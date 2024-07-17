@@ -1,0 +1,17 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ],
+  "compilerOptions": {
+    "baseUrl": ".", // 设定根目录
+    "paths": {
+      "@stores/*": ["/src/stores/*"] // 映射路径
+    }
+  }
+}
