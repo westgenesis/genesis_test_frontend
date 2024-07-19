@@ -13,5 +13,6 @@
     "paths": {
       "@stores/*": ["/src/stores/*"] // 映射路径
     }
-  }
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"]
 }

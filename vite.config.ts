@@ -1,10 +1,11 @@
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import path from 'path';
+import nodePolyfills from 'vite-plugin-node-stdlib-browser'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [vue(), nodePolyfills()],
   resolve: {
     alias: {
       '@stores': path.resolve(__dirname, 'src/stores'), // 配置 @stores 路径别名

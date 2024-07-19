@@ -42,6 +42,7 @@
                     <div class="flex-1">{{ requirement.name.split('/')[1] }}</div>
                     <div class="flex-1">{{ requirement.creator }}</div>
                     <div class="flex-1">{{ requirement.created_time }}</div>
+                    <div class="flex-1">{{ 'V' + requirement.version }}</div>
                     <div class="flex-1">{{ requirementStatusMap[requirement.status] }}</div>
                     <div class="flex-1 flex" style="gap: 1rem">
                         <el-upload ref="uploadRef" :auto-upload="false" :on-change="file => onBeforeUpdate(file, requirement)"
@@ -87,8 +88,6 @@ watch(currentProject, (newVal) => {
 
 const requirements = computed(() => currentProject.value?.requirement_files || []);
 
-console.log(currentProject.value);
-
 const onUploadMainDoc = () => {
     // 跳转到上传需求文档的页面
 };
@@ -108,11 +107,10 @@ const onBeforeUpload: UploadProps['onChange'] = async (file) => {
 const onBeforeUpdate: UploadProps['onChange'] = async (file, requirement) => {
     const formData = new FormData();
     console.log(file, requirement);
-    return;
     const info = new Blob([
         JSON.stringify({
             db_id: currentProject.value['_id']['$oid'],
-            category: 'requirments_docx',
+            category: 'update_requirments_docx',
             requirementId: requirement.reqId,
             requirementName: requirement.name,
             requirementCreator: requirement.creator,
@@ -126,8 +124,8 @@ const onBeforeUpdate: UploadProps['onChange'] = async (file, requirement) => {
 }
 
 const doSplitRequirement = async (requirement) => {
-    console.log(requirement);
     const result = await http.post('/api/do_split_requirement', requirement);
+    console.log(result);
 }
 </script>
 
@@ -157,7 +155,6 @@ const doSplitRequirement = async (requirement) => {
     filter: opacity(0.9);
 }
 
-/* 覆盖 el-radio-button 的默认样式 */
 :deep(.el-radio-button__orig-radio:checked + .el-radio-button__inner) {
     background-color: purple;
     border-color: purple;

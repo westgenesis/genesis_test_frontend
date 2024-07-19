@@ -9,7 +9,7 @@
                     <a-select v-model:value="form.kind" placeholder="请选择测试环境" style="width: 16.5rem">
                         <a-select-option value="VT">VT</a-select-option>
                         <a-select-option value="NI">NI</a-select-option>
-                        <a-select-option value="display">display</a-select-option>
+                        <a-select-option value="dSPACE">dSPACE</a-select-option>
                     </a-select>
                 </a-form-item>
                 <a-form-item label="项目描述" name="description">

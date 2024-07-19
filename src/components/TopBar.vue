@@ -29,7 +29,7 @@ const topBarItems = [
     },
     {
         name: '需求管理',
-        to: '/requirement/requirementManage'
+        to: '/requirement/functionModules'
     },
     {
         name: '用例管理',

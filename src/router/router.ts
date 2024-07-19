@@ -6,6 +6,8 @@ import MainLayout from '../components/MainLayout.vue';
 import ProjectManage from '../components/Project/ProjectManage.vue';
 import AddProject from '../components/Project/AddProject.vue';
 import RequirementManage from '../components/Requirement/RequirementManage.vue';
+import FunctionModule from '../components/Requirement/FunctionModule.vue';
+import FunctionPoint from '../components/Requirement/FunctionPoint.vue';
 
 const routes = [
   {
@@ -34,6 +36,14 @@ const routes = [
     path: '/project/manageRequirement/:id',
     component: RequirementManage
   },
+  {
+    path: '/requirement/functionModules',
+    component: FunctionModule
+  },
+  {
+    path: '/requirement/functionPoint',
+    component: FunctionPoint
+  }
 ];
 
 const router = createRouter({
