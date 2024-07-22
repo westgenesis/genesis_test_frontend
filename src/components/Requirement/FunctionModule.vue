@@ -50,7 +50,7 @@
                                 <requirement-docx :record="props.row" />
                             </template>
                         </el-table-column>
-                        <el-table-column prop="split_require_id" label="功能模块ID" width="100" />
+                        <el-table-column prop="split_file_id" label="功能模块ID" width="100" />
                         <el-table-column prop="file_name" label="功能模块名称" />
                         <el-table-column prop="description" label="功能模块描述"/>
                         <el-table-column prop="version" label="版本" width="200" />
@@ -140,8 +140,8 @@ const treeData = computed<TreeProps['treeData']>(() => {
                     req: req,
                     project: project,
                     type: 'requirement',
-                    children: req.split_require && req.split_require.length > 0
-                        ? req.split_require.map((splitReq, splitReqIndex) => ({
+                    children: req.split_files && req.split_files.length > 0
+                        ? req.split_files.map((splitReq, splitReqIndex) => ({
                             title: splitReq.file_name.replace('.docx', ''),
                             key: `0-${index}-${reqIndex}-${splitReqIndex}`,
                             fullPath: splitReq.object_name,
@@ -178,7 +178,7 @@ const onSaveContent = () => {
         type: 'warning'
     }).then(() => {
         HTMLtoDOCX(documentWordEdit.quill.getSemanticHTML()).then((data) => {
-            const file = new File([data], currentFile.value.file_name, {
+            const file = new File([data], fileName.value, {
                 type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
             })
             const formData = new FormData()
@@ -210,10 +210,10 @@ const pageSize = ref(10);
 const pagedData = computed(() => {
     const start = (currentPage.value - 1) * pageSize.value;
     const end = start + pageSize.value;
-    return currentRequirement.value?.req?.split_require.slice(start, end) || [];
+    return currentRequirement.value?.req?.split_files.slice(start, end) || [];
 });
 
-const totalItems = computed(() => currentRequirement.value?.req?.split_require.length || 0);
+const totalItems = computed(() => currentRequirement.value?.req?.split_files.length || 0);
 
 const handlePageChange = (page: number) => {
     currentPage.value = page;

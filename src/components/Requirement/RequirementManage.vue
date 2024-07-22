@@ -38,21 +38,21 @@
             </div>
             <div v-if="requirements?.length">
                 <div v-for="requirement in requirements" class="flex requirement">
-                    <div class="flex-1">{{ requirement.req_id }}</div>
-                    <div class="flex-1">{{ requirement.name.split('/')[1] }}</div>
-                    <div class="flex-1">{{ requirement.creator }}</div>
-                    <div class="flex-1">{{ requirement.created_time }}</div>
-                    <div class="flex-1">{{ 'V' + requirement.version }}</div>
-                    <div class="flex-1">{{ requirementStatusMap[requirement.status] }}</div>
+                    <div class="flex-1 requirement-item">{{ requirement.req_id }}</div>
+                    <div class="flex-1 requirement-item">{{ requirement.name.split('/')[1] }}</div>
+                    <div class="flex-1 requirement-item">{{ requirement.creator }}</div>
+                    <div class="flex-1 requirement-item">{{ requirement.created_time }}</div>
+                    <div class="flex-1 requirement-item">{{ 'V' + requirement.version }}</div>
+                    <div class="flex-1 requirement-item">{{ requirementStatusMap[requirement.status] }}</div>
                     <div class="flex-1 flex" style="gap: 1rem">
-                        <el-upload ref="uploadRef" :auto-upload="false" :on-change="file => onBeforeUpdate(file, requirement)"
-                            :show-file-list="false" accept=".doc,.docx,.pdf">
+                        <el-upload ref="uploadRef" :auto-upload="false"
+                            :on-change="file => onBeforeUpdate(file, requirement)" :show-file-list="false"
+                            accept=".doc,.docx,.pdf">
                             <template #trigger>
                                 <el-button type="text">更新</el-button>
                             </template>
                         </el-upload>
                         <el-button type="text" @click="doSplitRequirement(requirement)">解析</el-button>
-
                     </div>
                 </div>
 
@@ -174,5 +174,13 @@ const doSplitRequirement = async (requirement) => {
     display: flex;
     margin: 1rem;
     border-bottom: 1px solid #ddd;
+}
+
+.requirement-item {
+    flex: 1;
+    max-width: calc(100% / 7);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 </style>
