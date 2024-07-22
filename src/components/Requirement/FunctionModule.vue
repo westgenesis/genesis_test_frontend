@@ -24,9 +24,9 @@
                     <a-button type="primary" size="large" @click="onSaveContent" class="custom-purple-button">保存</a-button>
                 </div>
             </div>
-            <div v-show="currentType === 'requirement'" style="margin-top: 1rem">
+            <div v-show="currentType === 'requirement'" style="margin-top: 1rem;">
                 <div style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;">项目信息</div>
-                <div class="flex-container">
+                <div class="flex-container" style="margin-left: 1rem">
                     <div class="flex-item">
                         <strong>项目ID:</strong> {{ currentRequirement?.project?._id?.$oid }}
                     </div>
@@ -45,16 +45,22 @@
                 <div ></div>
                 <div>
                     <el-table :data="pagedData" style="width: 100%">
-                        <el-table-column prop="chunk_index" label="Chunk Index" width="100" />
-                        <el-table-column prop="object_name" label="Object Name" width="300" />
-                        <el-table-column prop="file_name" label="File Name" width="200" />
+                        <el-table-column type="expand">
+                            <template #default="props">
+                                <requirement-docx :record="props.row" />
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="split_require_id" label="功能模块ID" width="100" />
+                        <el-table-column prop="file_name" label="功能模块名称" />
+                        <el-table-column prop="description" label="功能模块描述"/>
+                        <el-table-column prop="version" label="版本" width="200" />
                         <el-table-column label="操作" width="120">
                             <template #default="scope">
                                 <el-button type="text" style="color: blue" @click="handleSplit(scope.row)">拆分</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
-                    <div class="flex jusitfy-center">
+                    <div class="flex justify-center">
                         <el-pagination
                         layout="prev, pager, next"
                         :total="totalItems"
@@ -79,6 +85,7 @@ import { useProductFetch } from '../../handler/handler';
 import { DocumentWordEdit } from './DocumentWordEdit';
 import HTMLtoDOCX from 'html-to-docx';
 import { http } from '../../http';
+import RequirementDocx from './RequirementDocx.vue';
 
 const currentFile = ref()
 const uploadRef = ref()
@@ -113,7 +120,7 @@ const onClickPreviewFile = (node: any) => {
             const file = new File([blob], splitReq.file_name)
             documentWordEdit.docxToQuill(file)
             currentFile.value = node;
-            fileName.value = splitReq.file_name;
+            fileName.value = splitReq.file_name.replace('.docx', '');
         })
 };
 
@@ -135,7 +142,7 @@ const treeData = computed<TreeProps['treeData']>(() => {
                     type: 'requirement',
                     children: req.split_require && req.split_require.length > 0
                         ? req.split_require.map((splitReq, splitReqIndex) => ({
-                            title: splitReq.file_name,
+                            title: splitReq.file_name.replace('.docx', ''),
                             key: `0-${index}-${reqIndex}-${splitReqIndex}`,
                             fullPath: splitReq.object_name,
                             splitReq: splitReq,
