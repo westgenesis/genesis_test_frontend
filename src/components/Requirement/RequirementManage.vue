@@ -38,7 +38,7 @@
             </div>
             <div v-if="requirements?.length">
                 <div v-for="requirement in requirements" class="flex requirement">
-                    <div class="flex-1">{{ requirement.reqId }}</div>
+                    <div class="flex-1">{{ requirement.req_id }}</div>
                     <div class="flex-1">{{ requirement.name.split('/')[1] }}</div>
                     <div class="flex-1">{{ requirement.creator }}</div>
                     <div class="flex-1">{{ requirement.created_time }}</div>
@@ -111,7 +111,7 @@ const onBeforeUpdate: UploadProps['onChange'] = async (file, requirement) => {
         JSON.stringify({
             db_id: currentProject.value['_id']['$oid'],
             category: 'update_requirments_docx',
-            requirementId: requirement.reqId,
+            requirementId: requirement.req_id,
             requirementName: requirement.name,
             requirementCreator: requirement.creator,
         })

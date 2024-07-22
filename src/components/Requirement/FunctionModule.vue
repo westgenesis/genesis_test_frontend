@@ -2,14 +2,14 @@
     <div class="flex">
         <div style="height: 100%;border-right: 1px solid #ddd" class="m-[20px] w-[400px]">
             <div style="border-bottom: 1px solid #ddd; padding-bottom: 1rem">全部项目 ({{ projects.length }})</div>
-            <div>
+            <div style="height: 90vh; overflow: scroll;">
                 <a-tree :show-line="showLine" :show-icon="showIcon" :default-expanded-keys="['0-0-0']"
-                    :tree-data="treeData" @select="onSelect">
+                    :tree-data="treeData" @select="onSelect" >
                     <template #icon></template>
                 </a-tree>
             </div>
         </div>
-        <div class="w-full h-[99.9%]">
+        <div class="w-full h-[99.9%] pt-[2rem]" >
             <div v-show="currentFile && currentType === 'sub_requirement'" class="editor-container">
                 <div style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;">功能模块</div>
                 <div class="flex  mt-[2rem]">
@@ -20,11 +20,11 @@
                 </div>
 
                 <div ref="quillEditorRef" class="docx-editor" />
-                <div>
-                    <a-button @click="onSaveContent">保存</a-button>
+                <div class="flex justify-center">
+                    <a-button type="primary" size="large" @click="onSaveContent" class="custom-purple-button">保存</a-button>
                 </div>
             </div>
-            <div v-show="currentType === 'requirement'">
+            <div v-show="currentType === 'requirement'" style="margin-top: 1rem">
                 <div style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;">项目信息</div>
                 <div class="flex-container">
                     <div class="flex-item">
@@ -42,6 +42,7 @@
                     </div>
                 </div>
                 <div style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;">功能模块信息</div>
+                <div ></div>
                 <div>
                     <el-table :data="pagedData" style="width: 100%">
                         <el-table-column prop="chunk_index" label="Chunk Index" width="100" />
@@ -53,13 +54,16 @@
                             </template>
                         </el-table-column>
                     </el-table>
-                    <el-pagination
+                    <div class="flex jusitfy-center">
+                        <el-pagination
                         layout="prev, pager, next"
                         :total="totalItems"
                         :page-size="pageSize"
                         :current-page="currentPage"
                         @current-change="handlePageChange"
                     />
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -176,7 +180,7 @@ const onSaveContent = () => {
                     db_id: currentFile.value.project._id.$oid,
                     category: 'save_requirement_docx',
                     splitReq: currentFile.value.splitReq,
-                    newFileName: fileName
+                    newFileName: fileName.value
                 })
             ])
 
@@ -212,7 +216,7 @@ const handleSplit = (row: any) => {
     const params = {
         project_id: currentRequirement.value.project._id.$oid,
         ...row,
-        reqId: currentRequirement.value.req.reqId,
+        req_id: currentRequirement.value.req.req_id,
     }
     http.post('/api/generate_testcase_new', params).then((res) => {
                 if (res) {
@@ -247,4 +251,33 @@ const handleSplit = (row: any) => {
     box-sizing: border-box;
     padding: 0.2rem;
 }
+
+.custom-purple-button {
+    background-color: purple;
+    border-color: purple;
+}
+
+.custom-purple-button:hover,
+.custom-purple-button:focus {
+    background-color: purple !important;
+    border-color: purple !important;
+    filter: opacity(0.9);
+}
+
+/* 覆盖 el-radio-button 的默认样式 */
+:deep(.el-radio-button__orig-radio:checked + .el-radio-button__inner) {
+  background-color: purple;
+  border-color: purple;
+}
+
+:deep(.el-radio-button__inner) {
+  color: purple;
+  border-color: purple;
+}
+
+:deep(.el-radio-button__original-radio:checked+.el-radio-button__inner) {
+    background-color: purple;
+    border-color: purple !important;
+}
+
 </style>
