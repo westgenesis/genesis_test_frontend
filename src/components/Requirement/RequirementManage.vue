@@ -113,6 +113,7 @@ const onBeforeUpdate: UploadProps['onChange'] = async (file, requirement) => {
             req_name: requirement.name,
             req_creator: requirement.creator,
             new_file_name: file.name,
+            version: requirement.version
         })
     const info = new Blob([
         JSON.stringify({
@@ -122,6 +123,7 @@ const onBeforeUpdate: UploadProps['onChange'] = async (file, requirement) => {
             req_name: requirement.name,
             req_creator: requirement.creator,
             new_file_name: file.name,
+            version: requirement.version
         })
     ])
     formData.append('user_file', file.raw as File);
