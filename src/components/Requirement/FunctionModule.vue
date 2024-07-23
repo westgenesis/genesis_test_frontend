@@ -12,7 +12,7 @@
         <div class="w-full h-[99.9%] pt-[2rem]">
             <div v-show="currentFile && currentType === 'sub_requirement'" class="editor-container">
                 <div style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;">功能模块</div>
-                <div class="flex  mt-[2rem]">
+                <div class="flex  mt-[2rem] mb-[1rem]">
                     <div class="w-[200px] ml-[1rem]">
                         功能模块名称
                     </div>
@@ -21,7 +21,7 @@
                 </div>
 
                 <div ref="quillEditorRef" class="docx-editor" />
-                <div class="flex justify-center">
+                <div class="flex justify-center mt-[1rem]">
                     <a-button type="primary" size="large" @click="onSaveContent"
                         class="custom-purple-button">保存</a-button>
                 </div>
@@ -85,7 +85,7 @@
     </div>
 
     <!-- 添加 a-drawer 组件 -->
-    <AddModuleDrawer :visible="drawerVisible" @close="closeAddDrawer" @save="saveNewModule" />
+    <AddModuleDrawer :visible="drawerVisible" @close="closeAddDrawer" @save="saveNewModule" :currentRequirement="currentRequirement"/>
 </template>
 
 <script setup lang="ts">
