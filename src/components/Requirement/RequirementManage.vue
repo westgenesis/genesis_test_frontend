@@ -106,7 +106,14 @@ const onBeforeUpload: UploadProps['onChange'] = async (file) => {
 
 const onBeforeUpdate: UploadProps['onChange'] = async (file, requirement) => {
     const formData = new FormData();
-    console.log(file, requirement);
+    console.log({
+            db_id: currentProject.value['_id']['$oid'],
+            category: 'update_requirments_docx',
+            req_id: requirement.req_id,
+            req_name: requirement.name,
+            req_creator: requirement.creator,
+            new_file_name: file.name,
+        })
     const info = new Blob([
         JSON.stringify({
             db_id: currentProject.value['_id']['$oid'],
@@ -119,7 +126,9 @@ const onBeforeUpdate: UploadProps['onChange'] = async (file, requirement) => {
     formData.append('user_file', file.raw as File);
     formData.append('info', info);
 
-    await http.post(`/api/upload_project_file`, formData);
+    await http.post(`/api/upload_project_file`, formData).then(respone => {
+        console.log(response);
+    });
     await projectStore.refreshProject(currentProject.value['_id']['$oid']);
 }
 
