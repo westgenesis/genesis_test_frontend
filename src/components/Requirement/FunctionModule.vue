@@ -17,6 +17,7 @@
                         功能模块名称
                     </div>
                     <a-input v-model:value="fileName" placeholder="输入文件名" style="width: 16.5rem;" />
+                    <div class="w-[200px] ml-[1rem]">V{{ currentFile?.splitReq?.version }}</div>
                 </div>
 
                 <div ref="quillEditorRef" class="docx-editor" />
@@ -78,7 +79,7 @@
 
 <script setup lang="ts">
 import { useProjectStore } from '../../stores/project';
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import type { TreeProps } from 'ant-design-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { useProductFetch } from '../../handler/handler';
@@ -90,7 +91,7 @@ import RequirementDocx from './RequirementDocx.vue';
 const currentFile = ref()
 const uploadRef = ref()
 
-const { projects } = useProjectStore();
+const { projects, refreshAllProjects } = useProjectStore();
 const showLine = ref<boolean>(true);
 const showIcon = ref<boolean>(false);
 const { handler } = useProductFetch();
@@ -106,7 +107,6 @@ onMounted(async () => {
 const currentType = ref('');
 const onClickPreviewFile = (node: any) => {
     const { splitReq, project } = node;
-    console.log(splitReq, project)
     if (splitReq.is_table === true) {
         ElMessage.error('该docx包含表格 暂时无法在 Word 编辑器中预览');
         return;
@@ -120,9 +120,14 @@ const onClickPreviewFile = (node: any) => {
             const file = new File([blob], splitReq.file_name)
             documentWordEdit.docxToQuill(file)
             currentFile.value = node;
+            console.log(node);
             fileName.value = splitReq.file_name.replace('.docx', '');
         })
 };
+
+watch(projects, (newProjects) => {
+    console.log(123456, newProjects);
+}, { immediate: true }); // immediate: true 选项用于在初始化时立即触发一次回调
 
 const treeData = computed<TreeProps['treeData']>(() => {
     return projects.map((project, index) => ({
@@ -171,7 +176,6 @@ const onSelect: TreeProps['onSelect'] = (selectedKeys, info) => {
 };
 
 const onSaveContent = () => {
-    console.log(currentFile.value);
     ElMessageBox.confirm('保存后会覆盖文件，是否确定？', '覆盖提示', {
         confirmButtonText: '是',
         cancelButtonText: '否',
@@ -186,8 +190,9 @@ const onSaveContent = () => {
                 JSON.stringify({
                     db_id: currentFile.value.project._id.$oid,
                     category: 'save_requirement_docx',
-                    splitReq: currentFile.value.splitReq,
-                    newFileName: fileName.value
+                    ...currentFile.value.splitReq,
+                    newFileName: fileName.value,
+                    req_id: currentFile.value.req.req_id,
                 })
             ])
 
@@ -196,6 +201,7 @@ const onSaveContent = () => {
             handler.UploadFile(formData).then((res) => {
                 if (res) {
                     ElMessage.success('保存成功')
+                    refreshAllProjects();
                 } else {
                     ElMessage.error('保存失败')
                 }

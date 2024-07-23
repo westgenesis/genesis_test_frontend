@@ -22,6 +22,12 @@ export const useProjectStore = defineStore('project', {
     async refreshProject(projectId) {
       const result = await http.get(`/api/project_info/${projectId}`);
       this.currentProject = result.project_data;
+    },
+    async refreshAllProjects() {
+      return http.get('/api/display_user_projects', { })
+        .then(response => {
+            this.projects = response.data;
+        });
     }
   },
 });
