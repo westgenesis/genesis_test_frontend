@@ -36,8 +36,5 @@ onMounted(async () => {
 
 
 <style scoped lang="less">
-.docx-editor {
-    border: none;
-    margin: 1rem;
-}
+
 </style>

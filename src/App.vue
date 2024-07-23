@@ -5,6 +5,7 @@ import { useUserStore } from './stores/user';
 import { onMounted } from 'vue'
 import { http } from './http';
 import { useProjectStore } from './stores/project';
+import 'quill/dist/quill.snow.css'
 
 
 const projectStore = useProjectStore();
