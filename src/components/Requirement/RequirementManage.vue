@@ -109,7 +109,7 @@ const onBeforeUpdate: UploadProps['onChange'] = async (file, requirement) => {
     console.log({
             db_id: currentProject.value['_id']['$oid'],
             category: 'update_requirments_docx',
-            req_id: requirement.req_id,
+            req_id: requirement.req_id, 
             req_name: requirement.name,
             req_creator: requirement.creator,
             new_file_name: file.name,
@@ -126,7 +126,7 @@ const onBeforeUpdate: UploadProps['onChange'] = async (file, requirement) => {
     formData.append('user_file', file.raw as File);
     formData.append('info', info);
 
-    await http.post(`/api/upload_project_file`, formData).then(respone => {
+    await http.post(`/api/upload_project_file`, formData).then(response => {
         console.log(response);
     });
     await projectStore.refreshProject(currentProject.value['_id']['$oid']);
