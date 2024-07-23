@@ -118,9 +118,10 @@ const onBeforeUpdate: UploadProps['onChange'] = async (file, requirement) => {
         JSON.stringify({
             db_id: currentProject.value['_id']['$oid'],
             category: 'update_requirments_docx',
-            requirementId: requirement.req_id,
-            requirementName: requirement.name,
-            requirementCreator: requirement.creator,
+            req_id: requirement.req_id, 
+            req_name: requirement.name,
+            req_creator: requirement.creator,
+            new_file_name: file.name,
         })
     ])
     formData.append('user_file', file.raw as File);
