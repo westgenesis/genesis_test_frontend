@@ -1,8 +1,8 @@
 <template>
     <div class="flex">
-        <div style="height: 100%;border-right: 1px solid #ddd" class="m-[20px] w-[400px]">
+        <div style="height: 100%;border-right: 1px solid #ddd;" class="m-[20px] w-[400px]">
             <div style="border-bottom: 1px solid #ddd; padding-bottom: 1rem">全部项目 ({{ projects.length }})</div>
-            <div style="height: 90vh; overflow: scroll;">
+            <div style="height: 90vh; overflow: scroll; background-color: rgba(248, 248, 254, 0.5);">
                 <a-tree :show-line="showLine" :show-icon="showIcon" :default-expanded-keys="['0-0-0']"
                     :tree-data="treeData" @select="onSelect">
                     <template #icon></template>
@@ -25,6 +25,7 @@
                     <a-button type="primary" size="large" @click="onSaveContent"
                         class="custom-purple-button">保存</a-button>
                 </div>
+                <div style="text-align: center;color: red;font-size: 12px;margin-top: 1rem;">提示：当前为V1.0版本 由文档xxx v1版本生成 保存后版本新增</div>
             </div>
             <div v-show="currentType === 'requirement'" class="w-full h-[99.9%] pt-[2rem]">
                 <div style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;">项目信息</div>

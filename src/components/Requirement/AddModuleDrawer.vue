@@ -72,6 +72,7 @@ const saveModule = () => {
                     description: newModuleDescription.value,
                     project_id: props.currentRequirement.project._id.$oid,
                     req_id: props.currentRequirement.req.req_id,
+                    version: props.currentRequirement.req.version
                 })
             ]);
 
