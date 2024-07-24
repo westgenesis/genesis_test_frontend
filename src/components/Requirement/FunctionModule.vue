@@ -25,7 +25,7 @@
                     <a-button type="primary" size="large" @click="onSaveContent"
                         class="custom-purple-button">保存</a-button>
                 </div>
-                <div style="text-align: center;color: red;font-size: 12px;margin-top: 1rem;">提示：当前为V1.0版本 由文档xxx v1版本生成 保存后版本新增</div>
+                <div style="text-align: center;color: red;font-size: 12px;margin-top: 1rem;">提示：当前为V{{ currentFile?.splitReq?.version }}版本 由文档xxx v1版本生成 保存后版本新增</div>
             </div>
             <div v-show="currentType === 'requirement'" class="w-full h-[99.9%] pt-[2rem]">
                 <div style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;">项目信息</div>
@@ -246,7 +246,7 @@ const handleSplit = (row: any) => {
         ...row,
         req_id: currentRequirement.value.req.req_id
     };
-    http.post('/api/generate_testcase_new', params).then((res) => {
+    http.post('/api/subrequire_generate_testcase', params).then((res) => {
         if (res) {
             ElMessage.success('拆分功能点成功');
         } else {

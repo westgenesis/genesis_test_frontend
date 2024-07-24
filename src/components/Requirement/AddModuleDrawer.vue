@@ -57,11 +57,9 @@ const saveModule = () => {
         req_id: props.currentRequirement.req.req_id,
     })
     const requirementDocxInstance = requirementDocxRef.value;
-    console.log(requirementDocxRef.value)
     if (requirementDocxInstance && requirementDocxInstance.documentWordEdit) {
         const documentWordEdit = requirementDocxInstance.documentWordEdit;
         HTMLtoDOCX(documentWordEdit.quill.getSemanticHTML()).then((data) => {
-            console.log(data)
             const file = new File([data], newModuleName.value, {
                 type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
             });
