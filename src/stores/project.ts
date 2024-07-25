@@ -4,7 +4,7 @@ import { http } from '../http';
 
 export const useProjectStore = defineStore('project', {
   state: () => ({
-    projects: [],
+    projects: JSON.parse(localStorage.getItem('projects') || '[]') || [],
     currentProject: {
       _id: {}
     },
@@ -12,6 +12,7 @@ export const useProjectStore = defineStore('project', {
   actions: {
     updateProjects(projects) {
       this.projects = projects;
+      localStorage.setItem('projects', JSON.stringify(projects));
     },
     updateCurrentProject(project) {
       this.currentProject = project;
@@ -26,7 +27,7 @@ export const useProjectStore = defineStore('project', {
     async refreshAllProjects() {
       return http.get('/api/display_user_projects', { })
         .then(response => {
-            this.projects = response.data;
+            this.updateProjects(response.data);
         });
     }
   },

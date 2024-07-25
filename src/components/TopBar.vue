@@ -1,64 +1,4 @@
-<script setup lang="ts">
-import { computed, ref, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import logo from '../assets/logo.svg';
-import { useUserStore } from '../stores/user';
-import { storeToRefs } from 'pinia';
-import { useProjectStore } from '../stores/project';
-import { UserOutlined } from '@ant-design/icons-vue'
 
-const route = useRoute();
-const router = useRouter();
-const selectedProject = ref('');
-const userStore = useUserStore();
-const { email } = storeToRefs(userStore);
-
-const projectStore = useProjectStore();
-const { projects, currentProject } = storeToRefs(projectStore);
-
-const isLoginOrRegistry = computed(() => {
-    return route.path === '/login' || route.path === '/registry'
-})
-
-const selectedItem = ref('项目管理')
-
-const topBarItems = [
-    {
-        name: '项目管理',
-        to: '/project/projectManage'
-    },
-    {
-        name: '需求管理',
-        to: '/requirement/functionModules'
-    },
-    {
-        name: '用例管理',
-        to: '/usecase/usecaseManage'
-    }
-]
-
-const handleTopBarClick = (item) => {
-    selectedItem.value = item.name;
-    router.replace(item.to || '/');
-}
-
-
-const backToLogin = () => {
-    router.push('/login');
-}
-
-// 监听 projects 的变化，并在其更新后设置 selectedProject
-watch(projects, (newProjects) => {
-    if (newProjects.length > 0) {
-        selectedProject.value = newProjects[0]._id.$oid;
-    }
-}, { immediate: true }); // immediate: true 选项用于在初始化时立即触发一次回调
-
-const handleSelect = (newProject) => {
-    projectStore.updateCurrentProjectById(newProject);
-}
-
-</script>
 
 <template>
     <div v-if="!isLoginOrRegistry" class="h-[60px] flex bg-custom-bg justify-between items-center">
@@ -96,6 +36,81 @@ const handleSelect = (newProject) => {
         </a-dropdown>
     </div>
 </template>
+
+<script setup lang="ts">
+import { computed, ref, watch, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import logo from '../assets/logo.svg';
+import { useUserStore } from '../stores/user';
+import { storeToRefs } from 'pinia';
+import { useProjectStore } from '../stores/project';
+import { UserOutlined } from '@ant-design/icons-vue'
+
+const route = useRoute();
+const router = useRouter();
+const selectedProject = ref('');
+const userStore = useUserStore();
+const { email } = storeToRefs(userStore);
+
+const projectStore = useProjectStore();
+const { projects, currentProject } = storeToRefs(projectStore);
+
+const isLoginOrRegistry = computed(() => {
+    return route.path === '/login' || route.path === '/registry'
+})
+
+const selectedItem = ref('项目管理')
+
+const topBarItems = [
+    {
+        name: '项目管理',
+        to: '/project/projectManage'
+    },
+    {
+        name: '需求管理',
+        to: '/requirement/functionModules'
+    },
+    {
+        name: '用例管理',
+        to: '/usecase/usecaseManage'
+    }
+]
+
+const handleTopBarClick = async (item) => {
+    selectedItem.value = item.name;
+    await projectStore.refreshAllProjects();
+    router.replace(item.to || '/');
+}
+
+
+const backToLogin = () => {
+    router.push('/login');
+}
+
+// 监听 projects 的变化，并在其更新后设置 selectedProject
+watch(projects, (newProjects) => {
+    if (newProjects.length > 0) {
+        selectedProject.value = newProjects[0]._id.$oid;
+    }
+}, { immediate: true }); // immediate: true 选项用于在初始化时立即触发一次回调
+
+const handleSelect = (newProject) => {
+    projectStore.updateCurrentProjectById(newProject);
+}
+
+onMounted(() => {
+    // 根据location.hash设置路由
+    const hash = location.hash.replace('#', '');
+    if (hash.startsWith('/project')) {
+        selectedItem.value = '项目管理';
+    } else if (hash.startsWith('/requirement')) {
+        selectedItem.value = '需求管理';
+    } else {
+        selectedItem.value = '用例管理';
+    }
+})
+
+</script>
 
 <style scoped lang="less">
 :deep(.ant-select-selector) {

@@ -103,7 +103,6 @@ const submitForm = () => {
             kind: form.value.kind,
             fileList: fileList._value.map(x => x.name),
         };
-        console.log(params);
         http.put('/api/create_new_project', params)
             .then(response => {
                 message.success('创建项目成功');

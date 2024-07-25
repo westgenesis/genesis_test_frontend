@@ -134,7 +134,6 @@ const submit = () => {
         kind: project.kind,
         project_id: project._id.$oid,
     };
-    console.log(params);
     http.put('/api/update_project', params)
         .then(response => {
             message.success('修改项目成功');

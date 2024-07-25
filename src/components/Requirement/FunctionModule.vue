@@ -4,7 +4,7 @@
             <div style="border-bottom: 1px solid #ddd; padding-bottom: 1rem">全部项目 ({{ projects.length }})</div>
             <div style="height: 90vh; overflow: scroll; background-color: rgba(248, 248, 254, 0.5);">
                 <a-tree :show-line="showLine" :show-icon="showIcon" :default-expanded-keys="['0-0-0']"
-                    :tree-data="treeData" @select="onSelect">
+                    :tree-data="treeData" @select="onSelect" v-model:selectedKeys="selectedKeys">
                     <template #icon></template>
                 </a-tree>
             </div>

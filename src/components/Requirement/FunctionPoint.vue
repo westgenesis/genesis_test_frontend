@@ -4,7 +4,7 @@
             <div style="border-bottom: 1px solid #ddd; padding-bottom: 1rem">全部项目 ({{ projects.length }})</div>
             <div style="height: 90vh; overflow: scroll; background-color: rgba(248, 248, 254, 0.5);">
                 <a-tree :show-line="showLine" :show-icon="showIcon" :default-expanded-keys="['0-0-0']"
-                    :tree-data="treeData" @select="onSelect">
+                    :tree-data="treeData" @select="onSelect" v-model:selectedKeys="selectedKeys">
                     <template #icon></template>
                 </a-tree>
             </div>
@@ -164,6 +164,7 @@ const { projects, refreshAllProjects } = useProjectStore();
 const showLine = ref<boolean>(true);
 const showIcon = ref<boolean>(false);
 const currentRequirement = ref();
+const selectedKeys = ref<string[]>([]);
 
 const form = ref({
     name: '',
@@ -231,8 +232,9 @@ const treeData = computed<TreeProps['treeData']>(() => {
     }));
 });
 
-const onSelect: TreeProps['onSelect'] = (selectedKeys, info) => {
+const onSelect: TreeProps['onSelect'] = (_, info) => {
     console.log(info.node);
+    console.log(selectedKeys.value);
     if (info?.node?.type === 'requirement') {
         currentType.value = 'requirement';
         currentRequirement.value = info.node;
@@ -243,7 +245,7 @@ const onSelect: TreeProps['onSelect'] = (selectedKeys, info) => {
         currentType.value = 'split_case';
         currentRequirement.value = info.node;
         form.value = {
-            name: info.node.splitCase.testcase_name.split('/')[1],
+            name: info.node.splitCase.testcase_name,
             pre_condition: info.node.splitCase.pre_condition,
             action: info.node.splitCase.action,
             result: info.node.splitCase.result,
@@ -287,8 +289,9 @@ const handleSave = async () => {
     console.log(form.value);
     const params = {
         ...form.value,
-        testcase_name: form.value.project_id + '/' + form.value.name
+        testcase_name: form.value.name
     }
+    delete params.name;
     return http.post('/api/modify_split_case', params).then(response => {
         if (response) {
             ElMessage.success('保存成功');
@@ -326,8 +329,9 @@ const handleNewSave = async () => {
     const params = {
         ...newForm.value,
         split_req_version: currentRequirement.value.splitReq.version,
-        testcase_name: newForm.value.project_id + '/' + newForm.value.name
+        testcase_name: newForm.value.name
     }
+    delete params.name;
     return http.post('/api/create_split_case', params).then(response => {
         if (response) {
             ElMessage.success('保存成功');

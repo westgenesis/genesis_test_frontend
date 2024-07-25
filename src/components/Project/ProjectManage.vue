@@ -151,7 +151,6 @@ type APIResult = {
 const queryData = (params: APIParams) => {
     return http.get('/api/display_user_projects', { params })
         .then(response => {
-            console.log(response);
             projectStore.updateProjects(response.data);
             return {
                 data: response.data,

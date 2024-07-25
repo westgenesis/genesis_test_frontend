@@ -29,9 +29,7 @@ const items: ItemType[] = ref([
 ]);
 
 const handleClick: MenuProps['onClick'] = e => {
-  console.log('click', e);
   router.replace(e.key);
-  console.log(selectedKeys)
 };
 
 watch(openKeys, val => {
@@ -39,7 +37,6 @@ watch(openKeys, val => {
 });
 
 watch(route, (newRoute) => {
-  console.log(newRoute.path)
   selectedKeys.value = [newRoute.path];
   if (newRoute.path.startsWith('/project')) {
     items.value = [getItem('项目管理', '/project/projectManage'), getItem('项目信息', '/project/manageRequirement')];
