@@ -81,9 +81,14 @@
                     测试用例信息
                 </div>
                 <div style="width: 100%">
-                    <el-table :data="currentRequirement?.splitReq?.split_case" style="width: 100%" id="function_point_table" :height="table_height">
-                        <el-table-column prop="testcase_id" label="测试用例ID" :width="table_width / 7 || 100" />
-                        <el-table-column prop="testcase_name" label="测试用例名称" :width="table_width / 7 || 100" />
+                    <div class="w-full flex justify-end mr-[2rem] mb-[1rem]">
+                        <a-button type="primary" size="large" @click="showDrawer"
+                            class="custom-purple-button mr-[2rem]">新建功能点</a-button>
+                    </div>
+                    <el-table :data="currentRequirement?.splitReq?.split_case" style="width: 100%"
+                        id="function_point_table" :height="table_height">
+                        <el-table-column prop="testcase_id" label="功能点ID" :width="table_width / 7 || 100" />
+                        <el-table-column prop="testcase_name" label="功能点名称" :width="table_width / 7 || 100" />
                         <el-table-column prop="pre_condition" label="初始条件" :width="table_width / 5 || 100" />
                         <el-table-column prop="action" label="触发条件" :width="table_width / 7 || 100" />
                         <el-table-column prop="result" label="预期结果" :width="table_width / 7 || 100" />
@@ -92,7 +97,9 @@
                 </div>
             </div>
             <div v-show="currentType === 'split_case'" class="w-full h-[99.9%] pt-[2rem]">
-                <div style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem; margin-bottom: 1rem;">功能点</div>
+                <div style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem; margin-bottom: 1rem;">
+                    功能点
+                </div>
                 <a-form :model="form" layout="vertical">
                     <a-form-item label="功能点名称">
                         <a-input v-model:value="form.name" placeholder="请输入功能点名称" :rows="4" />
@@ -115,6 +122,28 @@
                     </a-form-item>
                 </a-form>
             </div>
+
+            <a-drawer title="新建测试用例" :visible="visible" :width="720" @close="onDrawerClose">
+                <a-form :model="newForm" layout="vertical">
+                    <a-form-item label="功能点名称">
+                        <a-input v-model:value="newForm.name" placeholder="请输入功能点名称" :rows="4" />
+                    </a-form-item>
+                    <a-form-item label="初始条件">
+                        <a-textarea v-model:value="newForm.pre_condition" placeholder="请输入初始条件" :rows="2" />
+                    </a-form-item>
+                    <a-form-item label="触发条件">
+                        <a-textarea v-model:value="newForm.action" placeholder="请输入触发条件" :rows="2" />
+                    </a-form-item>
+                    <a-form-item label="预期结果">
+                        <a-textarea v-model:value="newForm.result" placeholder="请输入预期结果" :rows="2" />
+                    </a-form-item>
+                    <a-form-item>
+                        <div class="flex justify-center items-center" style="flex-direction: column;">
+                            <a-button type="primary" @click="handleNewSave" class="custom-purple-button">保存</a-button>
+                        </div>
+                    </a-form-item>
+                </a-form>
+            </a-drawer>
         </div>
     </div>
 
@@ -129,6 +158,7 @@ import { useProductFetch } from '../../handler/handler';
 import { http } from '../../http';
 
 const currentType = ref();
+const visible = ref(false);
 
 const { projects, refreshAllProjects } = useProjectStore();
 const showLine = ref<boolean>(true);
@@ -142,6 +172,18 @@ const form = ref({
     result: '',
     version: '',
     project_id: '',
+    testcase_id: '',
+});
+
+const newForm = ref({
+    name: '',
+    pre_condition: '',
+    action: '',
+    result: '',
+    project_id: '',
+    req_id: '',
+    split_file_id: '',
+    split_req_version: '',
 });
 
 const treeData = computed<TreeProps['treeData']>(() => {
@@ -206,6 +248,7 @@ const onSelect: TreeProps['onSelect'] = (selectedKeys, info) => {
             action: info.node.splitCase.action,
             result: info.node.splitCase.result,
             version: info.node.splitCase.version,
+            testcase_id: info.node.splitCase.testcase_id,
             project_id: info.node.project._id.$oid,
             req_id: info.node.req.req_id,
             split_file_id: info.node.splitReq.split_file_id,
@@ -230,10 +273,6 @@ const handlePageChange = (page: number) => {
     currentPage.value = page;
 };
 
-const handleModify = (row: any) => {
-    console.log(row);
-};
-
 onUpdated(() => {
     const ele = document.getElementById('function_point_table');
     if (ele) {
@@ -246,15 +285,62 @@ onUpdated(() => {
 
 const handleSave = async () => {
     console.log(form.value);
-    http.post('/api/update_split_case', form.value).then(response => {
+    const params = {
+        ...form.value,
+        testcase_name: form.value.project_id + '/' + form.value.name
+    }
+    return http.post('/api/modify_split_case', params).then(response => {
         if (response) {
             ElMessage.success('保存成功');
             refreshAllProjects();
         }
     })
 }
-</script>
 
+const showDrawer = () => {
+    newForm.value.project_id = currentRequirement.value.project._id.$oid;
+    newForm.value.split_file_id = currentRequirement.value.splitReq.split_file_id;
+    newForm.value.req_id = currentRequirement.value.req.req_id;
+    visible.value = true;
+};
+
+const onDrawerClose = () => {
+    visible.value = false;
+};
+
+const handleNewSave = async () => {
+    console.log(newForm.value);
+    if (!newForm.value.name) {
+        ElMessage.error('名称不能为空');
+        return;
+    } else if (!newForm.value.pre_condition) {
+        ElMessage.error('初始条件不能为空');
+        return;
+    } else if (!newForm.value.action) {
+        ElMessage.error('操作步骤不能为空');
+        return;
+    } else if (!newForm.value.result) {
+        ElMessage.error('预期结果不能为空');
+        return;
+    }
+    const params = {
+        ...newForm.value,
+        split_req_version: currentRequirement.value.splitReq.version,
+        testcase_name: newForm.value.project_id + '/' + newForm.value.name
+    }
+    return http.post('/api/create_split_case', params).then(response => {
+        if (response) {
+            ElMessage.success('保存成功');
+            refreshAllProjects();
+            onDrawerClose();
+        } else {
+            ElMessage.error('保存失败');
+        }
+    }).catch(() => {
+        ElMessage.error('保存失败');
+    })
+}
+</script>
 <style scoped lang="less">
 .flex-container {
     display: flex;

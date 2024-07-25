@@ -16,7 +16,6 @@ const props = defineProps({
         required: true
     }
 })
-console.log(props);
 
 const quillEditorRef = ref();
 let documentWordEdit: DocumentWordEdit

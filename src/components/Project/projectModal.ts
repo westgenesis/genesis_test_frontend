@@ -14,3 +14,7 @@ export const statusMap = {
     2: { label: "已完成", icon: CheckCircleOutlined, color: "success" },
     3: { label: "已关闭", icon: CloseCircleOutlined, color: "error" },
 };
+
+export const getAllProjects = () => {
+    
+}
