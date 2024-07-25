@@ -29,7 +29,7 @@
                 </div>
                 <div
                     style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;margin-top: 1rem; margin-bottom: 1rem;">
-                    功能模块信息</div>
+                    功能点信息</div>
                 <div style="width: 100%">
                     <div class="w-full flex justify-end mr-[2rem]">
                         <a-button type="primary" size="large" @click=""
@@ -37,23 +37,15 @@
                     </div>
 
                     <el-table :data="pagedData" style="width: 100%" id="function_module_table">
-                        <el-table-column prop="split_file_id" label="功能点ID" :width="table_width / 7 || 100" />
-                        <el-table-column prop="file_name" label="功能模块名称" :width="table_width / 7 || 100">
-                            <template #default="scope">
-                                {{ scope.row.file_name?.replace('.docx', '') }}
-                            </template>
-                        </el-table-column>
-                        <el-table-column prop="description" label="功能模块描述" :width="table_width / 7 || 100" />
-                        <el-table-column prop="version" label="版本" :width="table_width / 7 || 100" />
-                        <el-table-column label="操作" :width="table_width / 7 || 100">
-                            <template #default="scope">
-                                <el-button type="text" style="color: blue"
-                                    @click="handleSplit(scope.row)">拆分</el-button>
-                            </template>
-                        </el-table-column>
+                        <el-table-column prop="testcase_id" label="功能点ID" :width="100" />
+                        <el-table-column prop="testcase_name" label="功能点名称" :width="table_width2 / 7 || 100" />
+                        <el-table-column prop="pre_condition" label="初始条件" :width="table_width2 / 5 || 100" />
+                        <el-table-column prop="action" label="触发条件" :width="table_width2 / 5 || 100" />
+                        <el-table-column prop="result" label="预期结果" :width="table_width2 / 7 || 100" />
+                        <el-table-column prop="version" label="版本" :width="100" />
 
                     </el-table>
-                    <div class="flex justify-center">
+                    <div class="flex justify-center" hidden="!totalItems">
                         <el-pagination layout="prev, pager, next" :total="totalItems" :page-size="pageSize"
                             :current-page="currentPage" @current-change="handlePageChange" />
                     </div>
@@ -78,21 +70,27 @@
                 </div>
                 <div
                     style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;margin-top: 1rem; margin-bottom: 1rem;">
-                    测试用例信息
+                    功能点信息
                 </div>
                 <div style="width: 100%">
                     <div class="w-full flex justify-end mr-[2rem] mb-[1rem]">
                         <a-button type="primary" size="large" @click="showDrawer"
-                            class="custom-purple-button mr-[2rem]">新建功能点</a-button>
+                            class="custom-purple-button mr-[2rem] mb-[1rem]">新建功能点</a-button>
                     </div>
                     <el-table :data="currentRequirement?.splitReq?.split_case" style="width: 100%"
                         id="function_point_table" :height="table_height">
-                        <el-table-column prop="testcase_id" label="功能点ID" :width="table_width / 7 || 100" />
-                        <el-table-column prop="testcase_name" label="功能点名称" :width="table_width / 7 || 100" />
-                        <el-table-column prop="pre_condition" label="初始条件" :width="table_width / 5 || 100" />
-                        <el-table-column prop="action" label="触发条件" :width="table_width / 7 || 100" />
-                        <el-table-column prop="result" label="预期结果" :width="table_width / 7 || 100" />
-                        <el-table-column prop="version" label="版本" :width="table_width / 7 || 100" />
+                        <el-table-column prop="testcase_id" label="功能点ID" :width="100" />
+                        <el-table-column prop="testcase_name" label="功能点名称" :width="table_width1 / 7 || 100" />
+                        <el-table-column prop="pre_condition" label="初始条件" :width="table_width1 / 5 || 100" />
+                        <el-table-column prop="action" label="触发条件" :width="table_width1 / 5 || 100" />
+                        <el-table-column prop="result" label="预期结果" :width="table_width1 / 7 || 100" />
+                        <el-table-column prop="version" label="版本" :width="100" />
+                        <el-table-column label="操作" :width="table_width / 7 || 100">
+                            <template #default="scope">
+                                <el-button type="text" style="color: blue"
+                                    @click="handleSplit(scope.row)">生成用例</el-button>
+                            </template>
+                        </el-table-column>
                     </el-table>
                 </div>
             </div>
@@ -165,6 +163,7 @@ const showLine = ref<boolean>(true);
 const showIcon = ref<boolean>(false);
 const currentRequirement = ref();
 const selectedKeys = ref<string[]>([]);
+const flattened_cases = ref([]);
 
 const form = ref({
     name: '',
@@ -214,7 +213,7 @@ const treeData = computed<TreeProps['treeData']>(() => {
                             type: 'sub_requirement',
                             children: splitReq.split_case && splitReq.split_case.length > 0
                                 ? splitReq.split_case.map((splitCase, splitCaseIndex) => ({
-                                    title: (splitCase.testcase_name || '').split('/')[1],
+                                    title: (splitCase.testcase_name || ''),
                                     fullPath: splitCase.testcase_name,
                                     key: `0-${index}-${reqIndex}-${splitReqIndex}-${splitCaseIndex}`,
                                     splitCase: splitCase,
@@ -234,10 +233,16 @@ const treeData = computed<TreeProps['treeData']>(() => {
 
 const onSelect: TreeProps['onSelect'] = (_, info) => {
     console.log(info.node);
-    console.log(selectedKeys.value);
     if (info?.node?.type === 'requirement') {
         currentType.value = 'requirement';
         currentRequirement.value = info.node;
+        const split_files = info.node.req?.split_files || [];
+        if (split_files?.length) {
+            const combined_cases = split_files.map(x => x.split_case).filter(x => x);
+            const flattened = combined_cases.reduce((acc, curr) => acc.concat(curr), []);
+            console.log(flattened);
+            flattened_cases.value = flattened;
+        }
     } else if (info?.node?.type === 'sub_requirement') {
         currentType.value = 'sub_requirement';
         currentRequirement.value = info.node;
@@ -260,16 +265,19 @@ const onSelect: TreeProps['onSelect'] = (_, info) => {
 
 const currentPage = ref(1);
 const pageSize = ref(10);
-const table_width = ref(1000);
-const table_height = ref(500);
+const table_width1 = ref(1000);
+const table_height1 = ref(500);
+
+const table_width2 = ref(1000);
+const table_height2 = ref(500);
 
 const pagedData = computed(() => {
     const start = (currentPage.value - 1) * pageSize.value;
     const end = start + pageSize.value;
-    return currentRequirement.value?.req?.split_files.slice(start, end) || [];
+    return flattened_cases.value.slice(start, end) || [];
 });
 
-const totalItems = computed(() => currentRequirement.value?.req?.split_files.length || 0);
+const totalItems = computed(() => flattened_cases.value.length || 0);
 
 const handlePageChange = (page: number) => {
     currentPage.value = page;
@@ -279,9 +287,19 @@ onUpdated(() => {
     const ele = document.getElementById('function_point_table');
     if (ele) {
         const width = ele.getBoundingClientRect().width;
-        table_width.value = width;
+        table_width1.value = width;
         const height = window.innerHeight * 0.7;
-        table_height.value = height;
+        table_height1.value = height;
+    }
+});
+
+onUpdated(() => {
+    const ele = document.getElementById('function_module_table');
+    if (ele) {
+        const width = ele.getBoundingClientRect().width;
+        table_width2.value = width;
+        const height = window.innerHeight * 0.7;
+        table_height2.value = height;
     }
 });
 

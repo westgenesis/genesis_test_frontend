@@ -165,7 +165,7 @@ const treeData = computed<TreeProps['treeData']>(() => {
                             type: 'sub_requirement',
                             children: splitReq.split_case && splitReq.split_case.length > 0
                                 ? splitReq.split_case.map((splitCase, splitCaseIndex) => ({
-                                    title: (splitCase.testcase_name || '').split('/')[1],
+                                    title: (splitCase.testcase_name || ''),
                                     fullPath: splitCase.testcase_name,
                                     key: `0-${index}-${reqIndex}-${splitReqIndex}-${splitCaseIndex}`,
                                     splitCase: splitCase,
