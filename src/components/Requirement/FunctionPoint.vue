@@ -45,7 +45,7 @@
                         <el-table-column prop="version" label="版本" :width="100" />
 
                     </el-table>
-                    <div class="flex justify-center" hidden="!totalItems">
+                    <div class="flex justify-center">
                         <el-pagination layout="prev, pager, next" :total="totalItems" :page-size="pageSize"
                             :current-page="currentPage" @current-change="handlePageChange" />
                     </div>
