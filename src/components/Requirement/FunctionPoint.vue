@@ -123,7 +123,7 @@
                 </a-form>
             </div>
 
-            <a-drawer title="新建测试用例" :visible="visible" :width="720" @close="onDrawerClose">
+            <a-drawer title="新建功能点" :visible="visible" :width="720" @close="onDrawerClose">
                 <a-form :model="newForm" layout="vertical">
                     <a-form-item label="功能点名称">
                         <a-input v-model:value="newForm.name" placeholder="请输入功能点名称" :rows="4" />
