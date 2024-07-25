@@ -190,6 +190,7 @@ const treeData = computed<TreeProps['treeData']>(() => {
 });
 
 const onSelect: TreeProps['onSelect'] = (selectedKeys, info) => {
+    console.log(info.node);
     if (info?.node?.type === 'requirement') {
         currentType.value = 'requirement';
         currentRequirement.value = info.node;
@@ -199,13 +200,6 @@ const onSelect: TreeProps['onSelect'] = (selectedKeys, info) => {
     } else if (info?.node?.type === 'split_case') {
         currentType.value = 'split_case';
         currentRequirement.value = info.node;
-        console.log({
-            name: info.node.splitCase.testcase_name,
-            pre_condition: info.node.splitCase.pre_condition,
-            action: info.node.splitCase.action,
-            result: info.node.splitCase.result,
-            version: info.node.splitCase.version,
-        })
         form.value = {
             name: info.node.splitCase.testcase_name.split('/')[1],
             pre_condition: info.node.splitCase.pre_condition,
@@ -213,6 +207,8 @@ const onSelect: TreeProps['onSelect'] = (selectedKeys, info) => {
             result: info.node.splitCase.result,
             version: info.node.splitCase.version,
             project_id: info.node.project._id.$oid,
+            req_id: info.node.req.req_id,
+            split_file_id: info.node.splitReq.split_file_id,
         }
     }
 };
@@ -250,6 +246,12 @@ onUpdated(() => {
 
 const handleSave = async () => {
     console.log(form.value);
+    http.post('/api/update_split_case', form.value).then(response => {
+        if (response) {
+            ElMessage.success('保存成功');
+            refreshAllProjects();
+        }
+    })
 }
 </script>
 
