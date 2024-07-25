@@ -25,7 +25,7 @@
                     <a-button type="primary" size="large" @click="onSaveContent"
                         class="custom-purple-button">保存</a-button>
                 </div>
-                <div style="text-align: center;color: red;font-size: 12px;margin-top: 1rem;">提示：当前为V{{ currentFile?.splitReq?.version }}版本 由文档xxx v1版本生成 保存后版本新增</div>
+                <div style="text-align: center;color: red;font-size: 12px;margin-top: 1rem;">提示：当前为V{{ currentFile?.splitReq?.version }}版本 由文档{{ (currentFile?.req?.name || '').split('/')[1] }} v1版本生成 保存后版本新增</div>
             </div>
             <div v-show="currentType === 'requirement'" class="w-full h-[99.9%] pt-[2rem]">
                 <div style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;">项目信息</div>
@@ -48,11 +48,6 @@
                     style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;margin-top: 1rem; margin-bottom: 1rem;">
                     功能模块信息</div>
                 <div style="width: 100%">
-                    <div class="w-full flex justify-end mr-[2rem]">
-                        <a-button type="primary" size="large" @click="openAddDrawer"
-                        class="custom-purple-button mr-[2rem]">新建功能模块</a-button>
-                    </div>
-
                     <el-table :data="pagedData" style="width: 100%" id="function_module_table">
                         <el-table-column type="expand" width="70">
                             <template #default="props">
@@ -167,7 +162,19 @@ const treeData = computed<TreeProps['treeData']>(() => {
                             splitReq: splitReq,
                             req: req,
                             project: project,
-                            type: 'sub_requirement'
+                            type: 'sub_requirement',
+                            children: splitReq.split_case && splitReq.split_case.length > 0
+                                ? splitReq.split_case.map((splitCase, splitCaseIndex) => ({
+                                    title: (splitCase.testcase_name || '').split('/')[1],
+                                    fullPath: splitCase.testcase_name,
+                                    key: `0-${index}-${reqIndex}-${splitReqIndex}-${splitCaseIndex}`,
+                                    splitCase: splitCase,
+                                    splitReq: splitReq,
+                                    req: req,
+                                    project: project,
+                                    type: 'split_case'
+                                }))
+                                : []
                         }))
                         : []
                 };
@@ -177,17 +184,20 @@ const treeData = computed<TreeProps['treeData']>(() => {
 });
 
 const onSelect: TreeProps['onSelect'] = (selectedKeys, info) => {
+    console.log(info.node);
     if (info?.node?.type === 'requirement') {
-        console.log(info.node);
         currentType.value = 'requirement';
         currentRequirement.value = info.node;
-        return;
-    }
-    if (info?.node?.splitReq) {
+    } else if (info?.node?.type === 'sub_requirement') {
         currentType.value = 'sub_requirement';
+        currentRequirement.value = info.node;
         onClickPreviewFile(info?.node);
+    } else if (info?.node?.type === 'split_case') {
+        currentType.value ='split_case';
+        currentRequirement.value = info.node;
     }
 };
+
 
 const onSaveContent = () => {
     ElMessageBox.confirm('保存后会覆盖文件，是否确定？', '覆盖提示', {
