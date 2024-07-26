@@ -1,7 +1,7 @@
 
 
 <template>
-    <div v-if="!isLoginOrRegistry" class="h-[60px] flex bg-custom-bg justify-between items-center">
+    <div v-if="!isLoginOrRegistry" class="minh-[60px] flex bg-custom-bg justify-between items-center">
         <div class="flex items-center">
             <div class="h-full flex ml-[16px]">
                 <img :src="logo" />

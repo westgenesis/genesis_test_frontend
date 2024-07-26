@@ -2,7 +2,7 @@
     <div class="flex">
         <div style="height: 100%;border-right: 1px solid #ddd;" class="m-[20px] w-[400px]">
             <div style="border-bottom: 1px solid #ddd; padding-bottom: 1rem">全部项目 ({{ projects.length }})</div>
-            <div style="height: 90vh; overflow: scroll; background-color: rgba(248, 248, 254, 0.5);">
+            <div style="height: calc(100vh - 6.3rem); overflow: scroll; background-color: rgba(248, 248, 254, 0.5);">
                 <a-tree :show-line="showLine" :show-icon="showIcon" :default-expanded-keys="['0-0-0']"
                     :tree-data="treeData" @select="onSelect" v-model:selectedKeys="selectedKeys">
                     <template #icon></template>
@@ -409,6 +409,10 @@ const handleNewSave = async () => {
     }).catch(() => {
         ElMessage.error('保存失败');
     })
+}
+
+const handleSplit = (row) => {
+    ElMessage.error('现在还不支持生成用例')
 }
 </script>
 <style scoped lang="less">

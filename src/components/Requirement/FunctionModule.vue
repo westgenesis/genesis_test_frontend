@@ -2,7 +2,7 @@
     <div class="flex">
         <div style="height: 100%;border-right: 1px solid #ddd;" class="m-[20px] w-[400px]">
             <div style="border-bottom: 1px solid #ddd; padding-bottom: 1rem">全部项目 ({{ projects.length }})</div>
-            <div style="height: 90vh; overflow: scroll; background-color: rgba(248, 248, 254, 0.5);">
+            <div style="height: calc(100vh - 6.3rem); overflow: scroll; background-color: rgba(248, 248, 254, 0.5);">
                 <a-tree :show-line="showLine" :show-icon="showIcon" :default-expanded-keys="['0-0-0']"
                     :tree-data="treeData" @select="onSelect" v-model:selectedKeys="selectedKeys">
                     <template #icon></template>
@@ -247,17 +247,28 @@ const handlePageChange = (page: number) => {
 };
 
 const handleSplit = (row: any) => {
-    const params = {
-        project_id: currentRequirement.value.project._id.$oid,
-        ...row,
-        req_id: currentRequirement.value.req.req_id
-    };
-    http.post('/api/subrequire_generate_testcase', params).then((res) => {
-        if (res) {
-            ElMessage.success('拆分功能点成功');
-        } else {
-            ElMessage.error('拆分功能点失败');
-        }
+    ElMessageBox.confirm('拆分会覆盖当前模块的已有功能点，是否继续？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+    }).then(() => {
+        const params = {
+            project_id: currentRequirement.value.project._id.$oid,
+            ...row,
+            req_id: currentRequirement.value.req.req_id
+        };
+        ElMessage.success('已下发功能点拆解任务，请等待或刷新后去功能点页面查看结果');
+        http.post('/api/subrequire_generate_testcase', params).then((res) => {
+            console.log(res);
+            if (res.status === 'ok') {
+                ElMessage.success('拆分功能点成功');
+            } else {
+                ElMessage.error('拆分功能点失败，当前功能点的内容可能不支持继续拆分');
+            }
+        });
+    }).catch(() => {
+        // 用户点击取消，不做任何操作
+        ElMessage.info('已取消拆分操作');
     });
 };
 

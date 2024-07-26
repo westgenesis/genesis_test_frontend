@@ -23,7 +23,8 @@
         <a-card style="margin-top: 1rem;">
             <div
                 style="border-left: 4px solid purple; display: flex; align-items: center; justify-content: space-between; width: 100%;">
-                <div class="ml-[1rem]">需求文档</div>
+                <div class="ml-[1rem] flex align-center justify-center">需求文档 <div class="ml-[1rem] pb-[2px]" style="cursor: pointer; transform: translateY(-3px);" @click="doRefresh"><RedoOutlined /></div></div>
+
                 <el-upload ref="uploadRef" :auto-upload="false" :on-change="onBeforeUpload" :show-file-list="false"
                     accept=".doc,.docx,.pdf">
                     <template #trigger>
@@ -74,8 +75,8 @@
 import { useProjectStore } from '@stores/project';
 import { storeToRefs } from 'pinia';
 import { computed, watch } from 'vue';
-import { CloudUploadOutlined } from '@ant-design/icons-vue';
-import { UploadProps } from 'element-plus';
+import { CloudUploadOutlined, RedoOutlined } from '@ant-design/icons-vue';
+import { UploadProps, ElMessage } from 'element-plus';
 import { http } from '../../http';
 import { requirementStatusMap } from './RequirementModel';
 
@@ -104,17 +105,13 @@ const onBeforeUpload: UploadProps['onChange'] = async (file) => {
     await projectStore.refreshProject(currentProject.value['_id']['$oid']);
 }
 
+const doRefresh = async () => {
+    await projectStore.refreshProject(currentProject.value['_id']['$oid']);
+    ElMessage.success('需求文档已刷新');
+}
+
 const onBeforeUpdate: UploadProps['onChange'] = async (file, requirement) => {
     const formData = new FormData();
-    console.log({
-            db_id: currentProject.value['_id']['$oid'],
-            category: 'update_requirments_docx',
-            req_id: requirement.req_id, 
-            req_name: requirement.name,
-            req_creator: requirement.creator,
-            new_file_name: file.name,
-            version: requirement.version
-        })
     const info = new Blob([
         JSON.stringify({
             db_id: currentProject.value['_id']['$oid'],
@@ -130,14 +127,18 @@ const onBeforeUpdate: UploadProps['onChange'] = async (file, requirement) => {
     formData.append('info', info);
 
     await http.post(`/api/upload_project_file`, formData).then(response => {
-        console.log(response);
+        if (response.status === 'OK') {
+            ElMessage.success('更新成功')
+        } else {
+            ElMessage.error('更新失败');
+        }
     });
     await projectStore.refreshProject(currentProject.value['_id']['$oid']);
 }
 
 const doSplitRequirement = async (requirement) => {
+    ElMessage.success('已下发解析请求, 请等待一段时间或刷新后查看');
     const result = await http.post('/api/do_split_requirement', requirement);
-    console.log(result);
 }
 </script>
 
