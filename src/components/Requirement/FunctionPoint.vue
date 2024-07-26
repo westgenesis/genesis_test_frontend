@@ -31,19 +31,39 @@
                     style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;margin-top: 1rem; margin-bottom: 1rem;">
                     功能点信息</div>
                 <div style="width: 100%">
-                    <div class="w-full flex justify-end mr-[2rem]">
-                        <a-button type="primary" size="large" @click=""
-                            class="custom-purple-button mr-[2rem]">新建功能点</a-button>
-                    </div>
 
                     <el-table :data="pagedData" style="width: 100%" id="function_module_table">
-                        <el-table-column prop="testcase_id" label="功能点ID" :width="100" />
-                        <el-table-column prop="testcase_name" label="功能点名称" :width="table_width2 / 7 || 100" />
-                        <el-table-column prop="pre_condition" label="初始条件" :width="table_width2 / 5 || 100" />
-                        <el-table-column prop="action" label="触发条件" :width="table_width2 / 5 || 100" />
-                        <el-table-column prop="result" label="预期结果" :width="table_width2 / 7 || 100" />
-                        <el-table-column prop="version" label="版本" :width="100" />
-
+                        <el-table-column type="expand">
+                            <template #default="scope">
+                                <div style="padding: 10px;">
+                                    <div class="flex" style="border: 1px solid #eee;">
+                                        <div style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">初始条件</div>
+                                        <div>{{scope.row.pre_condition}}</div>
+                                    </div>
+                                    <div class="flex" style="border: 1px solid #eee;">
+                                        <div style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">触发条件</div>
+                                        <div>{{scope.row.action}}</div>
+                                    </div>
+                                    <div class="flex" style="border: 1px solid #eee;">
+                                        <div style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">预期结果</div>
+                                        <div>{{scope.row.result}}</div>
+                                    </div>
+                                </div>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="testcase_id" label="功能点ID" :width="table_width2 / 5 || 100" />
+                        <el-table-column prop="testcase_name" label="功能点名称" :width="table_width2 / 8 || 100" />
+                        <el-table-column prop="last_modified.$date" label="更新时间" :width="table_width2 / 7 || 100">
+                        </el-table-column>
+                        <el-table-column prop="split_req_name" label="所属功能模块"
+                            :width="table_width2 / 7 || 100"></el-table-column>
+                        <el-table-column prop="version" label="版本" :width="table_width2 / 10 || 100" />
+                        <el-table-column label="操作" :width="100">
+                            <template #default="scope">
+                                <el-button type="text" style="color: blue"
+                                    @click="handleSplit(scope.row)">生成用例</el-button>
+                            </template>
+                        </el-table-column>
                     </el-table>
                     <div class="flex justify-center">
                         <el-pagination layout="prev, pager, next" :total="totalItems" :page-size="pageSize"
@@ -79,13 +99,30 @@
                     </div>
                     <el-table :data="currentRequirement?.splitReq?.split_case" style="width: 100%"
                         id="function_point_table" :height="table_height">
-                        <el-table-column prop="testcase_id" label="功能点ID" :width="100" />
-                        <el-table-column prop="testcase_name" label="功能点名称" :width="table_width1 / 7 || 100" />
-                        <el-table-column prop="pre_condition" label="初始条件" :width="table_width1 / 5 || 100" />
-                        <el-table-column prop="action" label="触发条件" :width="table_width1 / 5 || 100" />
-                        <el-table-column prop="result" label="预期结果" :width="table_width1 / 7 || 100" />
-                        <el-table-column prop="version" label="版本" :width="100" />
-                        <el-table-column label="操作" :width="table_width / 7 || 100">
+                        <el-table-column type="expand">
+                            <template #default="scope">
+                                <div style="padding: 10px;">
+                                    <div class="flex" style="border: 1px solid #eee;">
+                                        <div style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">初始条件</div>
+                                        <div>{{scope.row.pre_condition}}</div>
+                                    </div>
+                                    <div class="flex" style="border: 1px solid #eee;">
+                                        <div style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">触发条件</div>
+                                        <div>{{scope.row.action}}</div>
+                                    </div>
+                                    <div class="flex" style="border: 1px solid #eee;">
+                                        <div style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">预期结果</div>
+                                        <div>{{scope.row.result}}</div>
+                                    </div>
+                                </div>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="testcase_id" label="功能点ID" :width="table_width1 / 5 || 100" />
+                        <el-table-column prop="testcase_name" label="功能点名称" :width="table_width1 / 6 || 100" />
+                        <el-table-column prop="last_modified.$date" label="更新时间" :width="table_width1 / 6 || 100">
+                        </el-table-column>
+                        <el-table-column prop="version" label="版本" :width="table_width1 / 6 || 100" />
+                        <el-table-column label="操作" :width="100">
                             <template #default="scope">
                                 <el-button type="text" style="color: blue"
                                     @click="handleSplit(scope.row)">生成用例</el-button>
@@ -154,11 +191,14 @@ import type { TreeProps } from 'ant-design-vue';
 import { ElMessage } from 'element-plus';
 import { useProductFetch } from '../../handler/handler';
 import { http } from '../../http';
+import { storeToRefs } from 'pinia';
 
 const currentType = ref();
 const visible = ref(false);
 
-const { projects, refreshAllProjects } = useProjectStore();
+const projectStore = useProjectStore();
+const { refreshAllProjects } = useProjectStore();
+const { projects } = storeToRefs(projectStore);
 const showLine = ref<boolean>(true);
 const showIcon = ref<boolean>(false);
 const currentRequirement = ref();
@@ -187,7 +227,7 @@ const newForm = ref({
 });
 
 const treeData = computed<TreeProps['treeData']>(() => {
-    return projects.map((project, index) => ({
+    return projects.value.map((project, index) => ({
         title: project.name,
         key: `0-${index}`,
         project: project,
@@ -238,7 +278,15 @@ const onSelect: TreeProps['onSelect'] = (_, info) => {
         currentRequirement.value = info.node;
         const split_files = info.node.req?.split_files || [];
         if (split_files?.length) {
-            const combined_cases = split_files.map(x => x.split_case).filter(x => x);
+            const combined_cases = split_files.map(x => {
+                if (x.split_case?.length) {
+                    x.split_case.map(c => {
+                        c.split_req_name = x.file_name;
+                        return c;
+                    });
+                }
+                return x.split_case;
+            }).filter(x => x);
             const flattened = combined_cases.reduce((acc, curr) => acc.concat(curr), []);
             console.log(flattened);
             flattened_cases.value = flattened;

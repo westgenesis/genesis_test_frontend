@@ -33,6 +33,7 @@ import { ref, defineProps, defineEmits, onUpdated } from 'vue';
 import RequirementDocx from './AddRequirementDocx.vue';
 import { http } from '../../http';
 import HTMLtoDOCX from 'html-to-docx';
+import { ElMessage, ElMessageBox } from 'element-plus';
 
 const props = defineProps({
     visible: Boolean,
@@ -50,12 +51,6 @@ const closeDrawer = () => {
 };
 
 const saveModule = () => {
-    console.log({
-        name: newModuleName.value,
-        description: newModuleDescription.value,
-        project_id: props.currentRequirement.project._id.$oid,
-        req_id: props.currentRequirement.req.req_id,
-    })
     const requirementDocxInstance = requirementDocxRef.value;
     if (requirementDocxInstance && requirementDocxInstance.documentWordEdit) {
         const documentWordEdit = requirementDocxInstance.documentWordEdit;
@@ -77,10 +72,12 @@ const saveModule = () => {
             formData.append('user_file', file);
             formData.append('info', info);
             http.post('/api/add_function_module', formData).then((res) => {
-                if (res) {
+                console.log(res);
+                if (res.status) {
+                    ElMessage.success('保存成功')
                     closeDrawer();
                 } else {
-                    console.error('保存失败');
+                    ElMessage.error('保存失败');
                     closeDrawer();
                 }
             });

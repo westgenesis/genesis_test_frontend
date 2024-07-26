@@ -1,13 +1,13 @@
 <template>
     <div class="project-detail">
-        <div class="flex justify-end mr-[6rem]">
-            <a-button type="primary" v-show="!isEditing" @click="changeEdit">编辑</a-button>
-            <a-button type="primary" v-show="isEditing" @click="submit">确定</a-button>
-            <a-button v-show="isEditing" @click="changeEdit" class="ml-[1rem]">取消</a-button>
+        <div class="flex justify-end mr-[6rem] mb-[2rem]">
+            <a-button type="primary" v-show="!isEditing" @click="changeEdit" class="custom-purple-button">编辑</a-button>
+            <a-button type="primary" v-show="isEditing" @click="submit" class="custom-purple-button">确定</a-button>
+            <a-button type="primary" v-show="isEditing" @click="changeEdit" class="ml-[1rem] custom-purple-button">取消</a-button>
         </div>
         <a-form :model="project" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }" ref="formRef">
             <a-form-item label="项目编号" class="form-item-spacing">
-                <a-input v-model:value="project.display_id" :disabled="!isEditing" style="width: 16.5rem" />
+                <a-input v-model:value="project.display_id" :disabled="true" style="width: 16.5rem" />
             </a-form-item>
             <a-form-item label="项目名称" class="form-item-spacing">
                 <a-input v-model:value="project.name" :disabled="!isEditing" style="width: 16.5rem" />
@@ -133,6 +133,7 @@ const submit = () => {
         periodEnd: form.value.dateTo,
         kind: project.kind,
         project_id: project._id.$oid,
+        project_status: project.project_status,
     };
     http.put('/api/update_project', params)
         .then(response => {
@@ -167,5 +168,33 @@ const onBeforeUpload = async (file) => {
 
 :deep(.el-upload__input) {
     display: none !important;
+}
+
+.custom-purple-button {
+    background-color: purple;
+    border-color: purple;
+}
+
+.custom-purple-button:hover,
+.custom-purple-button:focus {
+    background-color: purple !important;
+    border-color: purple !important;
+    filter: opacity(0.9);
+}
+
+/* 覆盖 el-radio-button 的默认样式 */
+:deep(.el-radio-button__orig-radio:checked + .el-radio-button__inner) {
+    background-color: purple;
+    border-color: purple;
+}
+
+:deep(.el-radio-button__inner) {
+    color: purple;
+    border-color: purple;
+}
+
+:deep(.el-radio-button__original-radio:checked+.el-radio-button__inner) {
+    background-color: purple;
+    border-color: purple !important;
 }
 </style>

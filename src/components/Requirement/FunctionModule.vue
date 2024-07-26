@@ -47,6 +47,10 @@
                 <div
                     style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;margin-top: 1rem; margin-bottom: 1rem;">
                     功能模块信息</div>
+                    <div class="w-full flex justify-end mr-[2rem]">
+                        <a-button type="primary" size="large" @click="openAddDrawer"
+                        class="custom-purple-button mr-[2rem]">新建功能模块</a-button>
+                    </div>
                 <div style="width: 100%">
                     <el-table :data="pagedData" style="width: 100%" id="function_module_table">
                         <el-table-column type="expand" width="70">
@@ -95,11 +99,14 @@ import HTMLtoDOCX from 'html-to-docx';
 import { http } from '../../http';
 import RequirementDocx from './RequirementDocx.vue';
 import AddModuleDrawer from './AddModuleDrawer.vue'; // 引入新组件
+import { storeToRefs } from 'pinia';
 
 const currentFile = ref();
 const uploadRef = ref();
 
-const { projects, refreshAllProjects } = useProjectStore();
+const projectStore = useProjectStore();
+const { refreshAllProjects } = useProjectStore();
+const { projects } = storeToRefs(projectStore);
 const showLine = ref<boolean>(true);
 const showIcon = ref<boolean>(false);
 const { handler } = useProductFetch();
@@ -139,7 +146,8 @@ watch(projects, (newProjects) => {
 }, { immediate: true }); // immediate: true 选项用于在初始化时立即触发一次回调
 
 const treeData = computed<TreeProps['treeData']>(() => {
-    return projects.map((project, index) => ({
+    console.log(111);
+    return projects.value.map((project, index) => ({
         title: project.name,
         key: `0-${index}`,
         project: project,
@@ -163,18 +171,6 @@ const treeData = computed<TreeProps['treeData']>(() => {
                             req: req,
                             project: project,
                             type: 'sub_requirement',
-                            children: splitReq.split_case && splitReq.split_case.length > 0
-                                ? splitReq.split_case.map((splitCase, splitCaseIndex) => ({
-                                    title: (splitCase.testcase_name || ''),
-                                    fullPath: splitCase.testcase_name,
-                                    key: `0-${index}-${reqIndex}-${splitReqIndex}-${splitCaseIndex}`,
-                                    splitCase: splitCase,
-                                    splitReq: splitReq,
-                                    req: req,
-                                    project: project,
-                                    type: 'split_case'
-                                }))
-                                : []
                         }))
                         : []
                 };
@@ -287,8 +283,6 @@ const closeAddDrawer = () => {
 };
 
 const saveNewModule = (module) => {
-    console.log('保存新功能模块:', module.name, module.description);
-    // 保存成功后关闭抽屉
     closeAddDrawer();
 };
 </script>

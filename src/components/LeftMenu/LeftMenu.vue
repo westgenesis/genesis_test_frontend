@@ -39,7 +39,7 @@ watch(openKeys, val => {
 watch(route, (newRoute) => {
   selectedKeys.value = [newRoute.path];
   if (newRoute.path.startsWith('/project')) {
-    items.value = [getItem('项目管理', '/project/projectManage'), getItem('项目信息', '/project/manageRequirement')];
+    items.value = [getItem('项目管理', '/project/projectManage')];
   } else if (newRoute.path.startsWith('/requirement')) {
     items.value = [getItem('功能模块', '/requirement/functionModules'), getItem('功能点', '/requirement/functionPoint')];
   } else if (newRoute.path.startsWith('/usecase')) {
