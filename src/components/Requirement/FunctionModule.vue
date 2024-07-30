@@ -139,17 +139,11 @@ const onClickPreviewFile = (node: any) => {
         const file = new File([blob], splitReq.file_name);
         documentWordEdit.docxToQuill(file);
         currentFile.value = node;
-        console.log(node);
         fileName.value = splitReq.file_name.replace('.docx', '');
     });
 };
 
-watch(projects, (newProjects) => {
-    console.log(123456, newProjects);
-}, { immediate: true }); // immediate: true 选项用于在初始化时立即触发一次回调
-
 const treeData = computed<TreeProps['treeData']>(() => {
-    console.log(111);
     return projects.value.map((project, index) => ({
         title: project.name,
         key: `0-${index}`,
@@ -330,10 +324,7 @@ const handleDelete = () => {
             if (res) {
                 ElMessage.success('删除成功');
                 refreshAllProjects();
-                console.log(currentRequirement.value?.req?.split_files);
-                currentRequirement.value?.req?.split_files.filter(x => !split_file_ids.includes(x.split_file_id));
-                currentRequirement.value = {...currentRequirement.value};
-                console.log(currentRequirement.value?.req?.split_files);
+                currentRequirement.value.req.split_files = currentRequirement.value?.req?.split_files.filter(x => !split_file_ids.includes(x.split_file_id));
             } else {
                 ElMessage.error('删除失败');
             }
