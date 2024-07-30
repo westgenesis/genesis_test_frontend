@@ -224,9 +224,7 @@ const onSaveContent = () => {
             handler.UploadFile(formData).then((res) => {
                 if (res) {
                     ElMessage.success('保存成功');
-                    console.log(currentFile.value.splitReq.version);
-                    console.log(typeof currentFile.value.splitReq.version);
-                    currentFile.value.splitReq.version = String(Number(currentFile.value.splitReq.version) + 0.1)
+                    currentFile.value.splitReq.version = (Number(currentFile.value.splitReq.version) + 0.1).toFixed(1);
                     refreshAllProjects();
                 } else {
                     ElMessage.error('保存失败');
