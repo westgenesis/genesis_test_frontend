@@ -94,8 +94,7 @@ const onUploadMainDoc = () => {
 };
 
 const onBeforeUpload: UploadProps['onChange'] = async (file) => {
-    console.log(requirements);
-    if (requirements.length >= 5) {
+    if (requirements.value.length >= 5) {
         ElMessage.error('一个项目最多上传五个需求文档');
         return;
     }
