@@ -94,6 +94,11 @@ const onUploadMainDoc = () => {
 };
 
 const onBeforeUpload: UploadProps['onChange'] = async (file) => {
+    console.log(requirements);
+    if (requirements.length >= 5) {
+        ElMessage.error('一个项目最多上传五个需求文档');
+        return;
+    }
     const formData = new FormData()
     const info = new Blob([
         JSON.stringify({ db_id: currentProject.value['_id']['$oid'], category: 'requirments_docx' })

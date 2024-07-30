@@ -17,7 +17,7 @@ const onSubmitFormData = async () => {
   const formData = {
     email: email.value,
     password: password.value,
-    remember_me: true,
+    remember_me: rememberMe.value,
   }
   try {
     const res: any = await http.post('/auth/login', formData)

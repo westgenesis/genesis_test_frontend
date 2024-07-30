@@ -31,8 +31,8 @@
                     </el-upload>
                 </a-form-item>
                 <a-form-item :wrapper-col="{ offset: 4, span: 14 }">
-                    <a-button @click="submitForm" type="primary">创建</a-button>
-                    <a-button @click="cancel" style="margin-left: 16px;">取消</a-button>
+                    <a-button @click="submitForm" type="primary" class="custom-purple-button">创建</a-button>
+                    <a-button @click="cancel" style="margin-left: 16px;" >取消</a-button>
                 </a-form-item>
             </a-form>
         </a-card>

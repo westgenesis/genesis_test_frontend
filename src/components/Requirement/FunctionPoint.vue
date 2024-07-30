@@ -122,8 +122,11 @@
                         <el-table-column prop="last_modified.$date" label="更新时间" :width="table_width1 / 6 || 100">
                         </el-table-column>
                         <el-table-column prop="version" label="版本" :width="table_width1 / 6 || 100" />
-                        <el-table-column label="操作" :width="100">
+                        <el-table-column label="操作" :width="150">
                             <template #default="scope">
+                                <el-button type="text" style="color: blue"
+                                @click="handleModify(scope.row)">修改</el-button>
+
                                 <el-button type="text" style="color: blue"
                                     @click="handleSplit(scope.row)">生成用例</el-button>
                             </template>
@@ -157,6 +160,27 @@
                     </a-form-item>
                 </a-form>
             </div>
+            <a-drawer title="修改功能点" :visible="editVisible" :width="720" @close="onEditDrawerClose">
+                <a-form :model="newForm" layout="vertical">
+                    <a-form-item label="功能点名称">
+                        <a-input v-model:value="newForm.name" placeholder="请输入功能点名称" :rows="4" />
+                    </a-form-item>
+                    <a-form-item label="初始条件">
+                        <a-textarea v-model:value="newForm.pre_condition" placeholder="请输入初始条件" :rows="2" />
+                    </a-form-item>
+                    <a-form-item label="触发条件">
+                        <a-textarea v-model:value="newForm.action" placeholder="请输入触发条件" :rows="2" />
+                    </a-form-item>
+                    <a-form-item label="预期结果">
+                        <a-textarea v-model:value="newForm.result" placeholder="请输入预期结果" :rows="2" />
+                    </a-form-item>
+                    <a-form-item>
+                        <div class="flex justify-center items-center" style="flex-direction: column;">
+                            <a-button type="primary" @click="handleEditSave" class="custom-purple-button">保存</a-button>
+                        </div>
+                    </a-form-item>
+                </a-form>
+            </a-drawer>
 
             <a-drawer title="新建功能点" :visible="visible" :width="720" @close="onDrawerClose">
                 <a-form :model="newForm" layout="vertical">
@@ -195,6 +219,7 @@ import { storeToRefs } from 'pinia';
 
 const currentType = ref();
 const visible = ref(false);
+const editVisible = ref(false);
 
 const projectStore = useProjectStore();
 const { refreshAllProjects } = useProjectStore();
@@ -366,6 +391,21 @@ const handleSave = async () => {
     })
 }
 
+const handleEditSave = async () => {
+    console.log(newForm.value);
+    const params = {
+        ...newForm.value,
+        testcase_name: newForm.value.name
+    }
+    delete params.name;
+    return http.post('/api/modify_split_case', params).then(response => {
+        if (response) {
+            ElMessage.success('保存成功');
+            refreshAllProjects();
+        }
+    })
+}
+
 const showDrawer = () => {
     newForm.value.project_id = currentRequirement.value.project._id.$oid;
     newForm.value.split_file_id = currentRequirement.value.splitReq.split_file_id;
@@ -376,6 +416,10 @@ const showDrawer = () => {
 const onDrawerClose = () => {
     visible.value = false;
 };
+
+const onEditDrawerClose = () => {
+    editVisible.value = false;
+}
 
 const handleNewSave = async () => {
     console.log(newForm.value);
@@ -413,6 +457,20 @@ const handleNewSave = async () => {
 
 const handleSplit = (row) => {
     ElMessage.error('现在还不支持生成用例')
+}
+
+const handleModify = (row) => {
+    console.log(row);
+    newForm.value.name = row.testcase_name;
+    newForm.value.pre_condition = row.pre_condition;
+    newForm.value.action = row.action;
+    newForm.value.result = row.result;
+    newForm.value.project_id = currentRequirement.value.project._id.$oid;
+    newForm.value.split_file_id = currentRequirement.value.splitReq.split_file_id;
+    newForm.value.req_id = currentRequirement.value.req.req_id;
+    newForm.value.testcase_id = row.testcase_id;
+    newForm.value.version = row.version;
+    editVisible.value = true;
 }
 </script>
 <style scoped lang="less">

@@ -50,9 +50,12 @@
                     <div class="w-full flex justify-end mr-[2rem]">
                         <a-button type="primary" size="large" @click="openAddDrawer"
                         class="custom-purple-button mr-[2rem]">新建功能模块</a-button>
+                        <a-button type="primary" size="large" @click="handleDelete"
+                        class="custom-purple-button mr-[2rem]">删除</a-button>
                     </div>
                 <div style="width: 100%">
-                    <el-table :data="pagedData" style="width: 100%" id="function_module_table">
+                    <el-table :data="pagedData" style="width: 100%" id="function_module_table" @selection-change="handleSelectionChange">
+                        <el-table-column type="selection" width="50"/>
                         <el-table-column type="expand" width="70">
                             <template #default="props">
                                 <requirement-docx :record="props.row" />
@@ -221,6 +224,9 @@ const onSaveContent = () => {
             handler.UploadFile(formData).then((res) => {
                 if (res) {
                     ElMessage.success('保存成功');
+                    console.log(currentFile.value.splitReq.version);
+                    console.log(typeof currentFile.value.splitReq.version);
+                    currentFile.value.splitReq.version = String(Number(currentFile.value.splitReq.version) + 0.1)
                     refreshAllProjects();
                 } else {
                     ElMessage.error('保存失败');
@@ -295,6 +301,48 @@ const closeAddDrawer = () => {
 
 const saveNewModule = (module) => {
     closeAddDrawer();
+};
+
+// 新增的代码
+const selectedRows = ref([]);
+
+const handleSelectionChange = (rows) => {
+    selectedRows.value = rows;
+};
+
+const handleDelete = () => {
+    if (selectedRows.value.length === 0) {
+        ElMessage.warning('请选择要删除的功能模块');
+        return;
+    }
+
+    ElMessageBox.confirm('确定要删除选中的功能模块吗？', '删除确认', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+    }).then(() => {
+        const split_file_ids = selectedRows.value.map(row => row.split_file_id);
+        const deleteSplitRequireParams = {
+            project_id: currentRequirement.value.project._id.$oid,
+            req_id: currentRequirement.value.req.req_id,
+            split_file_ids,
+        };
+
+        http.post('/api/delete_function_module', deleteSplitRequireParams).then((res) => {
+            if (res) {
+                ElMessage.success('删除成功');
+                refreshAllProjects();
+                console.log(currentRequirement.value?.req?.split_files);
+                currentRequirement.value?.req?.split_files.filter(x => !split_file_ids.includes(x.split_file_id));
+                currentRequirement.value = {...currentRequirement.value};
+                console.log(currentRequirement.value?.req?.split_files);
+            } else {
+                ElMessage.error('删除失败');
+            }
+        });
+    }).catch(() => {
+        ElMessage.info('已取消删除操作');
+    });
 };
 </script>
 
