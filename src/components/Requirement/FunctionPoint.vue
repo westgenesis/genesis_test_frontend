@@ -442,10 +442,14 @@ const handleNewSave = async () => {
         testcase_name: newForm.value.name
     }
     delete params.name;
-    return http.post('/api/create_split_case', params).then(response => {
+    return http.post('/api/create_split_case', params).then(async response => {
         if (response) {
             ElMessage.success('保存成功');
-            refreshAllProjects();
+            const res = await refreshAllProjects();
+            const currentProject = res.find(x => x._id.$oid === newForm.value.project_id);
+            const currentReq = currentProject.requirement_files.find(x => x.req_id === newForm.value.req_id);
+            const currentSplitReq = currentReq.split_files.find(x => x.split_file_id === newForm.value.split_file_id);
+            currentRequirement.value.splitReq.split_case = currentSplitReq.split_case;
             onDrawerClose();
         } else {
             ElMessage.error('保存失败');
