@@ -8,7 +8,7 @@
             </div>
             <div style="height: calc(100vh - 10.3rem); overflow: scroll; background-color: rgba(248, 248, 254, 0.5);">
                 <a-tree :show-line="showLine" :show-icon="showIcon" :default-expanded-keys="['0-0-0']"
-                    :tree-data="treeData" @select="onSelect" v-model:selectedKeys="selectedKeys">
+                    :tree-data="treeData" @select="onSelect">
                     <template #icon></template>
                 </a-tree>
             </div>
@@ -335,8 +335,12 @@ const openAddDrawer = () => {
     drawerVisible.value = true;
 };
 
-const closeAddDrawer = () => {
+const closeAddDrawer = async () => {
     drawerVisible.value = false;
+    const result = await projectStore.refreshAllProjects();
+    const currentProject = result.find(x => x._id.$oid === currentRequirement.value.project._id.$oid);
+    const currentReq = currentProject.requirement_files.find(x => x.req_id === currentRequirement.value.req.req_id);
+    currentRequirement.value.req.split_files = currentReq.split_files;
 };
 
 const saveNewModule = (module) => {

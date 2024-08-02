@@ -419,7 +419,7 @@ const treeData = computed(() => {
                                 req: req,
                                 project: project,
                                 type: 'sub_requirement',
-                                split_cases: splitReq.split_case.map((singleCase) => {
+                                split_cases: (splitReq.split_case || []).map((singleCase) => {
                                     for (const testcase of (singleCase.testcases || [])) {
                                         testcase.split_case_name = singleCase.testcase_name;
                                     }
