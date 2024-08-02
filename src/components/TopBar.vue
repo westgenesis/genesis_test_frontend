@@ -1,5 +1,3 @@
-
-
 <template>
     <div v-if="!isLoginOrRegistry" class="minh-[60px] flex bg-custom-bg justify-between items-center">
         <div class="flex items-center">
@@ -7,7 +5,7 @@
                 <img :src="logo" />
             </div>
             <div class="h-full">
-                <a-select ref="select" v-model:value="currentProject.name"
+                <a-select ref="select" v-model:value="selectedProject"
                     style="width: 12rem; margin-top: 2px; margin-left: 16px;" class="mt-[12px]" @change="handleSelect">
                     <a-select-option v-for="project in projects" :key="project._id.$oid" :value="project._id.$oid">
                         {{ project.name }}
@@ -94,8 +92,12 @@ watch(projects, (newProjects) => {
     }
 }, { immediate: true });
 
-const handleSelect = (newProject) => {
-    projectStore.updateCurrentProjectById(newProject);
+const handleSelect = (newProjectId) => {
+    const selectedProject = projects.value.find(project => project._id.$oid === newProjectId);
+    if (selectedProject) {
+        projectStore.updateCurrentProjectById(newProjectId);
+        currentProject.value.name = selectedProject.name; // 更新 currentProject.name
+    }
 }
 
 onMounted(() => {
