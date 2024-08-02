@@ -92,7 +92,7 @@ watch(projects, (newProjects) => {
     if (newProjects.length > 0) {
         selectedProject.value = newProjects[0]._id.$oid;
     }
-}, { immediate: true }); // immediate: true 选项用于在初始化时立即触发一次回调
+}, { immediate: true });
 
 const handleSelect = (newProject) => {
     projectStore.updateCurrentProjectById(newProject);

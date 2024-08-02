@@ -33,48 +33,42 @@
                 </div>
                 <div
                     style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;margin-top: 1rem; margin-bottom: 1rem;">
-                    功能点信息</div>
-                <div style="width: 100%">
-
-                    <el-table :data="pagedData" style="width: 100%" id="function_module_table">
-                        <el-table-column type="expand">
-                            <template #default="scope">
-                                <div style="padding: 10px;">
-                                    <div class="flex" style="border: 1px solid #eee;">
-                                        <div style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">初始条件</div>
-                                        <div>{{scope.row.pre_condition}}</div>
-                                    </div>
-                                    <div class="flex" style="border: 1px solid #eee;">
-                                        <div style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">触发条件</div>
-                                        <div>{{scope.row.action}}</div>
-                                    </div>
-                                    <div class="flex" style="border: 1px solid #eee;">
-                                        <div style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">预期结果</div>
-                                        <div>{{scope.row.result}}</div>
-                                    </div>
+                    测试用例信息</div>
+                <el-table :data="flattened_cases_req_paged" style="width: 100%" id="function_point_table" :height="table_height1">
+                    <el-table-column type="expand">
+                        <template #default="scope">
+                            <div style="padding: 10px;">
+                                <div class="flex" style="border: 1px solid #eee;">
+                                    <div
+                                        style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">
+                                        初始条件</div>
+                                    <div>{{ scope.row.pre_condition }}</div>
                                 </div>
-                            </template>
-                        </el-table-column>
-                        <el-table-column prop="testcase_id" label="功能点ID" :width="table_width2 / 5 || 100" />
-                        <el-table-column prop="testcase_name" label="功能点名称" :width="table_width2 / 8 || 100" />
-                        <el-table-column prop="last_modified.$date" label="更新时间" :width="table_width2 / 7 || 100">
-                        </el-table-column>
-                        <el-table-column prop="split_req_name" label="所属功能模块"
-                            :width="table_width2 / 7 || 100"></el-table-column>
-                        <el-table-column prop="version" label="版本" :width="table_width2 / 10 || 100" />
-                        <el-table-column label="操作" :width="100">
-                            <template #default="scope">
-                                <el-button type="text" style="color: blue"
-                                    @click="handleSplit(scope.row)">生成用例</el-button>
-                            </template>
-                        </el-table-column>
-                    </el-table>
-                    <div class="flex justify-center">
-                        <el-pagination layout="prev, pager, next" :total="totalItems" :page-size="pageSize"
-                            :current-page="currentPage" @current-change="handlePageChange" />
+                                <div class="flex" style="border: 1px solid #eee;">
+                                    <div
+                                        style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">
+                                        触发条件</div>
+                                    <div>{{ scope.row.action }}</div>
+                                </div>
+                                <div class="flex" style="border: 1px solid #eee;">
+                                    <div
+                                        style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">
+                                        预期结果</div>
+                                    <div>{{ scope.row.result }}</div>
+                                </div>
+                            </div>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="testcase_id" label="测试用例ID" :width="table_width1 / 7 || 100" />
+                    <el-table-column prop="testcase_name" label="测试用例名称" :width="table_width1 / 7 || 100" />
+                    <el-table-column prop="version" label="版本" :width="table_width1 / 7 || 100" />
+                    <el-table-column prop="split_case_name" label="所属功能点" :width="table_width1 / 7 || 100" />
+                    <el-table-column prop="split_file_name" label="所属功能模块" :width="table_width1 / 7 || 100"/>
+                </el-table>
+                <div class="flex justify-center mt-4">
+                        <a-pagination v-model:current="currentPageReq" :total="totalItemsReq" :page-size="pageSizeReq"
+                            @change="handlePageChangeReq" />
                     </div>
-
-                </div>
             </div>
             <div v-show="currentType === 'sub_requirement'" class="w-full h-[99.9%] pt-[2rem]">
                 <div style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;">功能模块名称</div>
@@ -94,57 +88,127 @@
                 </div>
                 <div
                     style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;margin-top: 1rem; margin-bottom: 1rem;">
-                    功能点信息
+                    测试用例信息
                 </div>
                 <div style="width: 100%">
-                    <div class="w-full flex justify-end mr-[2rem] mb-[1rem]">
-                        <a-button type="primary" size="large" @click="showDrawer"
-                            class="custom-purple-button mr-[2rem] mb-[1rem]">新建功能点</a-button>
-                    </div>
-                    <el-table :data="currentRequirement?.splitReq?.split_case" style="width: 100%"
-                        id="function_point_table" :height="table_height">
+                    <el-table :data="pagedData" style="width: 100%" id="function_point_table" :height="table_height1">
                         <el-table-column type="expand">
                             <template #default="scope">
                                 <div style="padding: 10px;">
                                     <div class="flex" style="border: 1px solid #eee;">
-                                        <div style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">初始条件</div>
-                                        <div>{{scope.row.pre_condition}}</div>
+                                        <div
+                                            style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">
+                                            初始条件</div>
+                                        <div>{{ scope.row.pre_condition }}</div>
                                     </div>
                                     <div class="flex" style="border: 1px solid #eee;">
-                                        <div style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">触发条件</div>
-                                        <div>{{scope.row.action}}</div>
+                                        <div
+                                            style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">
+                                            触发条件</div>
+                                        <div>{{ scope.row.action }}</div>
                                     </div>
                                     <div class="flex" style="border: 1px solid #eee;">
-                                        <div style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">预期结果</div>
-                                        <div>{{scope.row.result}}</div>
+                                        <div
+                                            style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">
+                                            预期结果</div>
+                                        <div>{{ scope.row.result }}</div>
                                     </div>
                                 </div>
                             </template>
                         </el-table-column>
-                        <el-table-column prop="testcase_id" label="功能点ID" :width="table_width1 / 5 || 100" />
-                        <el-table-column prop="testcase_name" label="功能点名称" :width="table_width1 / 6 || 100" />
-                        <el-table-column prop="last_modified.$date" label="更新时间" :width="table_width1 / 6 || 100">
-                        </el-table-column>
+                        <el-table-column prop="testcase_id" label="测试用例ID" :width="table_width1 / 5 || 100" />
+                        <el-table-column prop="testcase_name" label="测试用例名称" :width="table_width1 / 6 || 100" />
                         <el-table-column prop="version" label="版本" :width="table_width1 / 6 || 100" />
+                        <el-table-column prop="split_case_name" label="所属功能点" :width="table_width1 / 6 || 100" />
                         <el-table-column label="操作" :width="150">
                             <template #default="scope">
                                 <el-button type="text" style="color: blue"
-                                @click="handleModify(scope.row)">修改</el-button>
-
+                                    @click="handleModify(scope.row)">修改</el-button>
                                 <el-button type="text" style="color: blue"
-                                    @click="handleSplit(scope.row)">生成用例</el-button>
+                                    @click="handleSplit(scope.row)">生成脚本</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
+                    <div class="flex justify-center mt-4">
+                        <a-pagination v-model:current="currentPage" :total="totalItems" :page-size="pageSize"
+                            @change="handlePageChange" />
+                    </div>
                 </div>
             </div>
             <div v-show="currentType === 'split_case'" class="w-full h-[99.9%] pt-[2rem]">
                 <div style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem; margin-bottom: 1rem;">
-                    功能点
+                    功能点信息
                 </div>
+                <div class="flex-container" style="margin-left: 1rem">
+                    <div class="flex-item">
+                        <strong>功能点名称:</strong> {{ currentRequirement?.splitCase?.testcase_name }}
+                    </div>
+                    <div class="flex-item">
+                        <strong>功能点ID:</strong> {{ currentRequirement?.splitCase?.testcase_id }}
+                    </div>
+                    <div class="flex-item">
+                        <strong>当前版本:</strong> {{ currentRequirement?.splitCase?.version }}
+                    </div>
+                    <div class="flex-item">
+                        <strong>功能点描述:</strong> {{ currentRequirement?.splitCase?.description || '无描述' }}
+                    </div>
+                </div>
+                <div style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem; margin-bottom: 1rem;">
+                    测试用例
+                </div>
+                <div class="flex" style="justify-content: flex-end; margin-right: 1rem">
+                    <a-button type="primary" class="custom-purple-button" size="large"
+                        @click="showDrawer">新建测试用例</a-button>
+                </div>
+
+                <el-table :data="currentRequirement?.splitCase?.testcases" style="width: 100%" id="function_point_table"
+                    :height="table_height1">
+                    <el-table-column type="expand">
+                        <template #default="scope">
+                            <div style="padding: 10px;">
+                                <div class="flex" style="border: 1px solid #eee;">
+                                    <div
+                                        style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">
+                                        初始条件</div>
+                                    <div>{{ scope.row.pre_condition }}</div>
+                                </div>
+                                <div class="flex" style="border: 1px solid #eee;">
+                                    <div
+                                        style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">
+                                        触发条件</div>
+                                    <div>{{ scope.row.action }}</div>
+                                </div>
+                                <div class="flex" style="border: 1px solid #eee;">
+                                    <div
+                                        style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">
+                                        预期结果</div>
+                                    <div>{{ scope.row.result }}</div>
+                                </div>
+                            </div>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="testcase_id" label="测试用例ID" :width="table_width1 / 5 || 100" />
+                    <el-table-column prop="testcase_name" label="测试用例名称" :width="table_width1 / 6 || 100" />
+                    <el-table-column prop="version" label="版本" :width="table_width1 / 6 || 100" />
+                    <el-table-column label="操作" :width="150">
+                        <template #default="scope">
+                            <el-button type="text" style="color: blue" @click="handleModify(scope.row)">修改</el-button>
+
+                            <el-button type="text" style="color: blue" @click="handleSplit(scope.row)">生成脚本</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </div>
+            <div v-show="currentType === 'testcase'">
                 <a-form :model="form" layout="vertical">
-                    <a-form-item label="功能点名称">
-                        <a-input v-model:value="form.name" placeholder="请输入功能点名称" :rows="4" />
+                    <a-form-item label="测试用例类型">
+                        <a-select v-model:value="form.type" placeholder="请选择测试用例类型">
+                            <a-select-option value="positive">正例</a-select-option>
+                            <a-select-option value="negative">反例</a-select-option>
+                        </a-select>
+                    </a-form-item>
+                    <a-form-item label="测试用例名称">
+                        <a-input v-model:value="form.name" placeholder="请输入测试用例名称" :rows="4" />
                     </a-form-item>
                     <a-form-item label="初始条件">
                         <a-textarea v-model:value="form.pre_condition" placeholder="请输入初始条件" :rows="2" />
@@ -160,12 +224,17 @@
                             <a-button type="primary" @click="handleSave" class="custom-purple-button">保存</a-button>
                             <div style="color: red">提示：当前为V{{ form.version }}版本 保存后版本新增</div>
                         </div>
-
                     </a-form-item>
                 </a-form>
             </div>
-            <a-drawer title="修改功能点" :visible="editVisible" :width="720" @close="onEditDrawerClose">
+            <a-drawer title="修改测试用例" :visible="editVisible" :width="720" @close="onEditDrawerClose">
                 <a-form :model="newForm" layout="vertical">
+                    <a-form-item label="测试用例类型">
+                        <a-select v-model:value="newForm.type" placeholder="请选择测试用例类型">
+                            <a-select-option value="positive">正例</a-select-option>
+                            <a-select-option value="negative">反例</a-select-option>
+                        </a-select>
+                    </a-form-item>
                     <a-form-item label="功能点名称">
                         <a-input v-model:value="newForm.name" placeholder="请输入功能点名称" :rows="4" />
                     </a-form-item>
@@ -186,9 +255,15 @@
                 </a-form>
             </a-drawer>
 
-            <a-drawer title="新建功能点" :visible="visible" :width="720" @close="onDrawerClose">
+            <a-drawer title="新建测试用例" :visible="visible" :width="720" @close="onDrawerClose">
                 <a-form :model="newForm" layout="vertical">
-                    <a-form-item label="功能点名称">
+                    <a-form-item label="测试用例类型">
+                        <a-select v-model:value="newForm.type" placeholder="请选择测试用例类型">
+                            <a-select-option value="positive">正例</a-select-option>
+                            <a-select-option value="negative">反例</a-select-option>
+                        </a-select>
+                    </a-form-item>
+                    <a-form-item label="测试用例名称">
                         <a-input v-model:value="newForm.name" placeholder="请输入功能点名称" :rows="4" />
                     </a-form-item>
                     <a-form-item label="初始条件">
@@ -233,6 +308,23 @@ const showIcon = ref<boolean>(false);
 const currentRequirement = ref();
 const selectedKeys = ref<string[]>([]);
 const flattened_cases = ref([]);
+const flattened_cases_req = ref([]);
+
+const pageSizeReq = ref(10);
+const currentPageReq = ref(1);
+
+const flattened_cases_req_paged = computed(() => {
+    const start = (currentPageReq.value - 1) * pageSizeReq.value;
+    const end = start + pageSizeReq.value;
+    console.log(start, end);
+    return flattened_cases_req.value.slice(start, end);
+});
+
+const totalItemsReq = computed(() => flattened_cases_req.value.length);
+
+const handlePageChangeReq = (page: number) => {
+    currentPageReq.value = page;
+};
 
 const form = ref({
     name: '',
@@ -245,6 +337,7 @@ const form = ref({
 });
 
 const newForm = ref({
+    type: '',
     name: '',
     pre_condition: '',
     action: '',
@@ -253,7 +346,30 @@ const newForm = ref({
     req_id: '',
     split_file_id: '',
     split_req_version: '',
+    split_case_id: '',
+    split_case_version: '',
 });
+
+const getSplitCases = (req) => {
+    if (!req.split_files) {
+        return [];
+    }
+    const res = [];
+    for (const file of req.split_files) {
+        if (file.split_case?.length) {
+            for (const singleCase of file.split_case) {
+                if (singleCase.testcases?.length) {
+                    for (const testcase of singleCase.testcases) {
+                        testcase.split_case_name = singleCase.testcase_name;
+                        testcase.split_file_name = file.file_name;
+                        res.push(testcase);
+                    }
+                }
+            }
+        }
+    }
+    return res;
+}
 
 const searchValue = ref('');
 
@@ -263,8 +379,11 @@ const onSearch = (value) => {
 
 const filterTree = (items, searchTerm) => {
     return items.map((item) => {
+        // 递归过滤子节点
         const children = item.children ? filterTree(item.children, searchTerm) : [];
-        if (item.title.includes(searchTerm) || children.length > 0) {
+        // 检查当前节点或其子节点是否匹配搜索条件
+        const matches = item.title.includes(searchTerm) || children.length > 0;
+        if (matches) {
             return { ...item, children };
         }
         return null;
@@ -272,8 +391,10 @@ const filterTree = (items, searchTerm) => {
 };
 
 const treeData = computed(() => {
-    if (searchValue.value.trim() === '') {
-        return projects.value.map((project, index) => ({
+    const searchTerm = searchValue.value.trim();
+
+    const buildTree = (projects) => {
+        return projects.map((project, index) => ({
             title: project.name,
             key: `0-${index}`,
             project: project,
@@ -288,6 +409,7 @@ const treeData = computed(() => {
                         req: req,
                         project: project,
                         type: 'requirement',
+                        split_cases: getSplitCases(req),
                         children: req.split_files && req.split_files.length > 0
                             ? req.split_files.map((splitReq, splitReqIndex) => ({
                                 title: splitReq.file_name.replace('.docx', ''),
@@ -297,6 +419,12 @@ const treeData = computed(() => {
                                 req: req,
                                 project: project,
                                 type: 'sub_requirement',
+                                split_cases: splitReq.split_case.map((singleCase) => {
+                                    for (const testcase of (singleCase.testcases || [])) {
+                                        testcase.split_case_name = singleCase.testcase_name;
+                                    }
+                                    return singleCase.testcases || [];
+                                }),
                                 children: splitReq.split_case && splitReq.split_case.length > 0
                                     ? splitReq.split_case.map((splitCase, splitCaseIndex) => ({
                                         title: (splitCase.testcase_name || ''),
@@ -306,7 +434,18 @@ const treeData = computed(() => {
                                         splitReq: splitReq,
                                         req: req,
                                         project: project,
-                                        type: 'split_case'
+                                        type: 'split_case',
+                                        children: splitCase.testcases && splitCase.testcases.length > 0 ?
+                                            splitCase.testcases.map((testcase, testcaseIndex) => ({
+                                                title: (testcase.testcase_name || ''),
+                                                type: 'testcase',
+                                                key: `0-${index}-${reqIndex}-${splitReqIndex}-${splitCaseIndex}-${testcaseIndex}`,
+                                                splitCase: splitCase,
+                                                splitReq: splitReq,
+                                                req: req,
+                                                project: project,
+                                                testcase: testcase,
+                                            })) : []
                                     }))
                                     : []
                             }))
@@ -315,75 +454,27 @@ const treeData = computed(() => {
                 })
                 : []
         }));
+    };
+
+    if (searchTerm === '') {
+        return buildTree(projects.value);
     }
 
-    return filterTree(projects.value.map((project, index) => ({
-        title: project.name,
-        key: `0-${index}`,
-        project: project,
-        children: project.requirement_files && project.requirement_files.length > 0
-            ? project.requirement_files.map((req, reqIndex) => {
-                const parts = req.name.split('/');
-                const fileName = parts.pop();
-                return {
-                    title: fileName,
-                    key: `0-${index}-${reqIndex}`,
-                    fullPath: req.name,
-                    req: req,
-                    project: project,
-                    type: 'requirement',
-                    children: req.split_files && req.split_files.length > 0
-                        ? req.split_files.map((splitReq, splitReqIndex) => ({
-                            title: splitReq.file_name.replace('.docx', ''),
-                            key: `0-${index}-${reqIndex}-${splitReqIndex}`,
-                            fullPath: splitReq.object_name,
-                            splitReq: splitReq,
-                            req: req,
-                            project: project,
-                            type: 'sub_requirement',
-                            children: splitReq.split_case && splitReq.split_case.length > 0
-                                ? splitReq.split_case.map((splitCase, splitCaseIndex) => ({
-                                    title: (splitCase.testcase_name || ''),
-                                    fullPath: splitCase.testcase_name,
-                                    key: `0-${index}-${reqIndex}-${splitReqIndex}-${splitCaseIndex}`,
-                                    splitCase: splitCase,
-                                    splitReq: splitReq,
-                                    req: req,
-                                    project: project,
-                                    type: 'split_case'
-                                }))
-                                : []
-                        }))
-                        : []
-                };
-            })
-            : []
-    })), searchValue.value);
+    return filterTree(buildTree(projects.value), searchTerm);
 });
 
 const onSelect: TreeProps['onSelect'] = (_, info) => {
-    console.log(info.node);
     if (info?.node?.type === 'requirement') {
         currentType.value = 'requirement';
         currentRequirement.value = info.node;
-        const split_files = info.node.req?.split_files || [];
-        if (split_files?.length) {
-            const combined_cases = split_files.map(x => {
-                if (x.split_case?.length) {
-                    x.split_case.map(c => {
-                        c.split_req_name = x.file_name;
-                        return c;
-                    });
-                }
-                return x.split_case;
-            }).filter(x => x);
-            const flattened = combined_cases.reduce((acc, curr) => acc.concat(curr), []);
-            console.log(flattened);
-            flattened_cases.value = flattened;
-        }
+        const testcases_flatten = info.node.split_cases || [];
+        flattened_cases_req.value = testcases_flatten;
     } else if (info?.node?.type === 'sub_requirement') {
         currentType.value = 'sub_requirement';
         currentRequirement.value = info.node;
+        const split_cases = info.node.split_cases;
+        const flattened = split_cases.reduce((acc, curr) => acc.concat(curr ?? []), []);
+        flattened_cases.value = flattened;
     } else if (info?.node?.type === 'split_case') {
         currentType.value = 'split_case';
         currentRequirement.value = info.node;
@@ -398,24 +489,41 @@ const onSelect: TreeProps['onSelect'] = (_, info) => {
             req_id: info.node.req.req_id,
             split_file_id: info.node.splitReq.split_file_id,
         }
+    } else if (info?.node?.type === 'testcase') {
+        currentType.value = 'testcase';
+        currentRequirement.value = info.node;
+        form.value = {
+            name: info.node.testcase.testcase_name,
+            pre_condition: info.node.testcase.pre_condition,
+            action: info.node.testcase.action,
+            result: info.node.testcase.result,
+            version: info.node.testcase.version,
+            type: info.node.testcase.type,
+            testcase_id: info.node.testcase.testcase_id,
+            project_id: info.node.project._id.$oid,
+            req_id: info.node.req.req_id,
+            split_file_id: info.node.splitReq.split_file_id,
+            split_case_id: info.node.splitCase.testcase_id,
+        }
     }
 };
 
-const currentPage = ref(1);
-const pageSize = ref(10);
 const table_width1 = ref(1000);
-const table_height1 = ref(500);
+const table_height1 = ref(window.innerHeight * 0.5);
 
 const table_width2 = ref(1000);
 const table_height2 = ref(500);
 
+const currentPage = ref(1);
+const pageSize = ref(10);
+
 const pagedData = computed(() => {
     const start = (currentPage.value - 1) * pageSize.value;
     const end = start + pageSize.value;
-    return flattened_cases.value.slice(start, end) || [];
+    return flattened_cases.value.slice(start, end);
 });
 
-const totalItems = computed(() => flattened_cases.value.length || 0);
+const totalItems = computed(() => flattened_cases.value.length);
 
 const handlePageChange = (page: number) => {
     currentPage.value = page;
@@ -426,8 +534,6 @@ onUpdated(() => {
     if (ele) {
         const width = ele.getBoundingClientRect().width;
         table_width1.value = width;
-        const height = window.innerHeight * 0.7;
-        table_height1.value = height;
     }
 });
 
@@ -442,33 +548,41 @@ onUpdated(() => {
 });
 
 const handleSave = async () => {
-    console.log(form.value);
+
     const params = {
         ...form.value,
-        testcase_name: form.value.name
+        split_req_version: currentRequirement.value.splitReq.version,
+        testcase_name: form.value.name,
+        split_case_id: currentRequirement.value.splitCase.testcase_id,
+        split_case_version: currentRequirement.value.splitCase.version,
+        testcase_id: form.value.testcase_id,
     }
-    delete params.name;
-    return http.post('/api/modify_split_case', params).then(response => {
+    console.log(params);
+    return http.post('/api/modify_testcase', params).then(async response => {
         if (response) {
             ElMessage.success('保存成功');
-            refreshAllProjects();
-            form.value.version = response.version;
+            const result = await refreshAllProjects();
+            console.log(result);
+            console.log(111);
+            
         }
     })
 }
 
 const handleEditSave = async () => {
-    console.log(newForm.value);
     const params = {
         ...newForm.value,
-        testcase_name: newForm.value.name
+        split_req_version: currentRequirement.value.splitReq.version,
+        testcase_name: newForm.value.name,
+        split_case_id: currentRequirement.value.splitCase.testcase_id,
+        split_case_version: currentRequirement.value.splitCase.version,
+        testcase_id: newForm.value.testcase_id,
     }
     delete params.name;
-    return http.post('/api/modify_split_case', params).then(response => {
+    return http.post('/api/modify_testcase', params).then(response => {
         if (response) {
             ElMessage.success('保存成功');
             refreshAllProjects();
-            newForm.value.version = response.version;
         }
     })
 }
@@ -489,7 +603,6 @@ const onEditDrawerClose = () => {
 }
 
 const handleNewSave = async () => {
-    console.log(newForm.value);
     if (!newForm.value.name) {
         ElMessage.error('名称不能为空');
         return;
@@ -503,13 +616,16 @@ const handleNewSave = async () => {
         ElMessage.error('预期结果不能为空');
         return;
     }
+
     const params = {
         ...newForm.value,
         split_req_version: currentRequirement.value.splitReq.version,
-        testcase_name: newForm.value.name
+        testcase_name: newForm.value.name,
+        split_case_id: currentRequirement.value.splitCase.testcase_id,
+        split_case_version: currentRequirement.value.splitCase.version,
     }
     delete params.name;
-    return http.post('/api/create_split_case', params).then(async response => {
+    return http.post('/api/create_testcase', params).then(async response => {
         if (response) {
             ElMessage.success('保存成功');
             const res = await refreshAllProjects();
@@ -527,11 +643,10 @@ const handleNewSave = async () => {
 }
 
 const handleSplit = (row) => {
-    ElMessage.error('现在还不支持生成用例')
+    ElMessage.error('现在还不支持生成脚本')
 }
 
 const handleModify = (row) => {
-    console.log(row);
     newForm.value.name = row.testcase_name;
     newForm.value.pre_condition = row.pre_condition;
     newForm.value.action = row.action;
@@ -541,6 +656,7 @@ const handleModify = (row) => {
     newForm.value.req_id = currentRequirement.value.req.req_id;
     newForm.value.testcase_id = row.testcase_id;
     newForm.value.version = row.version;
+    newForm.value.type = row.type;
     editVisible.value = true;
 }
 </script>

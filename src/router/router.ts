@@ -8,6 +8,7 @@ import AddProject from '../components/Project/AddProject.vue';
 import RequirementManage from '../components/Requirement/RequirementManage.vue';
 import FunctionModule from '../components/Requirement/FunctionModule.vue';
 import FunctionPoint from '../components/Requirement/FunctionPoint.vue';
+import UseCase from '../components/UseCase/UseCase.vue';
 
 const routes = [
   {
@@ -43,6 +44,10 @@ const routes = [
   {
     path: '/requirement/functionPoint',
     component: FunctionPoint
+  },
+  {
+    path: '/usecase/usecaseManage',
+    component: UseCase
   }
 ];
 
