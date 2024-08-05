@@ -531,16 +531,17 @@ const handleSplit = (row) => {
     const split_file_id = currentRequirement.value.splitReq.split_file_id;
     const req_id = currentRequirement.value.req.req_id;
     const split_case_id = row.testcase_id;
-    const params = {
+    const singleCase = {
         ...row,
         project_id,
         split_file_id,
         req_id,
         split_case_id,
     }
-    delete params.testcases;
-    console.log(params);
-    http.post('/api/generate_testcases', params).then(async response => {
+    delete singleCase.testcases;
+    http.post('/api/generate_testcases_by_points', {
+        points: [singleCase]
+    }).then(async response => {
         if (response?.status === 'OK') {
             ElMessage.success('已下发生成用例任务');
         } else {
