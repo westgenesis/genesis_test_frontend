@@ -35,7 +35,7 @@
                     style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;margin-top: 1rem; margin-bottom: 1rem;">
                     测试用例信息</div>
                 <el-table :data="flattened_cases_req_paged" style="width: 100%" id="function_point_table" :height="table_height1">
-                    <el-table-column type="expand" :width="table_width1 / 7 || 100">
+                    <el-table-column type="expand" :width="100">
                         <template #default="scope">
                             <div style="padding: 10px;">
                                 <div class="flex" style="border: 1px solid #eee;">
@@ -59,11 +59,11 @@
                             </div>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="testcase_id" label="测试用例ID" :width="table_width1 / 7 || 100" />
-                    <el-table-column prop="testcase_name" label="测试用例名称" :width="table_width1 / 7 || 100" />
-                    <el-table-column prop="version" label="版本" :width="table_width1 / 7 || 100" />
-                    <el-table-column prop="split_case_name" label="所属功能点" :width="table_width1 / 7 || 100" />
-                    <el-table-column prop="split_file_name" label="所属功能模块" :width="table_width1 / 7 || 100"/>
+                    <el-table-column prop="testcase_id" label="测试用例ID" :width="100" />
+                    <el-table-column prop="testcase_name" label="测试用例名称" :width="100" />
+                    <el-table-column prop="version" label="版本" :width="100" />
+                    <el-table-column prop="split_case_name" label="所属功能点" :width="100" />
+                    <el-table-column prop="split_file_name" label="所属功能模块" :width="100"/>
                 </el-table>
                 <div class="flex justify-center mt-4">
                         <a-pagination v-model:current="currentPageReq" :total="totalItemsReq" :page-size="pageSizeReq"
@@ -92,7 +92,7 @@
                 </div>
                 <div style="width: 100%">
                     <el-table :data="pagedData" style="width: 100%" id="function_point_table" :height="table_height1">
-                        <el-table-column type="expand">
+                        <el-table-column type="expand" :width="100">
                             <template #default="scope">
                                 <div style="padding: 10px;">
                                     <div class="flex" style="border: 1px solid #eee;">
@@ -116,10 +116,10 @@
                                 </div>
                             </template>
                         </el-table-column>
-                        <el-table-column prop="testcase_id" label="测试用例ID" :width="table_width1 / 5 || 100" />
-                        <el-table-column prop="testcase_name" label="测试用例名称" :width="table_width1 / 6 || 100" />
-                        <el-table-column prop="version" label="版本" :width="table_width1 / 6 || 100" />
-                        <el-table-column prop="split_case_name" label="所属功能点" :width="table_width1 / 6 || 100" />
+                        <el-table-column prop="testcase_id" label="测试用例ID" :width="100" />
+                        <el-table-column prop="testcase_name" label="测试用例名称" :width="100" />
+                        <el-table-column prop="version" label="版本" :width="100" />
+                        <el-table-column prop="split_case_name" label="所属功能点" :width="100" />
                         <el-table-column label="操作" :width="150">
                             <template #default="scope">
                                 <el-button type="text" style="color: blue"
