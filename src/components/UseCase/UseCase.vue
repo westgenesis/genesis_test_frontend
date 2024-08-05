@@ -35,7 +35,7 @@
                     style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;margin-top: 1rem; margin-bottom: 1rem;">
                     测试用例信息</div>
                 <el-table :data="flattened_cases_req_paged" style="width: 100%" id="function_point_table" :height="table_height1">
-                    <el-table-column type="expand">
+                    <el-table-column type="expand" :width="table_width1 / 7 || 100">
                         <template #default="scope">
                             <div style="padding: 10px;">
                                 <div class="flex" style="border: 1px solid #eee;">
