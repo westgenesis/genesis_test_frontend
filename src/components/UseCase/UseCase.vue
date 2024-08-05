@@ -508,11 +508,8 @@ const onSelect: TreeProps['onSelect'] = (_, info) => {
     }
 };
 
-const table_width1 = ref(1000);
+const table_width1 = ref(window.innerWidth * 0.6);
 const table_height1 = ref(window.innerHeight * 0.5);
-
-const table_width2 = ref(1000);
-const table_height2 = ref(500);
 
 const currentPage = ref(1);
 const pageSize = ref(10);
@@ -528,24 +525,6 @@ const totalItems = computed(() => flattened_cases.value.length);
 const handlePageChange = (page: number) => {
     currentPage.value = page;
 };
-
-onUpdated(() => {
-    const ele = document.getElementById('function_point_table');
-    if (ele) {
-        const width = ele.getBoundingClientRect().width;
-        table_width1.value = width;
-    }
-});
-
-onUpdated(() => {
-    const ele = document.getElementById('function_module_table');
-    if (ele) {
-        const width = ele.getBoundingClientRect().width;
-        table_width2.value = width;
-        const height = window.innerHeight * 0.7;
-        table_height2.value = height;
-    }
-});
 
 const handleSave = async () => {
 

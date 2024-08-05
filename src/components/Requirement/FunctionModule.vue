@@ -309,7 +309,7 @@ const handleSplit = (row: any) => {
             req_id: currentRequirement.value.req.req_id
         };
         ElMessage.success('已下发功能点拆解任务，请等待或刷新后去功能点页面查看结果');
-        http.post('/api/subrequire_generate_testcase', params).then((res) => {
+        http.post('/api/subrequire_generate_points', params).then((res) => {
             console.log(res);
         });
     }).catch(() => {
