@@ -548,8 +548,6 @@ const handleSplit = (row) => {
             ElMessage.error('下发生成用例任务失败');
         }
     });
-
-    ElMessage.error('现在还不支持生成用例')
 }
 
 const handleModify = (row) => {
