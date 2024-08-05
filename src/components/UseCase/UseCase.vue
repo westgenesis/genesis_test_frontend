@@ -13,8 +13,8 @@
                 </a-tree>
             </div>
         </div>
-        <div class="w-full h-[99.9%] pt-[2rem]">
-            <div v-show="currentType === 'requirement'" class="w-full h-[99.9%] pt-[2rem]">
+        <div class="w-full h-[90%] pt-[2rem]">
+            <div v-show="currentType === 'requirement'" class="w-full h-[90%] pt-[2rem]">
                 <div style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;">项目信息</div>
                 <div class="flex-container" style="margin-left: 1rem">
                     <div class="flex-item">
@@ -70,7 +70,7 @@
                             @change="handlePageChangeReq" />
                     </div>
             </div>
-            <div v-show="currentType === 'sub_requirement'" class="w-full h-[99.9%] pt-[2rem]">
+            <div v-show="currentType === 'sub_requirement'" class="w-full h-[90%] pt-[2rem]">
                 <div style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;">功能模块名称</div>
                 <div class="flex-container" style="margin-left: 1rem">
                     <div class="flex-item">
@@ -135,7 +135,7 @@
                     </div>
                 </div>
             </div>
-            <div v-show="currentType === 'split_case'" class="w-full h-[99.9%] pt-[2rem]">
+            <div v-show="currentType === 'split_case'" class="w-full h-[90%] pt-[2rem]">
                 <div style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem; margin-bottom: 1rem;">
                     功能点信息
                 </div>
@@ -557,14 +557,13 @@ const handleSave = async () => {
         split_case_version: currentRequirement.value.splitCase.version,
         testcase_id: form.value.testcase_id,
     }
-    console.log(params);
     return http.post('/api/modify_testcase', params).then(async response => {
-        if (response) {
+        if (response.status === 'OK') {
             ElMessage.success('保存成功');
             const result = await refreshAllProjects();
-            console.log(result);
-            console.log(111);
-            
+            console.log(response.testcases);
+            const currentTestcase = response.testcases.find(testcase => testcase.testcase_id === params.testcase_id);
+            form.value.version = currentTestcase.version;
         }
     })
 }
@@ -628,11 +627,7 @@ const handleNewSave = async () => {
     return http.post('/api/create_testcase', params).then(async response => {
         if (response) {
             ElMessage.success('保存成功');
-            const res = await refreshAllProjects();
-            const currentProject = res.find(x => x._id.$oid === newForm.value.project_id);
-            const currentReq = currentProject.requirement_files.find(x => x.req_id === newForm.value.req_id);
-            const currentSplitReq = currentReq.split_files.find(x => x.split_file_id === newForm.value.split_file_id);
-            currentRequirement.value.splitReq.split_case = currentSplitReq.split_case;
+            currentRequirement.value.splitCase.testcases = response.testcases;
             onDrawerClose();
         } else {
             ElMessage.error('保存失败');

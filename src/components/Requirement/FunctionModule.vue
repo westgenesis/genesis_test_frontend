@@ -13,7 +13,7 @@
                 </a-tree>
             </div>
         </div>
-        <div class="w-full h-[99.9%] pt-[2rem]">
+        <div class="w-full h-[90%] pt-[2rem]">
             <div v-show="currentFile && currentType === 'sub_requirement'" class="editor-container">
                 <div style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;">功能模块</div>
                 <div class="flex  mt-[2rem] mb-[1rem]">
@@ -31,7 +31,7 @@
                 </div>
                 <div style="text-align: center;color: red;font-size: 12px;margin-top: 1rem;">提示：当前为V{{ currentFile?.splitReq?.version }}版本 由文档{{ (currentFile?.req?.name || '').split('/')[1] }} v1版本生成 保存后版本新增</div>
             </div>
-            <div v-show="currentType === 'requirement'" class="w-full h-[99.9%] pt-[2rem]">
+            <div v-show="currentType === 'requirement'" class="w-full h-[90%] pt-[2rem]">
                 <div style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;">项目信息</div>
                 <div class="flex-container" style="margin-left: 1rem">
                     <div class="flex-item">

@@ -13,8 +13,8 @@
                 </a-tree>
             </div>
         </div>
-        <div class="w-full h-[99.9%] pt-[2rem]">
-            <div v-show="currentType === 'requirement'" class="w-full h-[99.9%] pt-[2rem]">
+        <div class="w-full h-[90%] pt-[2rem]">
+            <div v-show="currentType === 'requirement'" class="w-full h-[90%] pt-[2rem]">
                 <div style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;">项目信息</div>
                 <div class="flex-container" style="margin-left: 1rem">
                     <div class="flex-item">
@@ -76,7 +76,7 @@
 
                 </div>
             </div>
-            <div v-show="currentType === 'sub_requirement'" class="w-full h-[99.9%] pt-[2rem]">
+            <div v-show="currentType === 'sub_requirement'" class="w-full h-[90%] pt-[2rem]">
                 <div style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;">功能模块名称</div>
                 <div class="flex-container" style="margin-left: 1rem">
                     <div class="flex-item">
@@ -138,7 +138,7 @@
                     </el-table>
                 </div>
             </div>
-            <div v-show="currentType === 'split_case'" class="w-full h-[99.9%] pt-[2rem]">
+            <div v-show="currentType === 'split_case'" class="w-full h-[90%] pt-[2rem]">
                 <div style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem; margin-bottom: 1rem;">
                     功能点
                 </div>
