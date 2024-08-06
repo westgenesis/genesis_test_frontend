@@ -697,9 +697,9 @@ const handleModify = (row) => {
 }
 </script>
 <style scoped lang="less">
-:deep(.el-table__empty_block) {
+:deep(.el-table__empty-block) {
     width: 100% !important;
-    display: none;
+    display: none !important;
 }
 :deep(.el-table) {
     width: 100%;
