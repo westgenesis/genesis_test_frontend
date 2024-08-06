@@ -32,7 +32,7 @@ onMounted(() => {
     <TopBar></TopBar>
     <div class="flex flex-1">
         <LeftMenu />
-        <div class="flex-1">
+        <div class="flex-1" style="background-color: #fff;">
           <router-view></router-view>
         </div>
     </div>
