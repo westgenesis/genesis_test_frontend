@@ -697,6 +697,12 @@ const handleModify = (row) => {
 }
 </script>
 <style scoped lang="less">
+:deep(.el-table__empty_block) {
+    width: 100% !important;
+}
+:deep(.el-table) {
+    width: 100%;
+}
 .flex-container {
     display: flex;
     flex-wrap: wrap;
