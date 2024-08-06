@@ -175,14 +175,32 @@
                                 <div class="flex" style="border: 1px solid #eee;">
                                     <div
                                         style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">
+                                        初始条件信号</div>
+                                    <div>{{ scope.row.pre_condition_signal }}</div>
+                                </div>
+                                <div class="flex" style="border: 1px solid #eee;">
+                                    <div
+                                        style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">
                                         触发条件</div>
                                     <div>{{ scope.row.action }}</div>
                                 </div>
                                 <div class="flex" style="border: 1px solid #eee;">
                                     <div
                                         style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">
+                                        触发条件信号</div>
+                                    <div>{{ scope.row.action_signal }}</div>
+                                </div>
+                                <div class="flex" style="border: 1px solid #eee;">
+                                    <div
+                                        style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">
                                         预期结果</div>
                                     <div>{{ scope.row.result }}</div>
+                                </div>
+                                <div class="flex" style="border: 1px solid #eee;">
+                                    <div
+                                        style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">
+                                        预期结果信号</div>
+                                    <div>{{ scope.row.result_signal }}</div>
                                 </div>
                             </div>
                         </template>
@@ -213,11 +231,20 @@
                     <a-form-item label="初始条件">
                         <a-textarea v-model:value="form.pre_condition" placeholder="请输入初始条件" :rows="2" />
                     </a-form-item>
+                    <a-form-item label="初始条件信号">
+                        <a-input v-model:value="form.pre_condition_signal" placeholder="请输入初始条件信号" />
+                    </a-form-item>
                     <a-form-item label="触发条件">
                         <a-textarea v-model:value="form.action" placeholder="请输入触发条件" :rows="2" />
                     </a-form-item>
+                    <a-form-item label="触发条件信号">
+                        <a-textarea v-model:value="form.action_signal" placeholder="请输入触发条件信号" :rows="2" />
+                    </a-form-item>
                     <a-form-item label="预期结果">
                         <a-textarea v-model:value="form.result" placeholder="请输入预期结果" :rows="2" />
+                    </a-form-item>
+                    <a-form-item label="预期结果信号">
+                        <a-textarea v-model:value="form.result_signal" placeholder="请输入预期结果" :rows="2" />
                     </a-form-item>
                     <a-form-item>
                         <div class="flex justify-center items-center" style="flex-direction: column;">
@@ -241,11 +268,20 @@
                     <a-form-item label="初始条件">
                         <a-textarea v-model:value="newForm.pre_condition" placeholder="请输入初始条件" :rows="2" />
                     </a-form-item>
+                    <a-form-item label="初始条件信号">
+                        <a-input v-model:value="newForm.pre_condition_signal" placeholder="请输入初始条件信号" />
+                    </a-form-item>
                     <a-form-item label="触发条件">
                         <a-textarea v-model:value="newForm.action" placeholder="请输入触发条件" :rows="2" />
                     </a-form-item>
+                    <a-form-item label="触发条件信号">
+                        <a-textarea v-model:value="newForm.action_signal" placeholder="请输入触发条件信号" :rows="2" />
+                    </a-form-item>
                     <a-form-item label="预期结果">
                         <a-textarea v-model:value="newForm.result" placeholder="请输入预期结果" :rows="2" />
+                    </a-form-item>
+                    <a-form-item label="预期结果信号">
+                        <a-textarea v-model:value="newForm.result_signal" placeholder="请输入预期结果" :rows="2" />
                     </a-form-item>
                     <a-form-item>
                         <div class="flex justify-center items-center" style="flex-direction: column;">
@@ -269,11 +305,20 @@
                     <a-form-item label="初始条件">
                         <a-textarea v-model:value="newForm.pre_condition" placeholder="请输入初始条件" :rows="2" />
                     </a-form-item>
+                    <a-form-item label="初始条件信号">
+                        <a-input v-model:value="newForm.pre_condition_signal" placeholder="请输入初始条件信号" />
+                    </a-form-item>
                     <a-form-item label="触发条件">
                         <a-textarea v-model:value="newForm.action" placeholder="请输入触发条件" :rows="2" />
                     </a-form-item>
+                    <a-form-item label="触发条件信号">
+                        <a-textarea v-model:value="newForm.action_signal" placeholder="请输入触发条件信号" :rows="2" />
+                    </a-form-item>
                     <a-form-item label="预期结果">
                         <a-textarea v-model:value="newForm.result" placeholder="请输入预期结果" :rows="2" />
+                    </a-form-item>
+                    <a-form-item label="预期结果信号">
+                        <a-textarea v-model:value="newForm.result_signal" placeholder="请输入预期结果" :rows="2" />
                     </a-form-item>
                     <a-form-item>
                         <div class="flex justify-center items-center" style="flex-direction: column;">
@@ -329,8 +374,11 @@ const handlePageChangeReq = (page: number) => {
 const form = ref({
     name: '',
     pre_condition: '',
+    pre_condition_signal: '',
     action: '',
+    action_signal: '',
     result: '',
+    result_signal: '',
     version: '',
     project_id: '',
     testcase_id: '',
@@ -340,8 +388,11 @@ const newForm = ref({
     type: '',
     name: '',
     pre_condition: '',
+    pre_condition_signal: '',
     action: '',
+    action_signal: '',
     result: '',
+    result_signal: '',
     project_id: '',
     req_id: '',
     split_file_id: '',
@@ -478,10 +529,14 @@ const onSelect: TreeProps['onSelect'] = (_, info) => {
     } else if (info?.node?.type === 'split_case') {
         currentType.value = 'split_case';
         currentRequirement.value = info.node;
+        console.log(info.node.splitCase);
         form.value = {
             name: info.node.splitCase.testcase_name,
             pre_condition: info.node.splitCase.pre_condition,
             action: info.node.splitCase.action,
+            action_signal: info.node.splitCase.action_signal,
+            result_signal: info.node.splitCase.result_signal,
+            pre_condition_signal: info.node.splitCase.pre_condition_signal,
             result: info.node.splitCase.result,
             version: info.node.splitCase.version,
             testcase_id: info.node.splitCase.testcase_id,
@@ -492,6 +547,7 @@ const onSelect: TreeProps['onSelect'] = (_, info) => {
     } else if (info?.node?.type === 'testcase') {
         currentType.value = 'testcase';
         currentRequirement.value = info.node;
+        console.log(info.node.testcase);
         form.value = {
             name: info.node.testcase.testcase_name,
             pre_condition: info.node.testcase.pre_condition,
@@ -504,6 +560,9 @@ const onSelect: TreeProps['onSelect'] = (_, info) => {
             req_id: info.node.req.req_id,
             split_file_id: info.node.splitReq.split_file_id,
             split_case_id: info.node.splitCase.testcase_id,
+            action_signal: info.node.testcase.action_signal,
+            result_signal: info.node.testcase.result_signal,
+            pre_condition_signal: info.node.testcase.pre_condition_signal,
         }
     }
 };
@@ -625,6 +684,9 @@ const handleModify = (row) => {
     newForm.value.pre_condition = row.pre_condition;
     newForm.value.action = row.action;
     newForm.value.result = row.result;
+    newForm.value.pre_condition_signal = row.pre_condition_signal;
+    newForm.value.action_signal = row.action_signal;
+    newForm.value.result_signal = row.result_signal;
     newForm.value.project_id = currentRequirement.value.project._id.$oid;
     newForm.value.split_file_id = currentRequirement.value.splitReq.split_file_id;
     newForm.value.req_id = currentRequirement.value.req.req_id;

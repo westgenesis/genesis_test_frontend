@@ -56,6 +56,8 @@
                         class="custom-purple-button mr-[2rem]">新建功能模块</a-button>
                         <a-button type="primary" size="large" @click="handleDelete"
                         class="custom-purple-button mr-[2rem]">删除</a-button>
+                        <a-button type="primary" size="large" @click="handleBatchSplit"
+                        class="custom-purple-button mr-[2rem]">批量拆分</a-button>
                     </div>
                 <div style="width: 100%">
                     <el-table :data="pagedData" style="width: 100%" id="function_module_table" @selection-change="handleSelectionChange">
@@ -314,6 +316,38 @@ const handleSplit = (row: any) => {
         });
     }).catch(() => {
         // 用户点击取消，不做任何操作
+        ElMessage.info('已取消拆分操作');
+    });
+};
+
+const handleBatchSplit = () => {
+    if (selectedRows.value.length === 0) {
+        ElMessage.warning('请选择要拆分的功能模块');
+        return;
+    }
+
+    ElMessageBox.confirm('拆分会覆盖当前模块的已有功能点，是否继续？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+    }).then(() => {
+        const params = selectedRows.value.map(row => ({
+            project_id: currentRequirement.value.project._id.$oid,
+            object_name: row.object_name,
+            split_file_id: row.split_file_id,
+            version: row.version,
+            req_id: currentRequirement.value.req.req_id
+        }));
+
+        http.post('/api/subrequire_batch_generate_points', params).then((res) => {
+            if (res) {
+                ElMessage.success('已下发功能点拆解任务，请等待或刷新后去功能点页面查看结果');
+                refreshAllProjects();
+            } else {
+                ElMessage.error('拆分失败');
+            }
+        });
+    }).catch(() => {
         ElMessage.info('已取消拆分操作');
     });
 };
