@@ -3,8 +3,7 @@
         <div style="height: 100%;border-right: 1px solid #ddd;" class="m-[20px] w-[400px]">
             <div style="border-bottom: 1px solid #ddd; padding-bottom: 1rem">全部项目 ({{ projects.length }})</div>
             <div style="height: 2rem; margin: 1rem">
-                <a-input-search placeholder="请输入要搜索的名称" style="width: 100%"
-                        @search="onSearch" />
+                <a-input-search placeholder="请输入要搜索的名称" style="width: 100%" @search="onSearch" />
             </div>
             <div style="height: calc(100vh - 10.3rem); overflow: scroll; background-color: rgba(248, 248, 254, 0.5);">
                 <a-tree :show-line="showLine" :show-icon="showIcon" :default-expanded-keys="['0-0-0']"
@@ -34,7 +33,8 @@
                 <div
                     style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;margin-top: 1rem; margin-bottom: 1rem;">
                     测试用例信息</div>
-                <el-table :data="flattened_cases_req_paged" style="width: 100%" id="function_point_table" :height="table_height1">
+                <el-table :data="flattened_cases_req_paged" style="width: 100%" id="function_point_table"
+                    :height="table_height1">
                     <el-table-column type="expand" :width="100">
                         <template #default="scope">
                             <div style="padding: 10px;">
@@ -63,12 +63,12 @@
                     <el-table-column prop="testcase_name" label="测试用例名称" :width="100" />
                     <el-table-column prop="version" label="版本" :width="100" />
                     <el-table-column prop="split_case_name" label="所属功能点" :width="100" />
-                    <el-table-column prop="split_file_name" label="所属功能模块" :width="100"/>
+                    <el-table-column prop="split_file_name" label="所属功能模块" :width="100" />
                 </el-table>
                 <div class="flex justify-center mt-4">
-                        <a-pagination v-model:current="currentPageReq" :total="totalItemsReq" :page-size="pageSizeReq"
-                            @change="handlePageChangeReq" />
-                    </div>
+                    <a-pagination v-model:current="currentPageReq" :total="totalItemsReq" :page-size="pageSizeReq"
+                        @change="handlePageChangeReq" />
+                </div>
             </div>
             <div v-show="currentType === 'sub_requirement'" class="w-full pt-[2rem]" style="height: 90vh">
                 <div style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;">功能模块名称</div>
@@ -213,7 +213,9 @@
                             <el-button type="text" style="color: blue" @click="handleModify(scope.row)">修改</el-button>
 
                             <el-button type="text" style="color: blue" @click="handleSplit(scope.row)">生成脚本</el-button>
-                            <el-button type="text" style="color: blue" @click="handleGeneralize(scope.row)">泛化</el-button>
+                            <el-button type="text" style="color: blue"
+                                @click="handleGeneralize(scope.row)">泛化</el-button>
+
                         </template>
                     </el-table-column>
                 </el-table>
@@ -467,6 +469,7 @@ const treeData = computed(() => {
                         children: req.split_files && req.split_files.length > 0
                             ? req.split_files.map((splitReq, splitReqIndex) => ({
                                 title: splitReq.file_name.replace('.docx', ''),
+
                                 key: `0-${index}-${reqIndex}-${splitReqIndex}`,
                                 fullPath: splitReq.object_name,
                                 splitReq: splitReq,
@@ -474,8 +477,11 @@ const treeData = computed(() => {
                                 project: project,
                                 type: 'sub_requirement',
                                 split_cases: (splitReq.split_case || []).map((singleCase) => {
-                                    for (const testcase of (singleCase.testcases || [])) {
+                                    for (const [index, testcase] of (singleCase.testcases || []).entries()) {
                                         testcase.split_case_name = singleCase.testcase_name;
+                                        testcase.testcaseIndex = index; // 添加index字段，值为当前的顺序
+                                        testcase.reqIndex = reqIndex;
+                                        testcase.splitReqIndex = splitReqIndex; // 添加splitReqIndex字段，值为当前的splitReq的顺序
                                     }
                                     return singleCase.testcases || [];
                                 }),
@@ -498,7 +504,7 @@ const treeData = computed(() => {
                                                 splitReq: splitReq,
                                                 req: req,
                                                 project: project,
-                                                testcase: testcase,
+                                                testcase: testcase || [],
                                             })) : []
                                     }))
                                     : []
@@ -707,7 +713,6 @@ const handleGeneralize = (row) => {
         req_id: currentRequirement.value.req.req_id,
         split_case_id: currentRequirement.value.splitCase.testcase_id,
     }
-    console.log(params);
     http.post('/api/echo', [params]).then(response => {
         if (response.status === 'OK') {
             ElMessage.success('泛化成功');
@@ -722,9 +727,11 @@ const handleGeneralize = (row) => {
     width: 100% !important;
     display: none !important;
 }
+
 :deep(.el-table) {
     width: 100%;
 }
+
 .flex-container {
     display: flex;
     flex-wrap: wrap;
