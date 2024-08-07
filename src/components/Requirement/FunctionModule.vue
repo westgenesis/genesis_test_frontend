@@ -1,6 +1,6 @@
 <template>
     <div class="flex">
-        <div style="height: 100%;border-right: 1px solid #ddd;" class="m-[20px] w-[400px]">
+        <div style="height: 100%;border-right: 1px solid #ddd;" class="m-[20px] mb-[0] w-[400px] flex flex-col">
             <div style="border-bottom: 1px solid #ddd; padding-bottom: 1rem">全部项目 ({{ projects.length }})</div>
             <div style="height: 2rem; margin: 1rem">
                 <a-input-search placeholder="请输入要搜索的名称" style="width: 100%"
@@ -13,7 +13,7 @@
                 </a-tree>
             </div>
         </div>
-        <div class="w-full h-[90%] pt-[2rem]">
+        <div class="w-full pt-[2rem] overflow-scroll">
             <div v-show="currentFile && currentType === 'sub_requirement'" class="editor-container">
                 <div style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;">功能模块</div>
                 <div class="flex  mt-[2rem] mb-[1rem]">
@@ -31,7 +31,7 @@
                 </div>
                 <div style="text-align: center;color: red;font-size: 12px;margin-top: 1rem;">提示：当前为V{{ currentFile?.splitReq?.version }}版本 由文档{{ (currentFile?.req?.name || '').split('/')[1] }} v1版本生成 保存后版本新增</div>
             </div>
-            <div v-show="currentType === 'requirement'" class="w-full h-[90%] pt-[2rem]">
+            <div v-show="currentType === 'requirement'" class="w-full pt-[2rem]" style="height: 90vh">
                 <div style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;">项目信息</div>
                 <div class="flex-container" style="margin-left: 1rem">
                     <div class="flex-item">
@@ -51,7 +51,7 @@
                 <div
                     style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;margin-top: 1rem; margin-bottom: 1rem;">
                     功能模块信息</div>
-                    <div class="w-full flex justify-end mr-[2rem]">
+                    <div class="w-full flex justify-end mr-[2rem] mb-[1rem]">
                         <a-button type="primary" size="large" @click="openAddDrawer"
                         class="custom-purple-button mr-[2rem]">新建功能模块</a-button>
                         <a-button type="primary" size="large" @click="handleDelete"
@@ -135,6 +135,7 @@ onMounted(async () => {
 const currentType = ref('');
 const onClickPreviewFile = (node: any) => {
     const { splitReq, project } = node;
+    console.log(splitReq);
     if (splitReq.is_table === true) {
         ElMessage.error('该docx包含表格 暂时无法在 Word 编辑器中预览');
         return;
@@ -422,6 +423,10 @@ const handleDelete = () => {
 </script>
 
 <style scoped lang="less">
+:deep(.el-table__empty_block) {
+    width: 100% !important;
+    display: none;
+}
 
 .flex-container {
     display: flex;

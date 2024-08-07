@@ -13,8 +13,8 @@
                 </a-tree>
             </div>
         </div>
-        <div class="w-full h-[90%] pt-[2rem]">
-            <div v-show="currentType === 'requirement'" class="w-full h-[90%] pt-[2rem]">
+        <div class="w-full h-[90%] pt-[2rem] overflow-scroll">
+            <div v-show="currentType === 'requirement'" class="w-full pt-[2rem]" style="height: 90vh">
                 <div style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;">项目信息</div>
                 <div class="flex-container" style="margin-left: 1rem">
                     <div class="flex-item">
@@ -70,7 +70,7 @@
                             @change="handlePageChangeReq" />
                     </div>
             </div>
-            <div v-show="currentType === 'sub_requirement'" class="w-full h-[90%] pt-[2rem]">
+            <div v-show="currentType === 'sub_requirement'" class="w-full pt-[2rem]" style="height: 90vh">
                 <div style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;">功能模块名称</div>
                 <div class="flex-container" style="margin-left: 1rem">
                     <div class="flex-item">
@@ -135,7 +135,7 @@
                     </div>
                 </div>
             </div>
-            <div v-show="currentType === 'split_case'" class="w-full h-[90%] pt-[2rem]">
+            <div v-show="currentType === 'split_case'" class="w-full pt-[2rem]" style="height: 90vh">
                 <div style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem; margin-bottom: 1rem;">
                     功能点信息
                 </div>
@@ -213,11 +213,12 @@
                             <el-button type="text" style="color: blue" @click="handleModify(scope.row)">修改</el-button>
 
                             <el-button type="text" style="color: blue" @click="handleSplit(scope.row)">生成脚本</el-button>
+                            <el-button type="text" style="color: blue" @click="handleGeneralize(scope.row)">泛化</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
             </div>
-            <div v-show="currentType === 'testcase'">
+            <div v-show="currentType === 'testcase'" style="height: 90vh;">
                 <a-form :model="form" layout="vertical">
                     <a-form-item label="测试用例类型">
                         <a-select v-model:value="form.type" placeholder="请选择测试用例类型">
@@ -421,6 +422,8 @@ const getSplitCases = (req) => {
     }
     return res;
 }
+
+
 
 const searchValue = ref('');
 
@@ -694,6 +697,24 @@ const handleModify = (row) => {
     newForm.value.version = row.version;
     newForm.value.type = row.type;
     editVisible.value = true;
+}
+
+const handleGeneralize = (row) => {
+    const params = {
+        ...row,
+        project_id: currentRequirement.value.project._id.$oid,
+        split_file_id: currentRequirement.value.splitReq.split_file_id,
+        req_id: currentRequirement.value.req.req_id,
+        split_case_id: currentRequirement.value.splitCase.testcase_id,
+    }
+    console.log(params);
+    http.post('/api/echo', params).then(response => {
+        if (response.status === 'OK') {
+            ElMessage.success('泛化成功');
+            refreshAllProjects();
+            currentRequirement.value.splitCase.testcases = response?.testcases || [];
+        }
+    })
 }
 </script>
 <style scoped lang="less">

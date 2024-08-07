@@ -30,9 +30,9 @@ onMounted(() => {
 <template>
   <div class="main">
     <TopBar></TopBar>
-    <div class="flex flex-1">
+    <div class="flex flex-1" style="overflow: hidden;">
         <LeftMenu />
-        <div class="flex-1" style="background-color: #fff;">
+        <div class="flex-1" style="background-color: #fff; overflow: hidden;" >
           <router-view></router-view>
         </div>
     </div>
