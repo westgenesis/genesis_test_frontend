@@ -449,7 +449,7 @@ const handleBatchGeneralize = () => {
     }));
 
     http.post('/api/echo', params).then(response => {
-        if (response.status === 'OK') {
+        if (response.status === 'ok') {
             ElMessage.success('批量泛化下发成功');
             refreshAllProjects();
         } else {
@@ -748,7 +748,7 @@ const handleGeneralize = (row) => {
         split_case_id: currentRequirement.value.splitCase.testcase_id,
     }
     http.post('/api/echo', [params]).then(response => {
-        if (response.status === 'OK') {
+        if (response.status === 'ok') {
             ElMessage.success('下发泛化请求成功');
             refreshAllProjects();
         } else {
