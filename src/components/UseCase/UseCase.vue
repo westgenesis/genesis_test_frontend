@@ -476,12 +476,13 @@ const treeData = computed(() => {
                                 req: req,
                                 project: project,
                                 type: 'sub_requirement',
-                                split_cases: (splitReq.split_case || []).map((singleCase) => {
+                                split_cases: (splitReq.split_case || []).map((singleCase, splitCaseIndex) => {
                                     for (const [index, testcase] of (singleCase.testcases || []).entries()) {
                                         testcase.split_case_name = singleCase.testcase_name;
                                         testcase.testcaseIndex = index; // 添加index字段，值为当前的顺序
                                         testcase.reqIndex = reqIndex;
                                         testcase.splitReqIndex = splitReqIndex; // 添加splitReqIndex字段，值为当前的splitReq的顺序
+                                        testcase.splitCaseIndex = splitCaseIndex;
                                     }
                                     return singleCase.testcases || [];
                                 }),
