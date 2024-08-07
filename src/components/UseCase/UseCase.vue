@@ -708,7 +708,7 @@ const handleGeneralize = (row) => {
         split_case_id: currentRequirement.value.splitCase.testcase_id,
     }
     console.log(params);
-    http.post('/api/echo', params).then(response => {
+    http.post('/api/echo', [params]).then(response => {
         if (response.status === 'OK') {
             ElMessage.success('泛化成功');
             refreshAllProjects();
