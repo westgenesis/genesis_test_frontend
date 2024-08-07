@@ -157,12 +157,13 @@
                     测试用例
                 </div>
                 <div class="flex" style="justify-content: flex-end; margin-right: 1rem">
+                    <a-button type="primary" class="custom-purple-button" @click="handleBatchGeneralize" size="large" style="margin-right: 1rem;">批量泛化</a-button>
                     <a-button type="primary" class="custom-purple-button" size="large"
                         @click="showDrawer">新建测试用例</a-button>
                 </div>
 
                 <el-table :data="currentRequirement?.splitCase?.testcases" style="width: 100%" id="function_point_table"
-                    :height="table_height1">
+                    :height="table_height1" @selection-change="handleSelectionChange">
                     <el-table-column type="expand">
                         <template #default="scope">
                             <div style="padding: 10px;">
@@ -205,6 +206,7 @@
                             </div>
                         </template>
                     </el-table-column>
+                    <el-table-column type="selection" width="50"></el-table-column>
                     <el-table-column prop="testcase_id" label="测试用例ID" :width="table_width1 / 5 || 100" />
                     <el-table-column prop="testcase_name" label="测试用例名称" :width="table_width1 / 6 || 100" />
                     <el-table-column prop="version" label="版本" :width="table_width1 / 6 || 100" />
@@ -374,6 +376,13 @@ const handlePageChangeReq = (page: number) => {
     currentPageReq.value = page;
 };
 
+const selectedRows = ref([]);
+
+const handleSelectionChange = (rows) => {
+    console.log(rows);
+    selectedRows.value = rows;
+};
+
 const form = ref({
     name: '',
     pre_condition: '',
@@ -424,6 +433,29 @@ const getSplitCases = (req) => {
     }
     return res;
 }
+
+const handleBatchGeneralize = () => {
+    if (selectedRows.length === 0) {
+        ElMessage.warning('请选择要泛化的测试用例');
+        return;
+    }
+
+    const params = selectedRows.value.map(row => ({
+        ...row,
+        project_id: currentRequirement.value.project._id.$oid,
+        split_file_id: currentRequirement.value.splitReq.split_file_id,
+        req_id: currentRequirement.value.req.req_id,
+        split_case_id: currentRequirement.value.splitCase.testcase_id,
+    }));
+
+    http.post('/api/echo', params).then(response => {
+        if (response.status === 'OK') {
+            ElMessage.success('批量泛化成功');
+            refreshAllProjects();
+            currentRequirement.value.splitCase.testcases = response?.testcases || [];
+        }
+    });
+};
 
 
 
