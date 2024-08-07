@@ -450,9 +450,10 @@ const handleBatchGeneralize = () => {
 
     http.post('/api/echo', params).then(response => {
         if (response.status === 'OK') {
-            ElMessage.success('批量泛化成功');
+            ElMessage.success('批量泛化下发成功');
             refreshAllProjects();
-            currentRequirement.value.splitCase.testcases = response?.testcases || [];
+        } else {
+            ElMessage.error('批量泛化下发失败')
         }
     });
 };
@@ -748,9 +749,10 @@ const handleGeneralize = (row) => {
     }
     http.post('/api/echo', [params]).then(response => {
         if (response.status === 'OK') {
-            ElMessage.success('泛化成功');
+            ElMessage.success('下发泛化请求成功');
             refreshAllProjects();
-            currentRequirement.value.splitCase.testcases = response?.testcases || [];
+        } else {
+            ElMessage.error('下发泛化请求失败')
         }
     })
 }

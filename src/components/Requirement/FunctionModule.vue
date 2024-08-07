@@ -77,8 +77,8 @@
                         <el-table-column prop="version" label="版本" :width="table_width / 7 || 100"/>
                         <el-table-column label="操作" :width="table_width / 7 || 100">
                             <template #default="scope">
-                                <el-button type="text" style="color: blue"
-                                    @click="handleSplit(scope.row)">拆分</el-button>
+                                <el-button type="text"
+                                    @click="handleSplit(scope.row)" :disabled="scope.row.is_table === true">拆分</el-button>
                             </template>
                         </el-table-column>
                         
