@@ -42,7 +42,7 @@ const routes = [
     component: FunctionModule
   },
   {
-    path: '/requirement/functionPoint',
+    path: '/requirement/functionPoints',
     component: FunctionPoint
   },
   {

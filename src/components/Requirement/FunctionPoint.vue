@@ -14,7 +14,7 @@
             </div>
         </div>
         <div class="w-full h-[90%] pt-[2rem] overflow-scroll">
-            <div v-show="currentType === 'requirement'" class="w-full pt-[2rem]" style="height: calc(100vh - 5.3rem)">
+            <div v-show="currentType === 'requirement'" class="w-full pt-[2rem]" style="height: 90vh">
                 <div style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;">项目信息</div>
                 <div class="flex-container" style="margin-left: 1rem">
                     <div class="flex-item">
@@ -33,45 +33,42 @@
                 </div>
                 <div
                     style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;margin-top: 1rem; margin-bottom: 1rem;">
-                    功能点信息</div>
+                    功能模块信息</div>
+                    <div class="w-full flex justify-end mr-[2rem] mb-[1rem]">
+                        <a-button type="primary" size="large" @click="openAddDrawer"
+                        class="custom-purple-button mr-[2rem]">新建功能模块</a-button>
+                        <a-button type="primary" size="large" @click="handleModuleDelete"
+                        class="custom-purple-button mr-[2rem]">删除</a-button>
+                        <a-button type="primary" size="large" @click="handleBatchSplit"
+                        class="custom-purple-button mr-[2rem]">批量拆分</a-button>
+                    </div>
                 <div style="width: 100%">
-
-                    <el-table :data="pagedData" style="width: 100%" id="function_module_table">
-                        <el-table-column type="expand">
-                            <template #default="scope">
-                                <div style="padding: 10px;">
-                                    <div class="flex" style="border: 1px solid #eee;">
-                                        <div style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">初始条件</div>
-                                        <div>{{scope.row.pre_condition}}</div>
-                                    </div>
-                                    <div class="flex" style="border: 1px solid #eee;">
-                                        <div style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">触发条件</div>
-                                        <div>{{scope.row.action}}</div>
-                                    </div>
-                                    <div class="flex" style="border: 1px solid #eee;">
-                                        <div style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">预期结果</div>
-                                        <div>{{scope.row.result}}</div>
-                                    </div>
-                                </div>
+                    <el-table :data="pagedDataModules" style="width: 100%" id="function_module_table" @selection-change="handleModuleSelectionChange">
+                        <el-table-column type="selection" width="50"/>
+                        <el-table-column type="expand" width="70">
+                            <template #default="props">
+                                <requirement-docx :record="props.row" />
                             </template>
                         </el-table-column>
-                        <el-table-column prop="testcase_id" label="功能点ID" :width="table_width2 / 5 || 100" />
-                        <el-table-column prop="testcase_name" label="功能点名称" :width="table_width2 / 8 || 100" />
-                        <el-table-column prop="last_modified.$date" label="更新时间" :width="table_width2 / 7 || 100">
-                        </el-table-column>
-                        <el-table-column prop="split_req_name" label="所属功能模块"
-                            :width="table_width2 / 7 || 100"></el-table-column>
-                        <el-table-column prop="version" label="版本" :width="table_width2 / 10 || 100" />
-                        <el-table-column label="操作" :width="100">
+                        <el-table-column prop="split_file_id" label="功能模块ID" :width="table_width / 7 || 100"/>
+                        <el-table-column prop="file_name" label="功能模块名称" :width="table_width / 7 || 100">
                             <template #default="scope">
-                                <el-button type="text" style="color: blue"
-                                    @click="handleSplit(scope.row)">生成用例</el-button>
+                                {{  scope.row.file_name?.replace('.docx', '') }}
                             </template>
                         </el-table-column>
+                        <el-table-column prop="description" label="功能模块描述" :width="table_width / 7 || 100"/>
+                        <el-table-column prop="version" label="版本" :width="table_width / 7 || 100"/>
+                        <el-table-column label="操作" :width="table_width / 7 || 100">
+                            <template #default="scope">
+                                <el-button type="text"
+                                    @click="handleSplit(scope.row)" :disabled="scope.row.is_table === true">拆分</el-button>
+                            </template>
+                        </el-table-column>
+                        
                     </el-table>
                     <div class="flex justify-center">
-                        <el-pagination layout="prev, pager, next" :total="totalItems" :page-size="pageSize"
-                            :current-page="currentPage" @current-change="handlePageChange" />
+                        <el-pagination layout="prev, pager, next" :total="totalItems" :page-size="pageSizeModules"
+                            :current-page="currentPageModules" @current-change="handlePageChange" />
                     </div>
 
                 </div>
@@ -132,7 +129,7 @@
                                 @click="handleModify(scope.row)">修改</el-button>
 
                                 <el-button type="text" style="color: blue"
-                                    @click="handleSplit(scope.row)">生成用例</el-button>
+                                    @click="handleGenerate(scope.row)">生成用例</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -209,17 +206,20 @@
             </a-drawer>
         </div>
     </div>
-
+    <!-- 添加 a-drawer 组件 -->
+    <AddModuleDrawer :visible="drawerVisible" @close="closeAddDrawer" @save="saveNewModule" :currentRequirement="currentRequirement"/>
 </template>
 
 <script setup lang="ts">
 import { useProjectStore } from '../../stores/project';
 import { ref, computed, onUpdated } from 'vue';
 import type { TreeProps } from 'ant-design-vue';
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElMessageBox } from 'element-plus';
 import { useProductFetch } from '../../handler/handler';
 import { http } from '../../http';
 import { storeToRefs } from 'pinia';
+import RequirementDocx from './RequirementDocx.vue';
+import AddModuleDrawer from './AddModuleDrawer.vue'; // 引入新组件
 
 const currentType = ref();
 const visible = ref(false);
@@ -366,21 +366,6 @@ const onSelect: TreeProps['onSelect'] = (_, info) => {
     if (info?.node?.type === 'requirement') {
         currentType.value = 'requirement';
         currentRequirement.value = info.node;
-        const split_files = info.node.req?.split_files || [];
-        if (split_files?.length) {
-            const combined_cases = split_files.map(x => {
-                if (x.split_case?.length) {
-                    x.split_case.map(c => {
-                        c.split_req_name = x.file_name;
-                        return c;
-                    });
-                }
-                return x.split_case;
-            }).filter(x => x);
-            const flattened = combined_cases.reduce((acc, curr) => acc.concat(curr), []);
-            console.log(flattened);
-            flattened_cases.value = flattened;
-        }
     } else if (info?.node?.type === 'sub_requirement') {
         currentType.value = 'sub_requirement';
         currentRequirement.value = info.node;
@@ -415,10 +400,21 @@ const pagedData = computed(() => {
     return flattened_cases.value.slice(start, end) || [];
 });
 
-const totalItems = computed(() => flattened_cases.value.length || 0);
+
+const currentPageModules = ref(1);
+const pageSizeModules = ref(10);
+const table_width = ref(1000);
+
+const pagedDataModules = computed(() => {
+    const start = (currentPageModules.value - 1) * pageSizeModules.value;
+    const end = start + pageSizeModules.value;
+    return currentRequirement.value?.req?.split_files.slice(start, end) || [];
+});
+
+const totalItems = computed(() => currentRequirement.value?.req?.split_files.length || 0);
 
 const handlePageChange = (page: number) => {
-    currentPage.value = page;
+    currentPageModules.value = page;
 };
 
 onUpdated(() => {
@@ -526,7 +522,7 @@ const handleNewSave = async () => {
     })
 }
 
-const handleSplit = (row) => {
+const handleGenerate = (row) => {
     const project_id = currentRequirement.value.project._id.$oid;
     const split_file_id = currentRequirement.value.splitReq.split_file_id;
     const req_id = currentRequirement.value.req.req_id;
@@ -563,6 +559,116 @@ const handleModify = (row) => {
     newForm.value.version = row.version;
     editVisible.value = true;
 }
+
+
+const drawerVisible = ref(false);
+const newModuleName = ref('');
+const newModuleDescription = ref('');
+
+const openAddDrawer = () => {
+    drawerVisible.value = true;
+};
+
+const closeAddDrawer = async () => {
+    drawerVisible.value = false;
+    const result = await projectStore.refreshAllProjects();
+    const currentProject = result.find(x => x._id.$oid === currentRequirement.value.project._id.$oid);
+    const currentReq = currentProject.requirement_files.find(x => x.req_id === currentRequirement.value.req.req_id);
+    currentRequirement.value.req.split_files = currentReq.split_files;
+};
+
+const handleSplit = (row: any) => {
+    ElMessageBox.confirm('拆分会覆盖当前模块的已有功能点，是否继续？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+    }).then(() => {
+        const params = {
+            project_id: currentRequirement.value.project._id.$oid,
+            ...row,
+            req_id: currentRequirement.value.req.req_id
+        };
+        ElMessage.success('已下发功能点拆解任务，请等待或刷新后去功能点页面查看结果');
+        http.post('/api/subrequire_generate_points', params).then((res) => {
+            console.log(res);
+        });
+    }).catch(() => {
+        // 用户点击取消，不做任何操作
+        ElMessage.info('已取消拆分操作');
+    });
+};
+
+const handleBatchSplit = () => {
+    if (selectedRows.value.length === 0) {
+        ElMessage.warning('请选择要拆分的功能模块');
+        return;
+    }
+
+    ElMessageBox.confirm('拆分会覆盖当前模块的已有功能点，是否继续？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+    }).then(() => {
+        const params = selectedRows.value.map(row => ({
+            project_id: currentRequirement.value.project._id.$oid,
+            object_name: row.object_name,
+            split_file_id: row.split_file_id,
+            version: row.version,
+            req_id: currentRequirement.value.req.req_id
+        }));
+
+        http.post('/api/subrequire_batch_generate_points', params).then((res) => {
+            if (res) {
+                ElMessage.success('已下发功能点拆解任务，请等待或刷新后去功能点页面查看结果');
+                refreshAllProjects();
+            } else {
+                ElMessage.error('拆分失败');
+            }
+        });
+    }).catch(() => {
+        ElMessage.info('已取消拆分操作');
+    });
+};
+
+
+const selectedRowsModule = ref([]);
+
+const handleModuleSelectionChange = (rows) => {
+    selectedRowsModule.value = rows;
+};
+
+const handleModuleDelete = () => {
+    if (selectedRowsModule.value.length === 0) {
+        ElMessage.warning('请选择要删除的功能模块');
+        return;
+    }
+
+    ElMessageBox.confirm('确定要删除选中的功能模块吗？', '删除确认', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+    }).then(() => {
+        const split_file_ids = selectedRowsModule.value.map(row => row.split_file_id);
+        const deleteSplitRequireParams = {
+            project_id: currentRequirement.value.project._id.$oid,
+            req_id: currentRequirement.value.req.req_id,
+            split_file_ids,
+        };
+
+        http.post('/api/delete_function_module', deleteSplitRequireParams).then((res) => {
+            if (res) {
+                ElMessage.success('删除成功');
+                refreshAllProjects();
+                currentRequirement.value.req.split_files = currentRequirement.value?.req?.split_files.filter(x => !split_file_ids.includes(x.split_file_id));
+            } else {
+                ElMessage.error('删除失败');
+            }
+        });
+    }).catch(() => {
+        ElMessage.info('已取消删除操作');
+    });
+};
+
 </script>
 <style scoped lang="less">
 :deep(.el-table__empty_block) {

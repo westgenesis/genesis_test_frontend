@@ -66,7 +66,7 @@ const topBarItems = [
     },
     {
         name: '需求管理',
-        to: '/requirement/functionModules'
+        to: '/requirement/functionPoints'
     },
     {
         name: '用例管理',

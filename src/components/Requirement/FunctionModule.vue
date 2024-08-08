@@ -135,7 +135,6 @@ onMounted(async () => {
 const currentType = ref('');
 const onClickPreviewFile = (node: any) => {
     const { splitReq, project } = node;
-    console.log(splitReq);
     if (splitReq.is_table === true) {
         ElMessage.error('该docx包含表格 暂时无法在 Word 编辑器中预览');
         return;
