@@ -47,7 +47,7 @@
                         <el-table-column type="selection" width="50"/>
                         <el-table-column type="expand" width="70">
                             <template #default="props">
-                                <requirement-docx :record="props.row" />
+                                <requirement-docx :record="props.row" :currentRequirement="currentRequirement"/>
                             </template>
                         </el-table-column>
                         <el-table-column prop="split_file_id" label="功能模块ID" :width="table_width / 7 || 100"/>
