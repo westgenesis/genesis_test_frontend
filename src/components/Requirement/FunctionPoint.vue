@@ -3,8 +3,7 @@
         <div style="height: 100%;border-right: 1px solid #ddd;" class="m-[20px] w-[400px]">
             <div style="border-bottom: 1px solid #ddd; padding-bottom: 1rem">全部项目 ({{ projects.length }})</div>
             <div style="height: 2rem; margin: 1rem">
-                <a-input-search placeholder="请输入要搜索的名称" style="width: 100%"
-                        @search="onSearch" />
+                <a-input-search placeholder="请输入要搜索的名称" style="width: 100%" @search="onSearch" />
             </div>
             <div style="height: calc(100vh - 10.3rem); overflow: scroll; background-color: rgba(248, 248, 254, 0.5);">
                 <a-tree :show-line="showLine" :show-icon="showIcon" :default-expanded-keys="['0-0-0']"
@@ -34,37 +33,38 @@
                 <div
                     style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;margin-top: 1rem; margin-bottom: 1rem;">
                     功能模块信息</div>
-                    <div class="w-full flex justify-end mr-[2rem] mb-[1rem]">
-                        <a-button type="primary" size="large" @click="openAddDrawer"
+                <div class="w-full flex justify-end mr-[2rem] mb-[1rem]">
+                    <a-button type="primary" size="large" @click="openAddDrawer"
                         class="custom-purple-button mr-[2rem]">新建功能模块</a-button>
-                        <a-button type="primary" size="large" @click="handleModuleDelete"
+                    <a-button type="primary" size="large" @click="handleModuleDelete"
                         class="custom-purple-button mr-[2rem]">删除</a-button>
-                        <a-button type="primary" size="large" @click="handleBatchSplit"
+                    <a-button type="primary" size="large" @click="handleBatchSplit"
                         class="custom-purple-button mr-[2rem]">批量拆分</a-button>
-                    </div>
+                </div>
                 <div style="width: 100%">
-                    <el-table :data="pagedDataModules" style="width: 100%" id="function_module_table" @selection-change="handleModuleSelectionChange">
-                        <el-table-column type="selection" width="50"/>
+                    <el-table :data="pagedDataModules" style="width: 100%" id="function_module_table"
+                        @selection-change="handleModuleSelectionChange">
+                        <el-table-column type="selection" width="50" />
                         <el-table-column type="expand" width="70">
                             <template #default="props">
-                                <requirement-docx :record="props.row" :currentRequirement="currentRequirement"/>
+                                <requirement-docx :record="props.row" :currentRequirement="currentRequirement" />
                             </template>
                         </el-table-column>
-                        <el-table-column prop="split_file_id" label="功能模块ID" :width="table_width / 7 || 100"/>
+                        <el-table-column prop="split_file_id" label="功能模块ID" :width="table_width / 7 || 100" />
                         <el-table-column prop="file_name" label="功能模块名称" :width="table_width / 7 || 100">
                             <template #default="scope">
-                                {{  scope.row.file_name?.replace('.docx', '') }}
+                                {{ scope.row.file_name?.replace('.docx', '') }}
                             </template>
                         </el-table-column>
-                        <el-table-column prop="description" label="功能模块描述" :width="table_width / 7 || 100"/>
-                        <el-table-column prop="version" label="版本" :width="table_width / 7 || 100"/>
+                        <el-table-column prop="description" label="功能模块描述" :width="table_width / 7 || 100" />
+                        <el-table-column prop="version" label="版本" :width="table_width / 7 || 100" />
                         <el-table-column label="操作" :width="table_width / 7 || 100">
                             <template #default="scope">
-                                <el-button type="text"
-                                    @click="handleSplit(scope.row)" :disabled="scope.row.is_table === true">拆分</el-button>
+                                <el-button type="text" @click="handleSplit(scope.row)"
+                                    :disabled="scope.row.is_table === true">拆分</el-button>
                             </template>
                         </el-table-column>
-                        
+
                     </el-table>
                     <div class="flex justify-center">
                         <el-pagination layout="prev, pager, next" :total="totalItems" :page-size="pageSizeModules"
@@ -73,7 +73,8 @@
 
                 </div>
             </div>
-            <div v-show="currentType === 'sub_requirement'" class="w-full pt-[2rem]" style="height: calc(100vh - 5.3rem)">
+            <div v-show="currentType === 'sub_requirement'" class="w-full pt-[2rem]"
+                style="height: calc(100vh - 5.3rem)">
                 <div style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;">功能模块名称</div>
                 <div class="flex-container" style="margin-left: 1rem">
                     <div class="flex-item">
@@ -95,25 +96,34 @@
                 </div>
                 <div style="width: 100%">
                     <div class="w-full flex justify-end mr-[2rem] mb-[1rem]">
+                        <a-button type="primary" size="large" @click="handleBatchGenerate"
+                            class="custom-purple-button mr-[2rem] mb-[1rem]">批量生成用例</a-button>
                         <a-button type="primary" size="large" @click="showDrawer"
                             class="custom-purple-button mr-[2rem] mb-[1rem]">新建功能点</a-button>
                     </div>
                     <el-table :data="currentRequirement?.splitReq?.split_case" style="width: 100%"
-                        id="function_point_table" :height="table_height">
+                        id="function_point_table" :height="table_height" @selection-change="onPointsSelectionChange">
+                        <el-table-column type="selection" width="50" />
                         <el-table-column type="expand">
                             <template #default="scope">
                                 <div style="padding: 10px;">
                                     <div class="flex" style="border: 1px solid #eee;">
-                                        <div style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">初始条件</div>
-                                        <div>{{scope.row.pre_condition}}</div>
+                                        <div
+                                            style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">
+                                            初始条件</div>
+                                        <div>{{ scope.row.pre_condition }}</div>
                                     </div>
                                     <div class="flex" style="border: 1px solid #eee;">
-                                        <div style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">触发条件</div>
-                                        <div>{{scope.row.action}}</div>
+                                        <div
+                                            style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">
+                                            触发条件</div>
+                                        <div>{{ scope.row.action }}</div>
                                     </div>
                                     <div class="flex" style="border: 1px solid #eee;">
-                                        <div style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">预期结果</div>
-                                        <div>{{scope.row.result}}</div>
+                                        <div
+                                            style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">
+                                            预期结果</div>
+                                        <div>{{ scope.row.result }}</div>
                                     </div>
                                 </div>
                             </template>
@@ -126,7 +136,7 @@
                         <el-table-column label="操作" :width="150">
                             <template #default="scope">
                                 <el-button type="text" style="color: blue"
-                                @click="handleModify(scope.row)">修改</el-button>
+                                    @click="handleModify(scope.row)">修改</el-button>
 
                                 <el-button type="text" style="color: blue"
                                     @click="handleGenerate(scope.row)">生成用例</el-button>
@@ -207,7 +217,8 @@
         </div>
     </div>
     <!-- 添加 a-drawer 组件 -->
-    <AddModuleDrawer :visible="drawerVisible" @close="closeAddDrawer" @save="saveNewModule" :currentRequirement="currentRequirement"/>
+    <AddModuleDrawer :visible="drawerVisible" @close="closeAddDrawer" @save="saveNewModule"
+        :currentRequirement="currentRequirement" />
 </template>
 
 <script setup lang="ts">
@@ -546,6 +557,42 @@ const handleGenerate = (row) => {
     });
 }
 
+const handleBatchGenerate = () => {
+    if (selectedRowsPoints.value.length === 0) {
+        ElMessage.warning('请选择要生成用例的功能模块');
+        return;
+    }
+
+    const project_id = currentRequirement.value.project._id.$oid;
+    const split_file_id = currentRequirement.value.splitReq.split_file_id;
+    const req_id = currentRequirement.value.req.req_id;
+
+    ElMessageBox.confirm('生成用例会覆盖当前模块的已有用例，是否继续？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+    }).then(() => {
+        const points = selectedRowsPoints.value.map(row => ({
+            ...row,
+            project_id,
+            split_file_id,
+            req_id,
+            split_case_id: row.testcase_id,
+        }));
+
+        http.post('/api/generate_testcases_by_points', { points }).then(async response => {
+            if (response?.status === 'OK') {
+                ElMessage.success('已下发生成用例任务');
+                await refreshAllProjects();
+            } else {
+                ElMessage.error('下发生成用例任务失败');
+            }
+        });
+    }).catch(() => {
+        ElMessage.info('已取消生成用例操作');
+    });
+};
+
 const handleModify = (row) => {
     console.log(row);
     newForm.value.name = row.testcase_name;
@@ -635,6 +682,12 @@ const selectedRowsModule = ref([]);
 
 const handleModuleSelectionChange = (rows) => {
     selectedRowsModule.value = rows;
+};
+
+const selectedRowsPoints = ref([]);
+
+const onPointsSelectionChange = (rows) => {
+    selectedRowsPoints.value = rows;
 };
 
 const handleModuleDelete = () => {
