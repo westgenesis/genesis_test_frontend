@@ -20,6 +20,7 @@ import { DocumentWordEdit } from './DocumentWordEdit';
 import { ref, defineProps, onMounted } from 'vue';
 import { useProductFetch } from '../../handler/handler';
 import { ElMessage, ElMessageBox } from 'element-plus';
+import { useProjectStore } from '../../stores/project';
 const { handler } = useProductFetch();
 
 const props = defineProps({
@@ -47,7 +48,7 @@ onMounted(async () => {
             documentWordEdit.docxToQuill(file)
         })
 })
-
+const { refreshAllProjects } = useProjectStore();
 const onSaveContent = () => {
     ElMessageBox.confirm('保存后会覆盖文件，是否确定？', '覆盖提示', {
         confirmButtonText: '是',
