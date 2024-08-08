@@ -477,7 +477,7 @@ const handleBatchDelete = () => {
         if (response.status === 'OK') {
             ElMessage.success('批量删除成功');
             refreshAllProjects();
-            currentRequirement.splitCase.testcases = response.testcases
+            currentRequirement.value.splitCase.testcases = response.testcases
         } else {
             ElMessage.error('批量删除失败');
         }
