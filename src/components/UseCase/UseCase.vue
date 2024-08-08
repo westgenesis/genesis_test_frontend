@@ -33,8 +33,7 @@
                 <div
                     style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;margin-top: 1rem; margin-bottom: 1rem;">
                     测试用例信息</div>
-                <el-table :data="flattened_cases_req_paged" style="width: 100%" id="function_point_table"
-                    :height="table_height1">
+                <el-table :data="flattened_cases_req_paged" style="width: 100%" id="function_point_table">
                     <el-table-column type="expand" :width="100">
                         <template #default="scope">
                             <div style="padding: 10px;">
@@ -158,6 +157,7 @@
                 </div>
                 <div class="flex" style="justify-content: flex-end; margin-right: 1rem">
                     <a-button type="primary" class="custom-purple-button" @click="handleBatchGeneralize" size="large" style="margin-right: 1rem;">批量泛化</a-button>
+                    <a-button type="primary" class="custom-purple-button" @click="handleBatchDelete" size="large" style="margin-right: 1rem;">批量删除</a-button>
                     <a-button type="primary" class="custom-purple-button" size="large"
                         @click="showDrawer">新建测试用例</a-button>
                 </div>
@@ -212,11 +212,11 @@
                     <el-table-column prop="version" label="版本" :width="table_width1 / 6 || 100" />
                     <el-table-column label="操作" :width="150">
                         <template #default="scope">
-                            <el-button type="text" style="color: blue" @click="handleModify(scope.row)">修改</el-button>
+                            <el-button type="text" @click="handleModify(scope.row)">修改</el-button>
 
-                            <el-button type="text" style="color: blue" @click="handleSplit(scope.row)">生成脚本</el-button>
-                            <el-button type="text" style="color: blue"
-                                @click="handleGeneralize(scope.row)">泛化</el-button>
+                            <el-button type="text" @click="handleSplit(scope.row)" :disabled="true">生成脚本</el-button>
+                            <el-button type="text"
+                                @click="handleGeneralize(scope.row)" :disabled="scope.row.is_generalized">泛化</el-button>
 
                         </template>
                     </el-table-column>
@@ -459,6 +459,30 @@ const handleBatchGeneralize = () => {
 };
 
 
+const handleBatchDelete = () => {
+    if (selectedRows.value.length === 0) {
+        ElMessage.warning('请选择要删除的测试用例');
+        return;
+    }
+
+    const params = selectedRows.value.map(row => ({
+        project_id: currentRequirement.value.project._id.$oid,
+        req_id: currentRequirement.value.req.req_id,
+        split_file_id: currentRequirement.value.splitReq.split_file_id,
+        split_case_id: currentRequirement.value.splitCase.testcase_id,
+        testcase_id: row.testcase_id,
+    }));
+
+    http.post('/api/delete_testcases', params).then(response => {
+        if (response.status === 'OK') {
+            ElMessage.success('批量删除成功');
+            refreshAllProjects();
+            currentRequirement.splitCase.testcases = response.testcases
+        } else {
+            ElMessage.error('批量删除失败');
+        }
+    });
+};
 
 const searchValue = ref('');
 
@@ -746,7 +770,9 @@ const handleGeneralize = (row) => {
         split_file_id: currentRequirement.value.splitReq.split_file_id,
         req_id: currentRequirement.value.req.req_id,
         split_case_id: currentRequirement.value.splitCase.testcase_id,
+        
     }
+    ElMessage.success('已下发泛化请求');
     http.post('/api/echo', [params]).then(response => {
         if (response.status === 'ok') {
             ElMessage.success('下发泛化请求成功');
