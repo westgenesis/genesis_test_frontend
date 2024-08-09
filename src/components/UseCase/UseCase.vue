@@ -448,6 +448,13 @@ const handleBatchGeneralize = () => {
         split_case_id: currentRequirement.value.splitCase.testcase_id,
     }));
 
+    for(const row of params) {
+        if (row.is_generalized) {
+            ElMessage.warning('请不要对已泛化的测试用例进行泛化操作');
+            return;
+        }
+    }
+
     http.post('/api/echo', params).then(response => {
         if (response.status === 'ok') {
             ElMessage.success('批量泛化下发成功');
