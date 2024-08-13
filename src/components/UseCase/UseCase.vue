@@ -107,41 +107,23 @@
                     测试用例信息
                 </div>
                 <div style="width: 100%">
+                    <div class="flex" style="justify-content: flex-end; margin-right: 1rem; margin-bottom: 1rem;">
+                        <a-button type="primary" class="custom-purple-button" size="large"
+                            @click="export_by_sub_requirement">导出全部</a-button>
+                    </div>
                     <el-table :data="pagedData" style="width: 100%" id="function_point_table" :height="table_height1">
-                        <el-table-column type="expand" :width="100">
+                        <el-table-column type="selection" width="50"></el-table-column>
+                        <el-table-column prop="testcase_id" label="测试用例ID" :width="table_width1 / 5 || 100" />
+                        <el-table-column prop="testcase_name" label="测试用例名称" :width="table_width1 / 6 || 100" />
+                        <el-table-column prop="version" label="版本" :width="table_width1 / 6 || 100" />
+                        <el-table-column prop="type" label="用例类型" :width="table_width1 / 6 || 100">
                             <template #default="scope">
-                                <div style="padding: 10px;">
-                                    <div class="flex" style="border: 1px solid #eee;">
-                                        <div
-                                            style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">
-                                            初始条件</div>
-                                        <div>{{ scope.row.pre_condition }}</div>
-                                    </div>
-                                    <div class="flex" style="border: 1px solid #eee;">
-                                        <div
-                                            style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">
-                                            触发条件</div>
-                                        <div>{{ scope.row.action }}</div>
-                                    </div>
-                                    <div class="flex" style="border: 1px solid #eee;">
-                                        <div
-                                            style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">
-                                            预期结果</div>
-                                        <div>{{ scope.row.result }}</div>
-                                    </div>
-                                </div>
+                                {{ scope.row.type === 'positive' ? '正例' : '反例' }}
                             </template>
                         </el-table-column>
-                        <el-table-column prop="testcase_id" label="测试用例ID" :width="100" />
-                        <el-table-column prop="testcase_name" label="测试用例名称" :width="100" />
-                        <el-table-column prop="version" label="版本" :width="100" />
-                        <el-table-column prop="split_case_name" label="所属功能点" :width="100" />
-                        <el-table-column label="操作" :width="150">
+                        <el-table-column prop="is_generalized" label="是否泛化" :width="table_width1 / 6 || 100">
                             <template #default="scope">
-                                <el-button type="text" style="color: blue"
-                                    @click="handleModify(scope.row)">修改</el-button>
-                                <el-button type="text" style="color: blue"
-                                    @click="handleSplit(scope.row)">生成脚本</el-button>
+                                {{ scope.row.is_generalized ? '泛化用例' : '非泛化用例' }}
                             </template>
                         </el-table-column>
                     </el-table>
@@ -172,7 +154,7 @@
                 <div style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem; margin-bottom: 1rem;">
                     测试用例
                 </div>
-                <div class="flex" style="justify-content: flex-end; margin-right: 1rem">
+                <div class="flex" style="justify-content: flex-end; margin-right: 1rem; margin-bottom: 1rem;">
                     <a-button type="primary" class="custom-purple-button" @click="handleBatchGeneralize" size="large"
                         style="margin-right: 1rem;">批量泛化</a-button>
                     <a-button type="primary" class="custom-purple-button" @click="handleBatchDelete" size="large"
@@ -231,11 +213,19 @@
                     <el-table-column prop="testcase_id" label="测试用例ID" :width="table_width1 / 5 || 100" />
                     <el-table-column prop="testcase_name" label="测试用例名称" :width="table_width1 / 6 || 100" />
                     <el-table-column prop="version" label="版本" :width="table_width1 / 6 || 100" />
+                    <el-table-column prop="type" label="用例类型" :width="table_width1 / 6 || 100">
+                        <template #default="scope">
+                            {{ scope.row.type === 'positive' ? '正例' : '反例' }}
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="is_generalized" label="是否泛化" :width="table_width1 / 6 || 100">
+                        <template #default="scope">
+                            {{ scope.row.is_generalized ? '泛化用例' : '非泛化用例' }}
+                        </template>
+                    </el-table-column>
                     <el-table-column label="操作" :width="150">
                         <template #default="scope">
                             <el-button type="text" @click="handleModify(scope.row)">修改</el-button>
-
-                            <el-button type="text" @click="handleSplit(scope.row)" :disabled="true">生成脚本</el-button>
                             <el-button type="text" @click="handleGeneralize(scope.row)"
                                 :disabled="scope.row.is_generalized">泛化</el-button>
 
@@ -772,10 +762,6 @@ const handleNewSave = async () => {
     })
 }
 
-const handleSplit = (row) => {
-    ElMessage.error('现在还不支持生成脚本')
-}
-
 const handleModify = (row) => {
     newForm.value.name = row.testcase_name;
     newForm.value.pre_condition = row.pre_condition;
@@ -814,12 +800,17 @@ const handleGeneralize = (row) => {
 }
 
 const handleExport = () => {
+    if (!currentRequirement.value.splitCase?.testcases?.length) {
+        ElMessage.error('请先生成或添加用例');
+        return;
+    }
     const params = {
         project_id: currentRequirement.value.project._id.$oid,
         split_file_id: currentRequirement.value.splitReq.split_file_id,
         req_id: currentRequirement.value.req.req_id,
         split_case_id: currentRequirement.value.splitCase.testcase_id,
     }
+
     http.post('/api/export_by_splitcase', params, { responseType: 'blob' })
         .then(response => {
             console.log(response)
@@ -828,7 +819,29 @@ const handleExport = () => {
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.setAttribute('download', 'filename.xlsx');
+            link.setAttribute('download', currentRequirement.value.splitCase.testcase_id + '.xlsx');
+            document.body.appendChild(link);
+            link.click();
+        }).catch(() => {
+            ElMessage.error('导出失败');
+        })
+}
+
+const export_by_sub_requirement = () => {
+    console.log(flattened_cases.value);
+    if (!flattened_cases.value?.length) {
+        ElMessage.error('请先生成或添加用例');
+        return;
+    }
+    http.post('/api/export_by_cases', { cases: flattened_cases.value }, { responseType: 'blob' })
+        .then(response => {
+            console.log(response)
+            const blob = new Blob([response as any], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            console.log(blob)
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', currentRequirement.value.splitReq.split_file_id + '.xlsx');
             document.body.appendChild(link);
             link.click();
         }).catch(() => {
