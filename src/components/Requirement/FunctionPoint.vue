@@ -6,8 +6,8 @@
                 <a-input-search placeholder="请输入要搜索的名称" style="width: 100%" @search="onSearch" />
             </div>
             <div style="height: calc(100vh - 10.3rem); overflow: scroll; background-color: rgba(248, 248, 254, 0.5);">
-                <a-tree :show-line="false" :show-icon="true" :default-expanded-keys="['0-0-0']"
-                    :tree-data="treeData" @select="onSelect" v-model:selectedKeys="selectedKeys">
+                <a-tree :show-line="false" :show-icon="true" :default-expanded-keys="['0-0-0']" :tree-data="treeData"
+                    @select="onSelect" v-model:selectedKeys="selectedKeys">
                     <template #switcherIcon="{ switcherCls }"><down-outlined :class="switcherCls" /></template>
                     <template #icon="node">
                         <template v-if="node.type === 'project'">
@@ -145,11 +145,16 @@
                                 </div>
                             </template>
                         </el-table-column>
-                        <el-table-column prop="testcase_id" label="功能点ID" :width="table_width1 / 5 || 100" />
-                        <el-table-column prop="testcase_name" label="功能点名称" :width="table_width1 / 6 || 100" />
-                        <el-table-column prop="last_modified.$date" label="更新时间" :width="table_width1 / 6 || 100">
+                        <el-table-column prop="testcase_id" label="功能点ID" :width="table_width1 / 6 || 100" />
+                        <el-table-column prop="testcase_name" label="功能点名称" :width="table_width1 / 7 || 100" />
+                        <el-table-column prop="last_modified.$date" label="更新时间" :width="table_width1 / 7 || 100">
                         </el-table-column>
-                        <el-table-column prop="version" label="版本" :width="table_width1 / 6 || 100" />
+                        <el-table-column prop="version" label="版本" :width="table_width1 / 7 || 100" />
+                        <el-table-column prop="status" label="状态" :width="table_width1 / 10 || 100">
+                            <template #default="scope">
+                                {{ scope.row.status ? scope.row.status : '待操作' }}
+                            </template>
+                        </el-table-column>
                         <el-table-column label="操作" :width="150">
                             <template #default="scope">
                                 <el-button type="text" style="color: blue"

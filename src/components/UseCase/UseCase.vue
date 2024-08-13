@@ -231,8 +231,13 @@
                     测试用例
                 </div>
                 <div class="flex" style="justify-content: space-between; margin-right: 1rem; margin-bottom: 1rem;">
-                    <div>
+                    <div class="flex">
                         <a-input-search placeholder="请输入测试用例名称" @search="onSplitCaseSearch" />
+                        <a-select v-model:value="splitCaseSelect" style="width: 12rem; margin-left: 1rem" placeholder="请选择测试用例类型">
+                            <a-select-option value="">全部</a-select-option>
+                            <a-select-option value="positive">正例</a-select-option>
+                            <a-select-option value="negative">反例</a-select-option>
+                        </a-select>
                     </div>
                     <div>
                         <a-button type="primary" class="custom-purple-button" @click="handleBatchGeneralize"
@@ -553,7 +558,7 @@ const handleBatchGeneralize = () => {
         }
     }
 
-    http.post('/api/echo', params).then(response => {
+    http.post('/api/split_gen_testcase', params).then(response => {
         if (response.status === 'ok') {
             ElMessage.success('批量泛化下发成功');
             refreshAllProjects();
@@ -601,11 +606,15 @@ const onSplitCaseSearch = (value) => {
     searchForSplitCase.value = value;
 }
 
+const splitCaseSelect = ref('');
+
+
+// 过滤后的testcase列表
 const testcasesForSplitCase = computed(() => {
-    console.log(searchForSplitCase);
-    console.log(currentRequirement.value?.splitCase?.testcases)
-    return (currentRequirement.value?.splitCase?.testcases || []).filter(x => x.testcase_name.includes(searchForSplitCase.value))
+    return (currentRequirement.value?.splitCase?.testcases || []).filter(x => x.testcase_name.includes(searchForSplitCase.value)).filter(x => x.type.includes(splitCaseSelect.value))
 })
+
+
 const filterTree = (items, searchTerm) => {
     return items.map((item) => {
         // 递归过滤子节点
@@ -886,7 +895,7 @@ const handleGeneralize = (row) => {
 
     }
     ElMessage.success('已下发泛化请求');
-    http.post('/api/echo', [params]).then(response => {
+    http.post('/api/split_gen_testcase', [params]).then(response => {
         if (response.status === 'ok') {
             ElMessage.success('下发泛化请求成功');
             refreshAllProjects();
