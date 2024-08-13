@@ -1,14 +1,31 @@
 <template>
     <div class="flex">
-        <div style="height: 100%;border-right: 1px solid #ddd;" class="m-[20px] w-[400px]">
+        <div style="height: 100%;border-right: 1px solid #ddd;" class="m-[20px] w-[600px]">
             <div style="border-bottom: 1px solid #ddd; padding-bottom: 1rem">全部项目 ({{ projects.length }})</div>
             <div style="height: 2rem; margin: 1rem">
                 <a-input-search placeholder="请输入要搜索的名称" style="width: 100%" @search="onSearch" />
             </div>
             <div style="height: calc(100vh - 10.3rem); overflow: scroll; background-color: rgba(248, 248, 254, 0.5);">
-                <a-tree :show-line="showLine" :show-icon="showIcon" :default-expanded-keys="['0-0-0']"
-                    :tree-data="treeData" @select="onSelect" v-model:selectedKeys="selectedKeys">
-                    <template #icon></template>
+                <a-tree :show-line="false" :show-icon="true" :default-expanded-keys="['0-0-0']" :tree-data="treeData"
+                    @select="onSelect" v-model:selectedKeys="selectedKeys">
+                    <template #switcherIcon="{ switcherCls }"><down-outlined :class="switcherCls" /></template>
+                    <template #icon="node">
+                        <template v-if="node.type === 'project'">
+                            <project-outlined />
+                        </template>
+                        <template v-if="node.type === 'requirement'">
+                            <profile-outlined />
+                        </template>
+                        <template v-else-if="node.type === 'sub_requirement'">
+                            <database-outlined />
+                        </template>
+                        <template v-else-if="node.type === 'split_case'">
+                            <ExperimentOutlined />
+                        </template>
+                        <template v-else-if="node.type === 'testcase'">
+                            <ApiOutlined />
+                        </template>
+                    </template>
                 </a-tree>
             </div>
         </div>
@@ -156,10 +173,14 @@
                     测试用例
                 </div>
                 <div class="flex" style="justify-content: flex-end; margin-right: 1rem">
-                    <a-button type="primary" class="custom-purple-button" @click="handleBatchGeneralize" size="large" style="margin-right: 1rem;">批量泛化</a-button>
-                    <a-button type="primary" class="custom-purple-button" @click="handleBatchDelete" size="large" style="margin-right: 1rem;">批量删除</a-button>
-                    <a-button type="primary" class="custom-purple-button" size="large"
+                    <a-button type="primary" class="custom-purple-button" @click="handleBatchGeneralize" size="large"
+                        style="margin-right: 1rem;">批量泛化</a-button>
+                    <a-button type="primary" class="custom-purple-button" @click="handleBatchDelete" size="large"
+                        style="margin-right: 1rem;">批量删除</a-button>
+                    <a-button type="primary" class="custom-purple-button" size="large" style="margin-right: 1rem;"
                         @click="showDrawer">新建测试用例</a-button>
+                    <a-button type="primary" class="custom-purple-button" size="large"
+                        @click="handleExport">导出全部</a-button>
                 </div>
 
                 <el-table :data="currentRequirement?.splitCase?.testcases" style="width: 100%" id="function_point_table"
@@ -215,8 +236,8 @@
                             <el-button type="text" @click="handleModify(scope.row)">修改</el-button>
 
                             <el-button type="text" @click="handleSplit(scope.row)" :disabled="true">生成脚本</el-button>
-                            <el-button type="text"
-                                @click="handleGeneralize(scope.row)" :disabled="scope.row.is_generalized">泛化</el-button>
+                            <el-button type="text" @click="handleGeneralize(scope.row)"
+                                :disabled="scope.row.is_generalized">泛化</el-button>
 
                         </template>
                     </el-table-column>
@@ -345,6 +366,7 @@ import { ElMessage } from 'element-plus';
 import { useProductFetch } from '../../handler/handler';
 import { http } from '../../http';
 import { storeToRefs } from 'pinia';
+import { ApiOutlined, ProjectOutlined, DatabaseOutlined, ProfileOutlined, DownOutlined, SmileOutlined, FrownOutlined, FrownFilled, ExperimentOutlined } from '@ant-design/icons-vue';
 
 const currentType = ref();
 const visible = ref(false);
@@ -448,7 +470,7 @@ const handleBatchGeneralize = () => {
         split_case_id: currentRequirement.value.splitCase.testcase_id,
     }));
 
-    for(const row of params) {
+    for (const row of params) {
         if (row.is_generalized) {
             ElMessage.warning('请不要对已泛化的测试用例进行泛化操作');
             return;
@@ -518,6 +540,7 @@ const treeData = computed(() => {
             title: project.name,
             key: `0-${index}`,
             project: project,
+            type: 'project',
             children: project.requirement_files && project.requirement_files.length > 0
                 ? project.requirement_files.map((req, reqIndex) => {
                     const parts = req.name.split('/');
@@ -777,7 +800,7 @@ const handleGeneralize = (row) => {
         split_file_id: currentRequirement.value.splitReq.split_file_id,
         req_id: currentRequirement.value.req.req_id,
         split_case_id: currentRequirement.value.splitCase.testcase_id,
-        
+
     }
     ElMessage.success('已下发泛化请求');
     http.post('/api/echo', [params]).then(response => {
@@ -789,6 +812,31 @@ const handleGeneralize = (row) => {
         }
     })
 }
+
+const handleExport = () => {
+    const params = {
+        project_id: currentRequirement.value.project._id.$oid,
+        split_file_id: currentRequirement.value.splitReq.split_file_id,
+        req_id: currentRequirement.value.req.req_id,
+        split_case_id: currentRequirement.value.splitCase.testcase_id,
+    }
+    http.post('/api/export_by_splitcase', params, { responseType: 'blob' })
+        .then(response => {
+            console.log(response)
+            const blob = new Blob([response as any], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            console.log(blob)
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'filename.xlsx');
+            document.body.appendChild(link);
+            link.click();
+        }).catch(() => {
+            ElMessage.error('导出失败');
+        })
+}
+
+
 </script>
 <style scoped lang="less">
 :deep(.el-table__empty-block) {

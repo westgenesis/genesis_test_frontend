@@ -1,14 +1,31 @@
 <template>
     <div class="flex">
-        <div style="height: 100%;border-right: 1px solid #ddd;" class="m-[20px] w-[400px]">
+        <div style="height: 100%;border-right: 1px solid #ddd;" class="m-[20px] w-[600px]">
             <div style="border-bottom: 1px solid #ddd; padding-bottom: 1rem">全部项目 ({{ projects.length }})</div>
             <div style="height: 2rem; margin: 1rem">
                 <a-input-search placeholder="请输入要搜索的名称" style="width: 100%" @search="onSearch" />
             </div>
             <div style="height: calc(100vh - 10.3rem); overflow: scroll; background-color: rgba(248, 248, 254, 0.5);">
-                <a-tree :show-line="showLine" :show-icon="showIcon" :default-expanded-keys="['0-0-0']"
+                <a-tree :show-line="false" :show-icon="true" :default-expanded-keys="['0-0-0']"
                     :tree-data="treeData" @select="onSelect" v-model:selectedKeys="selectedKeys">
-                    <template #icon></template>
+                    <template #switcherIcon="{ switcherCls }"><down-outlined :class="switcherCls" /></template>
+                    <template #icon="node">
+                        <template v-if="node.type === 'project'">
+                            <project-outlined />
+                        </template>
+                        <template v-if="node.type === 'requirement'">
+                            <profile-outlined />
+                        </template>
+                        <template v-else-if="node.type === 'sub_requirement'">
+                            <database-outlined />
+                        </template>
+                        <template v-else-if="node.type === 'split_case'">
+                            <ExperimentOutlined />
+                        </template>
+                        <template v-else-if="node.type === 'testcase'">
+                            <ApiOutlined />
+                        </template>
+                    </template>
                 </a-tree>
             </div>
         </div>
@@ -231,6 +248,7 @@ import { http } from '../../http';
 import { storeToRefs } from 'pinia';
 import RequirementDocx from './RequirementDocx.vue';
 import AddModuleDrawer from './AddModuleDrawer.vue'; // 引入新组件
+import { ApiOutlined, ProjectOutlined, DatabaseOutlined, ProfileOutlined, DownOutlined, SmileOutlined, FrownOutlined, FrownFilled, ExperimentOutlined } from '@ant-design/icons-vue';
 
 const currentType = ref();
 const visible = ref(false);
@@ -288,6 +306,7 @@ const treeData = computed(() => {
             title: project.name,
             key: `0-${index}`,
             project: project,
+            type: 'project',
             children: project.requirement_files && project.requirement_files.length > 0
                 ? project.requirement_files.map((req, reqIndex) => {
                     const parts = req.name.split('/');
