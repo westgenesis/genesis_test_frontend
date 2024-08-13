@@ -50,8 +50,12 @@
                 <div
                     style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;margin-top: 1rem; margin-bottom: 1rem;">
                     测试用例信息</div>
+                <div class="flex" style="justify-content: flex-end; margin-right: 1rem; margin-bottom: 1rem;">
+                    <a-button type="primary" class="custom-purple-button" size="large"
+                        @click="export_by_requirement">导出全部</a-button>
+                </div>
                 <el-table :data="flattened_cases_req_paged" style="width: 100%" id="function_point_table">
-                    <el-table-column type="expand" :width="100">
+                    <el-table-column type="expand" width="50">
                         <template #default="scope">
                             <div style="padding: 10px;">
                                 <div class="flex" style="border: 1px solid #eee;">
@@ -63,8 +67,20 @@
                                 <div class="flex" style="border: 1px solid #eee;">
                                     <div
                                         style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">
+                                        初始条件信号</div>
+                                    <div>{{ scope.row.pre_condition_signal }}</div>
+                                </div>
+                                <div class="flex" style="border: 1px solid #eee;">
+                                    <div
+                                        style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">
                                         触发条件</div>
                                     <div>{{ scope.row.action }}</div>
+                                </div>
+                                <div class="flex" style="border: 1px solid #eee;">
+                                    <div
+                                        style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">
+                                        触发条件信号</div>
+                                    <div>{{ scope.row.action_signal }}</div>
                                 </div>
                                 <div class="flex" style="border: 1px solid #eee;">
                                     <div
@@ -72,14 +88,28 @@
                                         预期结果</div>
                                     <div>{{ scope.row.result }}</div>
                                 </div>
+                                <div class="flex" style="border: 1px solid #eee;">
+                                    <div
+                                        style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">
+                                        预期结果信号</div>
+                                    <div>{{ scope.row.result_signal }}</div>
+                                </div>
                             </div>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="testcase_id" label="测试用例ID" :width="100" />
-                    <el-table-column prop="testcase_name" label="测试用例名称" :width="100" />
-                    <el-table-column prop="version" label="版本" :width="100" />
-                    <el-table-column prop="split_case_name" label="所属功能点" :width="100" />
-                    <el-table-column prop="split_file_name" label="所属功能模块" :width="100" />
+                    <el-table-column prop="testcase_id" label="测试用例ID" :width="table_width1 / 5 || 100" />
+                    <el-table-column prop="testcase_name" label="测试用例名称" :width="table_width1 / 6 || 100" />
+                    <el-table-column prop="version" label="版本" :width="table_width1 / 6 || 100" />
+                    <el-table-column prop="type" label="用例类型" :width="table_width1 / 6 || 100">
+                        <template #default="scope">
+                            {{ scope.row.type === 'positive' ? '正例' : '反例' }}
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="is_generalized" label="是否泛化" :width="table_width1 / 6 || 100">
+                        <template #default="scope">
+                            {{ scope.row.is_generalized ? '泛化用例' : '非泛化用例' }}
+                        </template>
+                    </el-table-column>
                 </el-table>
                 <div class="flex justify-center mt-4">
                     <a-pagination v-model:current="currentPageReq" :total="totalItemsReq" :page-size="pageSizeReq"
@@ -112,16 +142,62 @@
                             @click="export_by_sub_requirement">导出全部</a-button>
                     </div>
                     <el-table :data="pagedData" style="width: 100%" id="function_point_table" :height="table_height1">
-                        <el-table-column type="selection" width="50"></el-table-column>
-                        <el-table-column prop="testcase_id" label="测试用例ID" :width="table_width1 / 5 || 100" />
-                        <el-table-column prop="testcase_name" label="测试用例名称" :width="table_width1 / 6 || 100" />
-                        <el-table-column prop="version" label="版本" :width="table_width1 / 6 || 100" />
-                        <el-table-column prop="type" label="用例类型" :width="table_width1 / 6 || 100">
+                        <el-table-column type="expand">
+                            <template #default="scope">
+                                <div style="padding: 10px;">
+                                    <div class="flex" style="border: 1px solid #eee;">
+                                        <div
+                                            style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">
+                                            初始条件</div>
+                                        <div>{{ scope.row.pre_condition }}</div>
+                                    </div>
+                                    <div class="flex" style="border: 1px solid #eee;">
+                                        <div
+                                            style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">
+                                            初始条件信号</div>
+                                        <div>{{ scope.row.pre_condition_signal }}</div>
+                                    </div>
+                                    <div class="flex" style="border: 1px solid #eee;">
+                                        <div
+                                            style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">
+                                            触发条件</div>
+                                        <div>{{ scope.row.action }}</div>
+                                    </div>
+                                    <div class="flex" style="border: 1px solid #eee;">
+                                        <div
+                                            style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">
+                                            触发条件信号</div>
+                                        <div>{{ scope.row.action_signal }}</div>
+                                    </div>
+                                    <div class="flex" style="border: 1px solid #eee;">
+                                        <div
+                                            style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">
+                                            预期结果</div>
+                                        <div>{{ scope.row.result }}</div>
+                                    </div>
+                                    <div class="flex" style="border: 1px solid #eee;">
+                                        <div
+                                            style="min-width: 100px; background-color: #f2f2f2; padding: 10px; text-align: center;">
+                                            预期结果信号</div>
+                                        <div>{{ scope.row.result_signal }}</div>
+                                    </div>
+                                </div>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="testcase_id" label="测试用例ID" :width="table_width1 / 6 || 100" />
+                        <el-table-column prop="testcase_name" label="测试用例名称" :width="table_width1 / 7 || 100" />
+                        <el-table-column prop="version" label="版本" :width="table_width1 / 7 || 100" />
+                        <el-table-column prop="type" label="用例类型" :width="table_width1 / 7 || 100">
                             <template #default="scope">
                                 {{ scope.row.type === 'positive' ? '正例' : '反例' }}
                             </template>
                         </el-table-column>
-                        <el-table-column prop="is_generalized" label="是否泛化" :width="table_width1 / 6 || 100">
+                        <el-table-column prop="status" label="状态" :width="table_width1 / 10 || 100">
+                            <template #default="scope">
+                                {{ scope.row.status ? scope.row.status : '待操作' }}
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="is_generalized" label="是否泛化" :width="table_width1 / 7 || 100">
                             <template #default="scope">
                                 {{ scope.row.is_generalized ? '泛化用例' : '非泛化用例' }}
                             </template>
@@ -154,18 +230,24 @@
                 <div style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem; margin-bottom: 1rem;">
                     测试用例
                 </div>
-                <div class="flex" style="justify-content: flex-end; margin-right: 1rem; margin-bottom: 1rem;">
-                    <a-button type="primary" class="custom-purple-button" @click="handleBatchGeneralize" size="large"
-                        style="margin-right: 1rem;">批量泛化</a-button>
-                    <a-button type="primary" class="custom-purple-button" @click="handleBatchDelete" size="large"
-                        style="margin-right: 1rem;">批量删除</a-button>
-                    <a-button type="primary" class="custom-purple-button" size="large" style="margin-right: 1rem;"
-                        @click="showDrawer">新建测试用例</a-button>
-                    <a-button type="primary" class="custom-purple-button" size="large"
-                        @click="handleExport">导出全部</a-button>
+                <div class="flex" style="justify-content: space-between; margin-right: 1rem; margin-bottom: 1rem;">
+                    <div>
+                        <a-input-search placeholder="请输入测试用例名称" @search="onSplitCaseSearch" />
+                    </div>
+                    <div>
+                        <a-button type="primary" class="custom-purple-button" @click="handleBatchGeneralize"
+                            size="large" style="margin-right: 1rem;">批量泛化</a-button>
+                        <a-button type="primary" class="custom-purple-button" @click="handleBatchDelete" size="large"
+                            style="margin-right: 1rem;">批量删除</a-button>
+                        <a-button type="primary" class="custom-purple-button" size="large" style="margin-right: 1rem;"
+                            @click="showDrawer">新建测试用例</a-button>
+                        <a-button type="primary" class="custom-purple-button" size="large"
+                            @click="handleExport">导出全部</a-button>
+                    </div>
+
                 </div>
 
-                <el-table :data="currentRequirement?.splitCase?.testcases" style="width: 100%" id="function_point_table"
+                <el-table :data="testcasesForSplitCase" style="width: 100%" id="function_point_table"
                     :height="table_height1" @selection-change="handleSelectionChange">
                     <el-table-column type="expand">
                         <template #default="scope">
@@ -210,17 +292,22 @@
                         </template>
                     </el-table-column>
                     <el-table-column type="selection" width="50"></el-table-column>
-                    <el-table-column prop="testcase_id" label="测试用例ID" :width="table_width1 / 5 || 100" />
-                    <el-table-column prop="testcase_name" label="测试用例名称" :width="table_width1 / 6 || 100" />
-                    <el-table-column prop="version" label="版本" :width="table_width1 / 6 || 100" />
-                    <el-table-column prop="type" label="用例类型" :width="table_width1 / 6 || 100">
+                    <el-table-column prop="testcase_id" label="测试用例ID" :width="table_width1 / 7 || 100" />
+                    <el-table-column prop="testcase_name" label="测试用例名称" :width="table_width1 / 7 || 100" />
+                    <el-table-column prop="version" label="版本" :width="table_width1 / 7 || 100" />
+                    <el-table-column prop="type" label="用例类型" :width="table_width1 / 7 || 100">
                         <template #default="scope">
                             {{ scope.row.type === 'positive' ? '正例' : '反例' }}
                         </template>
                     </el-table-column>
-                    <el-table-column prop="is_generalized" label="是否泛化" :width="table_width1 / 6 || 100">
+                    <el-table-column prop="is_generalized" label="是否泛化" :width="table_width1 / 7 || 100">
                         <template #default="scope">
                             {{ scope.row.is_generalized ? '泛化用例' : '非泛化用例' }}
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="status" label="状态" :width="table_width1 / 10 || 100">
+                        <template #default="scope">
+                            {{ scope.row.status ? scope.row.status : '待操作' }}
                         </template>
                     </el-table-column>
                     <el-table-column label="操作" :width="150">
@@ -228,7 +315,6 @@
                             <el-button type="text" @click="handleModify(scope.row)">修改</el-button>
                             <el-button type="text" @click="handleGeneralize(scope.row)"
                                 :disabled="scope.row.is_generalized">泛化</el-button>
-
                         </template>
                     </el-table-column>
                 </el-table>
@@ -509,6 +595,17 @@ const onSearch = (value) => {
     searchValue.value = value;
 }
 
+const searchForSplitCase = ref('');
+
+const onSplitCaseSearch = (value) => {
+    searchForSplitCase.value = value;
+}
+
+const testcasesForSplitCase = computed(() => {
+    console.log(searchForSplitCase);
+    console.log(currentRequirement.value?.splitCase?.testcases)
+    return (currentRequirement.value?.splitCase?.testcases || []).filter(x => x.testcase_name.includes(searchForSplitCase.value))
+})
 const filterTree = (items, searchTerm) => {
     return items.map((item) => {
         // 递归过滤子节点
@@ -849,6 +946,26 @@ const export_by_sub_requirement = () => {
         })
 }
 
+const export_by_requirement = () => {
+    if (!flattened_cases_req.value?.length) {
+        ElMessage.error('请先生成或添加用例');
+        return;
+    }
+    http.post('/api/export_by_cases', { cases: flattened_cases_req.value }, { responseType: 'blob' })
+        .then(response => {
+            console.log(response)
+            const blob = new Blob([response as any], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            console.log(blob)
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', currentRequirement.value.req.name + '.xlsx');
+            document.body.appendChild(link);
+            link.click();
+        }).catch(() => {
+            ElMessage.error('导出失败');
+        })
+}
 
 </script>
 <style scoped lang="less">
