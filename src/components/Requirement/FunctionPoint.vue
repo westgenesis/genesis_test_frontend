@@ -1,6 +1,6 @@
 <template>
     <div class="flex">
-        <div style="height: 100%;border-right: 1px solid #ddd;" class="m-[20px] w-[600px]">
+        <div style="height: 100%;border-right: 1px solid #ddd;" class="m-[20px] w-[400px]">
             <div style="border-bottom: 1px solid #ddd; padding-bottom: 1rem">全部项目 ({{ projects.length }})</div>
             <div style="height: 2rem; margin: 1rem">
                 <a-input-search placeholder="请输入要搜索的名称" style="width: 100%" @search="onSearch" />
@@ -73,8 +73,12 @@
                                 {{ scope.row.file_name?.replace('.docx', '') }}
                             </template>
                         </el-table-column>
-                        <el-table-column prop="description" label="功能模块描述" :width="table_width / 7 || 100" />
                         <el-table-column prop="version" label="版本" :width="table_width / 7 || 100" />
+                        <el-table-column prop="status" label="状态" :width="table_width1 / 10 || 100">
+                            <template #default="scope">
+                                {{ scope.row.status ? scope.row.status : '待操作' }}
+                            </template>
+                        </el-table-column>
                         <el-table-column label="操作" :width="table_width / 7 || 100">
                             <template #default="scope">
                                 <el-button type="text" @click="handleSplit(scope.row)"
@@ -792,5 +796,9 @@ const handleModuleDelete = () => {
 :deep(.el-radio-button__original-radio:checked+.el-radio-button__inner) {
     background-color: purple;
     border-color: purple !important;
+}
+
+:deep(.ant-tree-node-content-wrapper) {
+    display: flex !important;
 }
 </style>

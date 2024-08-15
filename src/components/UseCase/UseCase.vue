@@ -894,9 +894,8 @@ const handleGeneralize = (row) => {
         split_case_id: currentRequirement.value.splitCase.testcase_id,
 
     }
-    ElMessage.success('已下发泛化请求');
     http.post('/api/split_gen_testcase', [params]).then(response => {
-        if (response.status === 'ok') {
+        if (response.status === 'OK') {
             ElMessage.success('下发泛化请求成功');
             refreshAllProjects();
         } else {
@@ -1010,6 +1009,10 @@ const export_by_requirement = () => {
     background-color: purple !important;
     border-color: purple !important;
     filter: opacity(0.9);
+}
+
+:deep(.ant-tree-node-content-wrapper) {
+    display: flex !important;
 }
 
 /* 覆盖 el-radio-button 的默认样式 */

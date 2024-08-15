@@ -4,6 +4,7 @@ import logo from '../assets/logo.svg'
 import { http } from '../http'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '../stores/user'
+import { ElMessage } from 'element-plus'
 
 defineProps<{ msg: string }>()
 
@@ -32,7 +33,7 @@ const onSubmitFormData = async () => {
       userStore.updateEmail(formData.email);
       router.replace('/project/projectManage');
     } else {
-      ElMessage.error(res.message)
+      ElMessage.error('登录失败')
     }
   } catch (error) {
     console.log(error)
