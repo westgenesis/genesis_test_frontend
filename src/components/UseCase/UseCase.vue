@@ -485,7 +485,6 @@ const currentPageReq = ref(1);
 const flattened_cases_req_paged = computed(() => {
     const start = (currentPageReq.value - 1) * pageSizeReq.value;
     const end = start + pageSizeReq.value;
-    console.log(start, end);
     return flattened_cases_req.value.slice(start, end);
 });
 
@@ -498,7 +497,6 @@ const handlePageChangeReq = (page: number) => {
 const selectedRows = ref([]);
 
 const handleSelectionChange = (rows) => {
-    console.log(rows);
     selectedRows.value = rows;
 };
 
@@ -630,9 +628,6 @@ const handleBatchDelete = () => {
     });
 };
 
-const getIds = () => {
-
-}
 const refreshUseCase = async () => {
     const result = await refreshAllProjects();
     const project_id = currentRequirement.value.project._id.$oid;
@@ -780,7 +775,6 @@ const onSelect: TreeProps['onSelect'] = (_, info) => {
     } else if (info?.node?.type === 'split_case') {
         currentType.value = 'split_case';
         currentRequirement.value = info.node;
-        console.log(info.node.splitCase);
         form.value = {
             name: info.node.splitCase.testcase_name,
             pre_condition: info.node.splitCase.pre_condition,
@@ -850,7 +844,6 @@ const handleSave = async () => {
         if (response.status === 'OK') {
             ElMessage.success('保存成功');
             const result = await refreshAllProjects();
-            console.log(response.testcases);
             const currentTestcase = response.testcases.find(testcase => testcase.testcase_id === params.testcase_id);
             form.value.version = currentTestcase.version;
         }
@@ -879,6 +872,13 @@ const showDrawer = () => {
     newForm.value.project_id = currentRequirement.value.project._id.$oid;
     newForm.value.split_file_id = currentRequirement.value.splitReq.split_file_id;
     newForm.value.req_id = currentRequirement.value.req.req_id;
+    console.log(newForm.value);
+    newForm.value.action = '';
+    newForm.value.action_signal = '';
+    newForm.value.result = ''
+    newForm.value.result_signal = '';
+    newForm.value.pre_condition_signal = '';
+    newForm.value.pre_condition = '';
     visible.value = true;
 };
 
@@ -980,9 +980,7 @@ const handleExport = () => {
 
     http.post('/api/export_by_splitcase', params, { responseType: 'blob' })
         .then(response => {
-            console.log(response)
             const blob = new Blob([response as any], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-            console.log(blob)
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
@@ -995,16 +993,13 @@ const handleExport = () => {
 }
 
 const export_by_sub_requirement = () => {
-    console.log(flattened_cases.value);
     if (!flattened_cases.value?.length) {
         ElMessage.error('请先生成或添加用例');
         return;
     }
     http.post('/api/export_by_cases', { cases: flattened_cases.value }, { responseType: 'blob' })
         .then(response => {
-            console.log(response)
             const blob = new Blob([response as any], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-            console.log(blob)
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
@@ -1023,9 +1018,7 @@ const export_by_requirement = () => {
     }
     http.post('/api/export_by_cases', { cases: flattened_cases_req.value }, { responseType: 'blob' })
         .then(response => {
-            console.log(response)
             const blob = new Blob([response as any], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-            console.log(blob)
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;

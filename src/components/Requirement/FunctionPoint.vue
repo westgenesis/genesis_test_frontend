@@ -69,26 +69,28 @@
                                 <requirement-docx :record="props.row" :currentRequirement="currentRequirement" />
                             </template>
                         </el-table-column>
-                        <el-table-column prop="split_file_id" label="功能模块ID" :width="table_width / 7 || 100" />
-                        <el-table-column prop="file_name" label="功能模块名称" :width="table_width / 7 || 100">
+                        <el-table-column prop="split_file_id" label="功能模块ID" :width="table_width2 / 7 || 100" />
+                        <el-table-column prop="file_name" label="功能模块名称" :width="table_width2 / 7 || 100">
                             <template #default="scope">
                                 {{ scope.row.file_name?.replace('.docx', '') }}
                             </template>
                         </el-table-column>
-                        <el-table-column prop="version" label="版本" :width="table_width / 7 || 100" />
-                        <el-table-column prop="status" label="状态" :width="table_width1 / 10 || 100">
+                        <el-table-column prop="version" label="版本" :width="table_width2 / 7 || 100" />
+                        <el-table-column prop="status" label="状态" :width="table_width2 / 10 || 100">
                             <template #default="scope">
-                                {{ scope.row.status ? scope.row.status : '待操作' }}
+                                <a-tag :color="statusMap[scope.row.status] || ''">
+                                    {{ scope.row.status ? scope.row.status : '待操作' }}
+                                </a-tag>
                             </template>
                         </el-table-column>
-                        <el-table-column prop="progress" label="拆分进度" :width="table_width1 / 10 || 100">
+                        <el-table-column prop="progress" label="拆分进度" :width="table_width2 / 10 || 100">
                             <template #default="scope">
                                 <a-progress v-if="scope.row.progress !== undefined && scope.row.progress !== null"
                                     :percent="scope.row.progress" size="small" stroke-width="4" show-info />
                                 <span v-else>- -</span>
                             </template>
                         </el-table-column>
-                        <el-table-column label="操作" :width="table_width / 7 || 100">
+                        <el-table-column label="操作" :width="table_width2 / 7 || 100">
                             <template #default="scope">
                                 <el-button type="text" @click="handleSplit(scope.row)"
                                     :disabled="scope.row.is_table === true">拆分</el-button>
@@ -270,6 +272,11 @@ import RequirementDocx from './RequirementDocx.vue';
 import AddModuleDrawer from './AddModuleDrawer.vue'; // 引入新组件
 import { ApiOutlined, ProjectOutlined, DatabaseOutlined, ProfileOutlined, DownOutlined, SmileOutlined, FrownOutlined, FrownFilled, ExperimentOutlined } from '@ant-design/icons-vue';
 
+const statusMap = {
+    '正在拆分': 'processing',
+    '拆分完成': 'success',
+    '拆分过程中出错': 'error',
+}
 const currentType = ref();
 const visible = ref(false);
 const editVisible = ref(false);
