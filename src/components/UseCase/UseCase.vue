@@ -227,23 +227,38 @@
                         <strong>功能点描述:</strong> {{ currentRequirement?.splitCase?.description || '无描述' }}
                     </div>
                 </div>
-                <div style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem; margin-bottom: 1rem;">
+                <div
+                    style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem; margin-bottom: 1rem; margin-top: 1rem">
                     测试用例
                 </div>
                 <div class="flex" style="justify-content: space-between; margin-right: 1rem; margin-bottom: 1rem;">
                     <div class="flex">
                         <a-input-search placeholder="请输入测试用例名称" @search="onSplitCaseSearch" />
-                        <a-select v-model:value="splitCaseSelect" style="width: 12rem; margin-left: 1rem" placeholder="请选择测试用例类型">
+                        <a-select v-model:value="splitCaseSelect" style="width: 12rem; margin-left: 1rem"
+                            placeholder="请选择测试用例类型">
                             <a-select-option value="">全部</a-select-option>
                             <a-select-option value="positive">正例</a-select-option>
                             <a-select-option value="negative">反例</a-select-option>
                         </a-select>
                     </div>
                     <div>
-                        <a-button type="primary" class="custom-purple-button" @click="handleBatchGeneralize"
-                            size="large" style="margin-right: 1rem;">批量泛化</a-button>
-                        <a-button type="primary" class="custom-purple-button" @click="handleBatchDelete" size="large"
-                            style="margin-right: 1rem;">批量删除</a-button>
+                        <a-button type="primary" class="custom-purple-button" size="large" style="margin-right: 1rem;"
+                            @click="refreshUseCase">刷新</a-button>
+                        <a-dropdown>
+                            <a-button type="primary" class="custom-purple-button" size="large"
+                                style="margin-right: 1rem;">批量操作</a-button>
+                            <template #overlay>
+                                <a-menu>
+                                    <a-menu-item>
+                                        <a @click="handleBatchDelete">批量删除</a>
+                                    </a-menu-item>
+                                    <a-menu-item>
+                                        <a @click="handleBatchGeneralize">批量泛化</a>
+                                    </a-menu-item>
+                                </a-menu>
+                            </template>
+                        </a-dropdown>
+
                         <a-button type="primary" class="custom-purple-button" size="large" style="margin-right: 1rem;"
                             @click="showDrawer">新建测试用例</a-button>
                         <a-button type="primary" class="custom-purple-button" size="large"
@@ -320,6 +335,7 @@
                             <el-button type="text" @click="handleModify(scope.row)">修改</el-button>
                             <el-button type="text" @click="handleGeneralize(scope.row)"
                                 :disabled="scope.row.is_generalized">泛化</el-button>
+                            <el-button type="text" @click="handleDelete(scope.row)">删除</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -538,7 +554,7 @@ const getSplitCases = (req) => {
 }
 
 const handleBatchGeneralize = () => {
-    if (selectedRows.length === 0) {
+    if (selectedRows.value.length === 0) {
         ElMessage.warning('请选择要泛化的测试用例');
         return;
     }
@@ -568,6 +584,26 @@ const handleBatchGeneralize = () => {
     });
 };
 
+const handleDelete = (row) => {
+    const rows = [row]
+    const params = rows.map(row => ({
+        project_id: currentRequirement.value.project._id.$oid,
+        req_id: currentRequirement.value.req.req_id,
+        split_file_id: currentRequirement.value.splitReq.split_file_id,
+        split_case_id: currentRequirement.value.splitCase.testcase_id,
+        testcase_id: row.testcase_id,
+    }));
+
+    http.post('/api/delete_testcases', params).then(response => {
+        if (response.status === 'OK') {
+            ElMessage.success('批量删除成功');
+            refreshAllProjects();
+            currentRequirement.value.splitCase.testcases = response.testcases
+        } else {
+            ElMessage.error('批量删除失败');
+        }
+    });
+}
 
 const handleBatchDelete = () => {
     if (selectedRows.value.length === 0) {
@@ -593,6 +629,28 @@ const handleBatchDelete = () => {
         }
     });
 };
+
+const getIds = () => {
+
+}
+const refreshUseCase = async () => {
+    const result = await refreshAllProjects();
+    const project_id = currentRequirement.value.project._id.$oid;
+    const req_id = currentRequirement.value.req.req_id;
+    const split_file_id = currentRequirement.value.splitReq.split_file_id;
+    const split_case_id = currentRequirement.value.splitCase.testcase_id;
+    const project = result.find(x => x._id.$oid === project_id);
+    const req = project?.requirement_files.find(x => x.req_id === req_id);
+    const splitReq = req?.split_files.find(x => x.split_file_id === split_file_id);
+    const splitCase = splitReq?.split_case.find(x => x.testcase_id === split_case_id);
+    if (splitCase) {
+        currentRequirement.value.splitCase.testcases = splitCase.testcases || [];
+        ElMessage.success('已刷新')
+    } else {
+        ElMessage.error('刷新失败')
+    }
+
+}
 
 const searchValue = ref('');
 
@@ -886,6 +944,10 @@ const handleModify = (row) => {
 }
 
 const handleGeneralize = (row) => {
+    if (!row.action) {
+        ElMessage.error('当前触发条件为空，请修改后再泛化！');
+        return;
+    }
     const params = {
         ...row,
         project_id: currentRequirement.value.project._id.$oid,
@@ -974,6 +1036,8 @@ const export_by_requirement = () => {
             ElMessage.error('导出失败');
         })
 }
+
+
 
 </script>
 <style scoped lang="less">
