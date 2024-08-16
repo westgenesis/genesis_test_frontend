@@ -51,6 +51,8 @@
                     style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;margin-top: 1rem; margin-bottom: 1rem;">
                     功能模块信息</div>
                 <div class="w-full flex justify-end mr-[2rem] mb-[1rem]">
+                    <a-button type="primary" size="large" @click="refreshModule"
+                    class="custom-purple-button mr-[2rem]">刷新</a-button>
                     <a-button type="primary" size="large" @click="openAddDrawer"
                         class="custom-purple-button mr-[2rem]">新建功能模块</a-button>
                     <a-button type="primary" size="large" @click="handleModuleDelete"
@@ -756,6 +758,13 @@ const handleModuleDelete = () => {
         ElMessage.info('已取消删除操作');
     });
 };
+
+const refreshModule = async () => {
+    const result = await projectStore.refreshAllProjects();
+    const currentProject = result.find(x => x._id.$oid === currentRequirement.value.project._id.$oid);
+    const currentReq = currentProject.requirement_files.find(x => x.req_id === currentRequirement.value.req.req_id);
+    currentRequirement.value.req.split_files = currentReq.split_files;
+}
 
 </script>
 <style scoped lang="less">
