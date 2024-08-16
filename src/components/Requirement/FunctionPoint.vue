@@ -572,16 +572,7 @@ const handleNewSave = async () => {
     })
 }
 
-const refreshCases = async () => {
-    const res = await refreshAllProjects();
-    const project_id = currentRequirement.value.project._id.$oid;
-    const split_file_id = currentRequirement.value.splitReq.split_file_id;
-    const req_id = currentRequirement.value.req.req_id;
-    const currentProject = res.find(x => x._id.$oid === project_id);
-    const currentReq = currentProject.requirement_files.find(x => x.req_id === req_id);
-    const currentSplitReq = currentReq.split_files.find(x => x.split_file_id === split_file_id);
-    currentRequirement.value.splitReq.split_case = currentSplitReq.split_case;
-}
+
 
 const handleGenerate = (row) => {
     const project_id = currentRequirement.value.project._id.$oid;
@@ -776,7 +767,31 @@ const refreshModule = async () => {
     const result = await projectStore.refreshAllProjects();
     const currentProject = result.find(x => x._id.$oid === currentRequirement.value.project._id.$oid);
     const currentReq = currentProject.requirement_files.find(x => x.req_id === currentRequirement.value.req.req_id);
-    currentRequirement.value.req.split_files = currentReq.split_files;
+    if (currentReq) {
+        currentRequirement.value.req.split_files = currentReq.split_files;
+        ElMessage.success('已刷新')
+    } else {
+        ElMessage.error('刷新失败')
+    }
+
+
+}
+
+
+const refreshCases = async () => {
+    const res = await refreshAllProjects();
+    const project_id = currentRequirement.value.project._id.$oid;
+    const split_file_id = currentRequirement.value.splitReq.split_file_id;
+    const req_id = currentRequirement.value.req.req_id;
+    const currentProject = res.find(x => x._id.$oid === project_id);
+    const currentReq = currentProject.requirement_files.find(x => x.req_id === req_id);
+    const currentSplitReq = currentReq.split_files.find(x => x.split_file_id === split_file_id);
+    if (currentSplitReq) {
+        currentRequirement.value.splitReq.split_case = currentSplitReq.split_case;
+        ElMessage.success('已刷新')
+    } else {
+        ElMessage.error('刷新失败')
+    }
 }
 
 </script>
