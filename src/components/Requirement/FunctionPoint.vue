@@ -126,6 +126,8 @@
                 </div>
                 <div style="width: 100%">
                     <div class="w-full flex justify-end mr-[2rem] mb-[1rem]">
+                        <a-button type="primary" size="large" @click="refreshCases"
+                            class="custom-purple-button mr-[2rem] mb-[1rem]">刷新</a-button>
                         <a-button type="primary" size="large" @click="handleBatchGenerate"
                             class="custom-purple-button mr-[2rem] mb-[1rem]">批量生成用例</a-button>
                         <a-button type="primary" size="large" @click="showDrawer"
@@ -570,6 +572,17 @@ const handleNewSave = async () => {
     })
 }
 
+const refreshCases = async () => {
+    const res = await refreshAllProjects();
+    const project_id = currentRequirement.value.project._id.$oid;
+    const split_file_id = currentRequirement.value.splitReq.split_file_id;
+    const req_id = currentRequirement.value.req.req_id;
+    const currentProject = res.find(x => x._id.$oid === project_id);
+    const currentReq = currentProject.requirement_files.find(x => x.req_id === req_id);
+    const currentSplitReq = currentReq.split_files.find(x => x.split_file_id === split_file_id);
+    currentRequirement.value.splitReq.split_case = currentSplitReq.split_case;
+}
+
 const handleGenerate = (row) => {
     const project_id = currentRequirement.value.project._id.$oid;
     const split_file_id = currentRequirement.value.splitReq.split_file_id;
@@ -703,7 +716,7 @@ const handleBatchSplit = () => {
 
         http.post('/api/subrequire_batch_generate_points', params).then((res) => {
             if (res) {
-                ElMessage.success('已下发功能点拆解任务，请等待或刷新后去功能点页面查看结果');
+                ElMessage.success('已下发功能点拆解任务，请等待或刷新后查看结果');
                 refreshAllProjects();
             } else {
                 ElMessage.error('拆分失败');
