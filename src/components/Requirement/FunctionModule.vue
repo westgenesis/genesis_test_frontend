@@ -110,7 +110,6 @@ import RequirementDocx from './RequirementDocx.vue';
 import AddModuleDrawer from './AddModuleDrawer.vue'; // 引入新组件
 import { storeToRefs } from 'pinia';
 
-
 const searchValue = ref('');
 const currentFile = ref();
 const uploadRef = ref();

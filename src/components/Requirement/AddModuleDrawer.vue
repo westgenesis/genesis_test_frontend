@@ -72,7 +72,6 @@ const saveModule = () => {
             formData.append('user_file', file);
             formData.append('info', info);
             http.post('/api/add_function_module', formData).then((res) => {
-                console.log(res);
                 if (res.status) {
                     ElMessage.success('保存成功')
                     closeDrawer();

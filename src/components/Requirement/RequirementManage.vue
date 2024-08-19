@@ -20,7 +20,7 @@
                 </div>
             </div>
         </a-card>
-        <a-card style="margin-top: 1rem;">
+        <a-card style="margin-top: 1rem;" id="requirement-card">
             <div
                 style="border-left: 4px solid purple; display: flex; align-items: center; justify-content: space-between; width: 100%;">
                 <div class="ml-[1rem] flex align-center justify-center">需求文档 <div class="ml-[1rem] pb-[2px]" style="cursor: pointer; transform: translateY(-3px);" @click="doRefresh"><RedoOutlined /></div></div>
@@ -79,7 +79,7 @@ import { CloudUploadOutlined, RedoOutlined } from '@ant-design/icons-vue';
 import { UploadProps, ElMessage } from 'element-plus';
 import { http } from '../../http';
 import { requirementStatusMap } from './RequirementModel';
-
+import { ElLoading } from 'element-plus'
 const projectStore = useProjectStore();
 const { currentProject } = storeToRefs(projectStore);
 
@@ -104,9 +104,16 @@ const onBeforeUpload: UploadProps['onChange'] = async (file) => {
     ])
     formData.append('user_file', file.raw as File);
     formData.append('info', info);
+    const loadingInstance = ElLoading.service({
+        target: '#requirement-card'
+    })
+    try {
+        await http.post(`/api/upload_project_file`, formData);
+        await projectStore.refreshProject(currentProject.value['_id']['$oid']);
+    } finally {
+        loadingInstance.close()
+    }
 
-    await http.post(`/api/upload_project_file`, formData);
-    await projectStore.refreshProject(currentProject.value['_id']['$oid']);
 }
 
 const doRefresh = async () => {
@@ -141,7 +148,7 @@ const onBeforeUpdate: UploadProps['onChange'] = async (file, requirement) => {
 }
 
 const doSplitRequirement = async (requirement) => {
-    ElMessage.success('已下发解析请求, 请等待一段时间或刷新后查看');
+    ElMessage.success('已下发解析请求, 请等待一段时间或刷新后查看需求管理');
     const result = await http.post('/api/do_split_requirement', requirement);
 }
 </script>

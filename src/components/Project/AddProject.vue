@@ -77,7 +77,7 @@ const rules = ref({
     kind: [{ required: true, message: '请选择测试环境', trigger: 'change' }],
     description: [{ required: false, message: '请输入项目描述', trigger: 'blur' }],
     period: [{ required: true, message: '请选择计划周期', trigger: 'change' }],
-    repository: [{ required: true, message: '请上传项目知识库文件', trigger: 'change' }],
+    repository: [{ required: false, message: '请上传项目知识库文件', trigger: 'change' }],
 });
 
 const formRef = ref();
@@ -95,10 +95,6 @@ const onBeforeUpload: UploadProps['onChange'] = async (file) => {
 };
 
 const submitForm = () => {
-    if (!fileList._value?.length) {
-        message.error('请上传项目知识库');
-        return;
-    }
     formRef.value.validate().then(() => {
         const params = {
             name: form.value.name,

@@ -465,10 +465,10 @@ const table_width = ref(1000);
 const pagedDataModules = computed(() => {
     const start = (currentPageModules.value - 1) * pageSizeModules.value;
     const end = start + pageSizeModules.value;
-    return currentRequirement.value?.req?.split_files.slice(start, end) || [];
+    return currentRequirement.value?.req?.split_files?.slice(start, end) || [];
 });
 
-const totalItems = computed(() => currentRequirement.value?.req?.split_files.length || 0);
+const totalItems = computed(() => currentRequirement.value?.req?.split_files?.length || 0);
 
 const handlePageChange = (page: number) => {
     currentPageModules.value = page;
