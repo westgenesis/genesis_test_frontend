@@ -174,10 +174,10 @@
                         </el-table-column>
                         <el-table-column label="操作" :width="150">
                             <template #default="scope">
-                                <el-button type="text" style="color: blue"
+                                <el-button type="text"
                                     @click="handleModify(scope.row)">修改</el-button>
 
-                                <el-button type="text" style="color: blue"
+                                <el-button type="text"
                                     @click="handleGenerate(scope.row)">生成用例</el-button>
                             </template>
                         </el-table-column>
@@ -258,6 +258,13 @@
     <!-- 添加 a-drawer 组件 -->
     <AddModuleDrawer :visible="drawerVisible" @close="closeAddDrawer" @save="saveNewModule"
         :currentRequirement="currentRequirement" />
+
+    <HistoryVersionModal
+      :visible="showHistoryModal"
+      :historyData="historyData"
+      @update:visible="showHistoryModal = $event"
+      @viewDetail="handleViewDetail"
+    />
 </template>
 
 <script setup lang="ts">
@@ -271,6 +278,9 @@ import { storeToRefs } from 'pinia';
 import RequirementDocx from './RequirementDocx.vue';
 import AddModuleDrawer from './AddModuleDrawer.vue'; // 引入新组件
 import { ApiOutlined, ProjectOutlined, DatabaseOutlined, ProfileOutlined, DownOutlined, SmileOutlined, FrownOutlined, FrownFilled, ExperimentOutlined } from '@ant-design/icons-vue';
+import HistoryVersionModal from './HistoryVersionModal.vue';
+
+const showHistoryModal = ref(false);
 
 const statusMap = {
     '正在拆分': 'processing',
@@ -289,6 +299,14 @@ const showIcon = ref<boolean>(false);
 const currentRequirement = ref();
 const selectedKeys = ref<string[]>([]);
 const flattened_cases = ref([]);
+
+const showHistory = (row) => {
+    console.log(row)
+}
+
+const saveNewModule = (module) => {
+    closeAddDrawer();
+};
 
 const form = ref({
     name: '',
@@ -522,6 +540,7 @@ const handleEditSave = async () => {
             ElMessage.success('保存成功');
             refreshAllProjects();
             newForm.value.version = response.version;
+            refreshCases(false);
         }
     })
 }
@@ -571,6 +590,7 @@ const handleNewSave = async () => {
             const currentSplitReq = currentReq.split_files.find(x => x.split_file_id === newForm.value.split_file_id);
             currentRequirement.value.splitReq.split_case = currentSplitReq.split_case;
             onDrawerClose();
+            refreshCases();
         } else {
             ElMessage.error('保存失败');
         }
@@ -694,7 +714,7 @@ const handleSplit = (row: any) => {
 };
 
 const handleBatchSplit = () => {
-    if (selectedRows.value.length === 0) {
+    if (selectedRowsModule.value.length === 0) {
         ElMessage.warning('请选择要拆分的功能模块');
         return;
     }
@@ -704,7 +724,7 @@ const handleBatchSplit = () => {
         cancelButtonText: '取消',
         type: 'warning'
     }).then(() => {
-        const params = selectedRows.value.map(row => ({
+        const params = selectedRowsModule.value.map(row => ({
             project_id: currentRequirement.value.project._id.$oid,
             object_name: row.object_name,
             split_file_id: row.split_file_id,
@@ -785,7 +805,7 @@ const refreshModule = async () => {
 }
 
 
-const refreshCases = async () => {
+const refreshCases = async (needShow = true) => {
     const res = await refreshAllProjects();
     const project_id = currentRequirement.value.project._id.$oid;
     const split_file_id = currentRequirement.value.splitReq.split_file_id;
@@ -795,7 +815,9 @@ const refreshCases = async () => {
     const currentSplitReq = currentReq.split_files.find(x => x.split_file_id === split_file_id);
     if (currentSplitReq) {
         currentRequirement.value.splitReq.split_case = currentSplitReq.split_case;
-        ElMessage.success('已刷新')
+        if (needShow) {
+            ElMessage.success('已刷新')
+        }
     } else {
         ElMessage.error('刷新失败')
     }
