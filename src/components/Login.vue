@@ -92,7 +92,7 @@ onMounted(() => {
 
         <div class="mb-[20px] mt-[12px] flex-center">
           <el-button type="button" class="a-button primary large" long @click="onSubmitFormData">
-            登陆
+            登录
           </el-button>
         </div>
       </form>
