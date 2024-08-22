@@ -333,8 +333,8 @@
                     <el-table-column label="操作" :width="150">
                         <template #default="scope">
                             <el-button type="text" @click="handleModify(scope.row)">修改</el-button>
-                            <el-button type="text" @click="handleGeneralize(scope.row)"
-                                :disabled="scope.row.is_generalized">泛化</el-button>
+                            <!-- <el-button type="text" @click="handleGeneralize(scope.row)"
+                                :disabled="scope.row.is_generalized">泛化</el-button> -->
                             <el-button type="text" @click="handleDelete(scope.row)">删除</el-button>
                         </template>
                     </el-table-column>
