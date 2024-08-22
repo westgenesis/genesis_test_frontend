@@ -34,6 +34,9 @@
                     <a-button type="link" @click="downloadFile(file)">
                         <DownloadOutlined />
                     </a-button>
+                    <a-button type="link" class="ml-[1rem]" @click="deleteFile(file)">
+                        <DeleteOutlined />
+                    </a-button>
                 </div>
                 <el-upload ref="uploadRef" :auto-upload="false" :on-change="onBeforeUpload"
                     accept=".doc,.docx,.pdf,.xlsx,.png">
@@ -53,7 +56,7 @@
 import { ref, defineProps, watch } from 'vue';
 import { statusMap } from './projectModal';
 import dayjs, { Dayjs } from 'dayjs';
-import { DownloadOutlined } from '@ant-design/icons-vue';
+import { DownloadOutlined, DeleteOutlined} from '@ant-design/icons-vue';
 import { http } from '../../http';
 import { message } from 'ant-design-vue';
 import { useUserStore } from '../../stores/user';
@@ -80,6 +83,24 @@ const statusOptions = Object.keys(statusMap).reduce((acc, key) => {
 
 const changeEdit = () => {
     isEditing.value = !isEditing.value;
+}
+
+const deleteFile = (file_name) => {
+    console.log(file_name);
+    http.post(`/api/delete_project_file`, {
+        project_id: props.project._id.$oid,
+        object_name: props.project._id.$oid + '/' + file_name,
+        file_name: file_name,
+        object_type: 'knowledges'
+    })
+       .then(() => {
+            message.success('删除成功');
+            fileList.value = fileList.value.filter(x => x !== file_name)
+        })
+       .catch(error => {
+            message.error('删除失败');
+            console.error('删除文件失败', error);
+        });
 }
 
 watch(() => props.project, (newProject) => {

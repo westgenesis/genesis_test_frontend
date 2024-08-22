@@ -95,10 +95,6 @@ onMounted(() => {
             登陆
           </el-button>
         </div>
-        <div class="flex-center mt-[20px]">
-          <span class="mr-1">还没有账号？</span>
-          <router-link class="no-drag text-[#DB22D9]" to="/registry">注册</router-link>
-        </div>
       </form>
       <div class="mt-4 flex items-center justify-center">
         <div class="loginType">

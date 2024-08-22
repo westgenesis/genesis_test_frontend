@@ -26,7 +26,7 @@
                 <div class="ml-[1rem] flex align-center justify-center">需求文档 <div class="ml-[1rem] pb-[2px]" style="cursor: pointer; transform: translateY(-3px);" @click="doRefresh"><RedoOutlined /></div></div>
 
                 <el-upload ref="uploadRef" :auto-upload="false" :on-change="onBeforeUpload" :show-file-list="false"
-                    accept=".doc,.docx,.pdf">
+                    accept=".doc,.docx">
                     <template #trigger>
                         <a-button type="primary" size="large" class="custom-purple-button">
                             <template #icon>
