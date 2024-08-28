@@ -5,9 +5,10 @@ import nodePolyfills from 'vite-plugin-node-stdlib-browser';
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+import vueJsx from '@vitejs/plugin-vue-jsx'
 
 export default defineConfig({
-  plugins: [vue(), nodePolyfills(),   
+  plugins: [vue(), vueJsx(), nodePolyfills(),   
     // ...
     AutoImport({
       resolvers: [ElementPlusResolver()],

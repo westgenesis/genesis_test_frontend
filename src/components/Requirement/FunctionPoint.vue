@@ -277,10 +277,7 @@ import { http } from '../../http';
 import { storeToRefs } from 'pinia';
 import RequirementDocx from './RequirementDocx.vue';
 import AddModuleDrawer from './AddModuleDrawer.vue'; // 引入新组件
-import { ApiOutlined, ProjectOutlined, DatabaseOutlined, ProfileOutlined, DownOutlined, SmileOutlined, FrownOutlined, FrownFilled, ExperimentOutlined } from '@ant-design/icons-vue';
-import HistoryVersionModal from './HistoryVersionModal.vue';
-
-const showHistoryModal = ref(false);
+import { ApiOutlined, ProjectOutlined, DatabaseOutlined, ProfileOutlined, DownOutlined, ExperimentOutlined } from '@ant-design/icons-vue';
 
 const statusMap = {
     '正在拆分': 'processing',

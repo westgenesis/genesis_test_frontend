@@ -7,6 +7,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    ActionCombination: typeof import('./src/components/Script/ActionCombination.vue')['default']
     AddModuleDrawer: typeof import('./src/components/Requirement/AddModuleDrawer.vue')['default']
     AddProject: typeof import('./src/components/Project/AddProject.vue')['default']
     AddRequirementDocx: typeof import('./src/components/Requirement/AddRequirementDocx.vue')['default']
@@ -25,6 +26,7 @@ declare module 'vue' {
     HistoryVersionModal: typeof import('./src/components/Requirement/HistoryVersionModal.vue')['default']
     LeftMenu: typeof import('./src/components/LeftMenu/LeftMenu.vue')['default']
     Login: typeof import('./src/components/Login.vue')['default']
+    MetaAction: typeof import('./src/components/Script/MetaAction.vue')['default']
     ProjectDetail: typeof import('./src/components/Project/ProjectDetail.vue')['default']
     ProjectManage: typeof import('./src/components/Project/ProjectManage.vue')['default']
     Registry: typeof import('./src/components/Registry.vue')['default']
@@ -32,6 +34,7 @@ declare module 'vue' {
     RequirementManage: typeof import('./src/components/Requirement/RequirementManage.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    ScriptFile: typeof import('./src/components/Script/ScriptFile.vue')['default']
     TopBar: typeof import('./src/components/TopBar.vue')['default']
     UseCase: typeof import('./src/components/UseCase/UseCase.vue')['default']
   }

@@ -9,6 +9,9 @@ import RequirementManage from '../components/Requirement/RequirementManage.vue';
 import FunctionModule from '../components/Requirement/FunctionModule.vue';
 import FunctionPoint from '../components/Requirement/FunctionPoint.vue';
 import UseCase from '../components/UseCase/UseCase.vue';
+import ScriptFile from '../components/Script/ScriptFile.vue';
+import MetaAction from '../components/Script/MetaAction.vue';
+import ActionCombination from '../components/Script/ActionCombination.vue';
 
 const routes = [
   {
@@ -48,6 +51,18 @@ const routes = [
   {
     path: '/usecase/usecaseManage',
     component: UseCase
+  },
+  {
+    path: '/script/file',
+    component: ScriptFile
+  },
+  {
+    path: '/script/metaAction',
+    component: MetaAction
+  },
+  {
+    path: '/script/actionCombination',
+    component: ActionCombination
   }
 ];
 

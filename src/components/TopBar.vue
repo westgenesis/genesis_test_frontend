@@ -16,7 +16,17 @@
             <div class="h-full flex items-center">
                 <div v-for="item in topBarItems" :key="item.name" class="p-[10px] topBarItem cursor-pointer"
                     :class="{ 'bg-white': item.name === selectedItem }" @click="handleTopBarClick(item)">
-                    {{ item.name }}
+                    <a-dropdown v-if="item.children" :trigger="['hover']">
+                        <span>{{ item.name }}</span>
+                        <template #overlay>
+                            <a-menu>
+                                <a-menu-item v-for="child in item.children" :key="child.name" @click="handleTopBarClick(child)">
+                                    {{ child.name }}
+                                </a-menu-item>
+                            </a-menu>
+                        </template>
+                    </a-dropdown>
+                    <span v-else>{{ item.name }}</span>
                 </div>
             </div>
         </div>
@@ -71,8 +81,18 @@ const topBarItems = [
     {
         name: '用例管理',
         to: '/usecase/usecaseManage'
+    },
+    {
+        name: '脚本管理',
+        to: '/script/file',
+        children: [
+            { name: '脚本文件', to: '/script/file' },
+            { name: '元动作库', to: '/script/metaAction' },
+            { name: '动作组合库', to: '/script/actionCombination' }
+        ]
     }
 ]
+
 
 const handleTopBarClick = async (item) => {
     selectedItem.value = item.name;
@@ -107,8 +127,10 @@ onMounted(() => {
         selectedItem.value = '项目管理';
     } else if (hash.startsWith('/requirement')) {
         selectedItem.value = '需求管理';
-    } else {
+    } else if (hash.startsWith('/usecase')) {
         selectedItem.value = '用例管理';
+    } else if (hash.startsWith('/script')) {
+        selectedItem.value = '脚本管理'
     }
 })
 
