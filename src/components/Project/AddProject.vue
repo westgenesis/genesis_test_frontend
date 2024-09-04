@@ -18,7 +18,6 @@
                 <a-form-item label="计划周期" name="period">
                     <a-range-picker @change="changePeriod" v-model:value="form.period"/>
                 </a-form-item>
-                
                 <a-form-item label="项目知识库" name="repository">
                     <el-upload ref="uploadRef" :auto-upload="false" :on-change="onBeforeUpload"
                         accept=".doc,.docx,.pdf,.xlsx,.png"

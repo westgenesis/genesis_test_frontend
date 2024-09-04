@@ -22,6 +22,7 @@ declare module 'vue' {
     Empty: typeof import('./src/components/Empty.vue')['default']
     FunctionModule: typeof import('./src/components/Requirement/FunctionModule.vue')['default']
     FunctionPoint: typeof import('./src/components/Requirement/FunctionPoint.vue')['default']
+    HistoryVersionModal: typeof import('./src/components/Requirement/HistoryVersionModal.vue')['default']
     LeftMenu: typeof import('./src/components/LeftMenu/LeftMenu.vue')['default']
     Login: typeof import('./src/components/Login.vue')['default']
     ProjectDetail: typeof import('./src/components/Project/ProjectDetail.vue')['default']

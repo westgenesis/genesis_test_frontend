@@ -209,6 +209,7 @@ const manageRequirement = (record) => {
     router.replace(`/project/manageRequirement/${record._id.$oid}`);
     projectStore.updateCurrentProjectById(record._id.$oid);
 }
+
 </script>
 
 <style scoped>
