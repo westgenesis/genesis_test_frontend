@@ -336,6 +336,7 @@
                             <!-- <el-button type="text" @click="handleGeneralize(scope.row)"
                                 :disabled="scope.row.is_generalized">泛化</el-button> -->
                             <el-button type="text" @click="handleDelete(scope.row)">删除</el-button>
+                            <el-button type="text" @click="handleGenerateFile(scope.row)">生成脚本</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -500,6 +501,31 @@ const handleSelectionChange = (rows) => {
     selectedRows.value = rows;
 };
 
+const showFillModal = (need_fill_result) => {
+    console.log(need_fill_result);
+}
+
+const handleGenerateFile = (row) => {
+    console.log(row);
+    http.post('/api/generate_script_file', row).then(response => {
+        console.log(response);
+        if (response.status === 'need_fill') {
+            const need_fill_result = {
+                pre_condition_signal: response?.unmatched?.pre_condition_signalo,
+                action_signal: response?.unmatched?.action_signal,
+                result_signal: response?.unmatched?.result_signal,
+            }
+            showFillModal(need_fill_result);
+            ElMessage.success('需要创建元动作');
+            refreshAllProjects();
+        } else if (response.status === 'success') {
+            ElMessage.error('生成成功')
+        } else {
+            ElMessage.error('生成失败');
+        }
+    });
+    
+}
 const form = ref({
     name: '',
     pre_condition: '',

@@ -38,12 +38,16 @@
         <a-form-item label="动作描述" name="description">
           <a-input v-model:value="formData.description" placeholder="请输入内容" />
         </a-form-item>
+        <a-form-item label="值" name="value">
+          <a-input v-model:value="formData.value" placeholder="请输入内容" />
+        </a-form-item>
         <a-form-item label="动作执行路径" name="exec_path">
           <a-input v-model:value="formData.exec_path" placeholder="请输入内容" />
         </a-form-item>
         <a-form-item label="路径参数" name="path_parameter">
           <a-input v-model:value="formData.path_parameter" placeholder="请输入内容" />
         </a-form-item>
+
         <a-form-item label="动作类型" name="action_type">
           <a-select v-model:value="formData.action_type" style="width: 100%" @change="updateAllowedMethods">
             <a-select-option value="In">In</a-select-option>
@@ -83,12 +87,16 @@
         <a-form-item label="动作描述" name="description">
           <a-input v-model:value="editFormData.description" placeholder="请输入内容" />
         </a-form-item>
+        <a-form-item label="Value" name="value">
+          <a-input v-model:value="editFormData.value" placeholder="请输入内容" />
+        </a-form-item>
         <a-form-item label="动作执行路径" name="exec_path">
           <a-input v-model:value="editFormData.exec_path" placeholder="请输入内容" />
         </a-form-item>
         <a-form-item label="路径参数" name="path_parameter">
           <a-input v-model:value="editFormData.path_parameter" placeholder="请输入内容" />
         </a-form-item>
+
         <a-form-item label="动作类型" name="action_type">
           <a-select v-model:value="editFormData.action_type" style="width: 100%" @change="updateAllowedMethods">
             <a-select-option value="In">In</a-select-option>
@@ -159,8 +167,9 @@ const editFormData = reactive({
 const rules = {
   name: [{ required: true, message: '请输入动作名称' }],
   description: [{ required: true, message: '请输入动作描述' }],
-  exec_path: [{ required: true, message: '请输入动作执行路径' }],
-  path_parameter: [{ required: false, message: '请输入路径参数' }]
+  exec_path: [{ required: false, message: '请输入动作执行路径' }],
+  path_parameter: [{ required: false, message: '请输入路径参数' }],
+  value: [{ required: true, message: '请输入Value' }]
 };
 
 onMounted(() => {
@@ -250,6 +259,11 @@ const columns = [
     key: 'description',
   },
   {
+    title: 'Value',
+    dataIndex: 'value',
+    key: 'value',
+  },
+  {
     title: '执行路径',
     dataIndex: 'exec_path',
     key: 'exec_path',
@@ -302,8 +316,8 @@ const handleEditOk = async () => {
     ElMessage.error('描述不能为空');
     return;
   }
-  if (!editFormData.exec_path) {
-    ElMessage.error('执行路径不能为空');
+  if (!editFormData.value) {
+    ElMessage.error('值不能为空');
     return;
   }
   try {

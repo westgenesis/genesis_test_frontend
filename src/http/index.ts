@@ -1,9 +1,9 @@
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
-
+const baseURL = import.meta.env.VITE_API_BASE_URL || '';
 // 创建 Axios 实例
 const http = axios.create({
-  baseURL: '/dev-api', // 设置基本的请求 URL
+  baseURL: baseURL, // 设置基本的请求 URL
   timeout: 60000 // 设置请求超时时间
 })
 
