@@ -356,7 +356,7 @@
                         <a-textarea v-model:value="form.pre_condition" placeholder="请输入初始条件" :rows="2" />
                     </a-form-item>
                     <a-form-item label="初始条件信号">
-                        <a-input v-model:value="form.pre_condition_signal" placeholder="请输入初始条件信号" />
+                        <a-textarea v-model:value="form.pre_condition_signal" placeholder="请输入初始条件信号" :rows="2"/>
                     </a-form-item>
                     <a-form-item label="触发条件">
                         <a-textarea v-model:value="form.action" placeholder="请输入触发条件" :rows="2" />
@@ -393,7 +393,7 @@
                         <a-textarea v-model:value="newForm.pre_condition" placeholder="请输入初始条件" :rows="2" />
                     </a-form-item>
                     <a-form-item label="初始条件信号">
-                        <a-input v-model:value="newForm.pre_condition_signal" placeholder="请输入初始条件信号" />
+                        <a-textarea v-model:value="newForm.pre_condition_signal" placeholder="请输入初始条件信号" :rows="2"/>
                     </a-form-item>
                     <a-form-item label="触发条件">
                         <a-textarea v-model:value="newForm.action" placeholder="请输入触发条件" :rows="2" />
@@ -430,7 +430,7 @@
                         <a-textarea v-model:value="newForm.pre_condition" placeholder="请输入初始条件" :rows="2" />
                     </a-form-item>
                     <a-form-item label="初始条件信号">
-                        <a-input v-model:value="newForm.pre_condition_signal" placeholder="请输入初始条件信号" />
+                        <a-textarea v-model:value="newForm.pre_condition_signal" placeholder="请输入初始条件信号" :rows="2" />
                     </a-form-item>
                     <a-form-item label="触发条件">
                         <a-textarea v-model:value="newForm.action" placeholder="请输入触发条件" :rows="2" />
