@@ -36,4 +36,13 @@ export default defineConfig({
   optimizeDeps: {
     include: ['vue', 'vue-router'], // 明确指定要预构建的依赖，减少内存占用
   },
+  build: {
+    rollupOptions: {
+      output: {
+        entryFileNames: '[name].js',
+        chunkFileNames: '[name].js',
+        assetFileNames: '[name].[ext]'
+      }
+    }
+  }
 });
