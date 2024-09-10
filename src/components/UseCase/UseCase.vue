@@ -350,25 +350,25 @@
                         </a-select>
                     </a-form-item>
                     <a-form-item label="测试用例名称">
-                        <a-input v-model:value="form.name" placeholder="请输入测试用例名称" :rows="4" />
+                        <a-input v-model:value="form.name" placeholder="请输入测试用例名称" />
                     </a-form-item>
                     <a-form-item label="初始条件">
-                        <a-textarea v-model:value="form.pre_condition" placeholder="请输入初始条件" :rows="2" />
+                        <a-textarea v-model:value="form.pre_condition" placeholder="请输入初始条件" :rows="3" />
                     </a-form-item>
                     <a-form-item label="初始条件信号">
-                        <a-textarea v-model:value="form.pre_condition_signal" placeholder="请输入初始条件信号" :rows="2"/>
+                        <a-textarea v-model:value="form.pre_condition_signal" placeholder="请输入初始条件信号" :rows="3"/>
                     </a-form-item>
                     <a-form-item label="触发条件">
-                        <a-textarea v-model:value="form.action" placeholder="请输入触发条件" :rows="2" />
+                        <a-textarea v-model:value="form.action" placeholder="请输入触发条件" :rows="3" />
                     </a-form-item>
                     <a-form-item label="触发条件信号">
-                        <a-textarea v-model:value="form.action_signal" placeholder="请输入触发条件信号" :rows="2" />
+                        <a-textarea v-model:value="form.action_signal" placeholder="请输入触发条件信号" :rows="3" />
                     </a-form-item>
                     <a-form-item label="预期结果">
-                        <a-textarea v-model:value="form.result" placeholder="请输入预期结果" :rows="2" />
+                        <a-textarea v-model:value="form.result" placeholder="请输入预期结果" :rows="3" />
                     </a-form-item>
                     <a-form-item label="预期结果信号">
-                        <a-textarea v-model:value="form.result_signal" placeholder="请输入预期结果" :rows="2" />
+                        <a-textarea v-model:value="form.result_signal" placeholder="请输入预期结果" :rows="3" />
                     </a-form-item>
                     <a-form-item>
                         <div class="flex justify-center items-center" style="flex-direction: column;">
@@ -390,22 +390,22 @@
                         <a-input v-model:value="newForm.name" placeholder="请输入功能点名称" :rows="4" />
                     </a-form-item>
                     <a-form-item label="初始条件">
-                        <a-textarea v-model:value="newForm.pre_condition" placeholder="请输入初始条件" :rows="2" />
+                        <a-textarea v-model:value="newForm.pre_condition" placeholder="请输入初始条件" :rows="3" />
                     </a-form-item>
                     <a-form-item label="初始条件信号">
-                        <a-textarea v-model:value="newForm.pre_condition_signal" placeholder="请输入初始条件信号" :rows="2"/>
+                        <a-textarea v-model:value="newForm.pre_condition_signal" placeholder="请输入初始条件信号" :rows="3"/>
                     </a-form-item>
                     <a-form-item label="触发条件">
-                        <a-textarea v-model:value="newForm.action" placeholder="请输入触发条件" :rows="2" />
+                        <a-textarea v-model:value="newForm.action" placeholder="请输入触发条件" :rows="3" />
                     </a-form-item>
                     <a-form-item label="触发条件信号">
-                        <a-textarea v-model:value="newForm.action_signal" placeholder="请输入触发条件信号" :rows="2" />
+                        <a-textarea v-model:value="newForm.action_signal" placeholder="请输入触发条件信号" :rows="3" />
                     </a-form-item>
                     <a-form-item label="预期结果">
-                        <a-textarea v-model:value="newForm.result" placeholder="请输入预期结果" :rows="2" />
+                        <a-textarea v-model:value="newForm.result" placeholder="请输入预期结果" :rows="3" />
                     </a-form-item>
                     <a-form-item label="预期结果信号">
-                        <a-textarea v-model:value="newForm.result_signal" placeholder="请输入预期结果" :rows="2" />
+                        <a-textarea v-model:value="newForm.result_signal" placeholder="请输入预期结果" :rows="3" />
                     </a-form-item>
                     <a-form-item>
                         <div class="flex justify-center items-center" style="flex-direction: column;">
@@ -427,22 +427,22 @@
                         <a-input v-model:value="newForm.name" placeholder="请输入功能点名称" :rows="4" />
                     </a-form-item>
                     <a-form-item label="初始条件">
-                        <a-textarea v-model:value="newForm.pre_condition" placeholder="请输入初始条件" :rows="2" />
+                        <a-textarea v-model:value="newForm.pre_condition" placeholder="请输入初始条件" :rows="3" />
                     </a-form-item>
                     <a-form-item label="初始条件信号">
-                        <a-textarea v-model:value="newForm.pre_condition_signal" placeholder="请输入初始条件信号" :rows="2" />
+                        <a-textarea v-model:value="newForm.pre_condition_signal" placeholder="请输入初始条件信号" :rows="3" />
                     </a-form-item>
                     <a-form-item label="触发条件">
-                        <a-textarea v-model:value="newForm.action" placeholder="请输入触发条件" :rows="2" />
+                        <a-textarea v-model:value="newForm.action" placeholder="请输入触发条件" :rows="3" />
                     </a-form-item>
                     <a-form-item label="触发条件信号">
-                        <a-textarea v-model:value="newForm.action_signal" placeholder="请输入触发条件信号" :rows="2" />
+                        <a-textarea v-model:value="newForm.action_signal" placeholder="请输入触发条件信号" :rows="3" />
                     </a-form-item>
                     <a-form-item label="预期结果">
-                        <a-textarea v-model:value="newForm.result" placeholder="请输入预期结果" :rows="2" />
+                        <a-textarea v-model:value="newForm.result" placeholder="请输入预期结果" :rows="3" />
                     </a-form-item>
                     <a-form-item label="预期结果信号">
-                        <a-textarea v-model:value="newForm.result_signal" placeholder="请输入预期结果" :rows="2" />
+                        <a-textarea v-model:value="newForm.result_signal" placeholder="请输入预期结果" :rows="3" />
                     </a-form-item>
                     <a-form-item>
                         <div class="flex justify-center items-center" style="flex-direction: column;">
