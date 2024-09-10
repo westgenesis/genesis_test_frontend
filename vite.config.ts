@@ -41,7 +41,13 @@ export default defineConfig({
       output: {
         entryFileNames: '[name].js',
         chunkFileNames: '[name].js',
-        assetFileNames: '[name].[ext]'
+        // 对于 SVG 文件，将其输出到 /assets 目录
+        assetFileNames: ({ name }) => {
+          if (name && name.endsWith('.svg')) {
+            return 'assets/[name].[ext]'; // 将 SVG 文件输出到 /assets 目录
+          }
+          return '[name].[ext]'; // 其他文件保持默认输出
+        },
       }
     }
   }
