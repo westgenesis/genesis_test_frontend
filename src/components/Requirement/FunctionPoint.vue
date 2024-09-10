@@ -1,6 +1,6 @@
 <template>
     <div class="flex">
-        <div style="height: 100%;border-right: 1px solid #ddd;" class="m-[20px] w-[400px]">
+        <div style="height: 100%;border-right: 1px solid #ddd;" class="m-[20px] w-[28rem]">
             <div style="border-bottom: 1px solid #ddd; padding-bottom: 1rem">全部项目 ({{ projects.length }})</div>
             <div style="height: 2rem; margin: 1rem">
                 <a-input-search placeholder="请输入要搜索的名称" style="width: 100%" @search="onSearch" />
