@@ -86,7 +86,6 @@
   <script setup>
   import { ref, reactive, onMounted, computed } from 'vue';
   import { ElMessageBox } from 'element-plus';
-  import { Form, Input, Drawer, Table, Button, Select, Pagination } from 'ant-design-vue';
   import { http } from '../../http';
   import { ElMessage } from 'element-plus';
   import { HomeOutlined } from '@ant-design/icons-vue';

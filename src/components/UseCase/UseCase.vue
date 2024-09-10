@@ -453,7 +453,14 @@
             </a-drawer>
         </div>
     </div>
-
+    <FillModal
+    :visible="fillModalVisible"
+    :preConditionSignals="need_fill_result.pre_condition_signal"
+    :actionSignals="need_fill_result.action_signal"
+    :resultSignals="need_fill_result.result_signal"
+    @update:visible="fillModalVisible = $event"
+    @ok="handleFillModalOk"
+  />
 </template>
 
 <script setup lang="ts">
@@ -465,6 +472,7 @@ import { useProductFetch } from '../../handler/handler';
 import { http } from '../../http';
 import { storeToRefs } from 'pinia';
 import { ApiOutlined, ProjectOutlined, DatabaseOutlined, ProfileOutlined, DownOutlined, SmileOutlined, FrownOutlined, FrownFilled, ExperimentOutlined } from '@ant-design/icons-vue';
+import FillModal from './FillModal.vue';
 
 const currentType = ref();
 const visible = ref(false);
@@ -501,9 +509,23 @@ const handleSelectionChange = (rows) => {
     selectedRows.value = rows;
 };
 
-const showFillModal = (need_fill_result) => {
-    console.log(need_fill_result);
-}
+const fillModalVisible = ref(false);
+const need_fill_result = ref({
+  pre_condition_signal: [],
+  action_signal: [],
+  result_signal: [],
+});
+
+const showFillModal = (result) => {
+  need_fill_result.value = result;
+  fillModalVisible.value = true;
+};
+
+const handleFillModalOk = (formData) => {
+  // 处理表单提交
+  console.log(formData);
+  fillModalVisible.value = false;
+};
 
 const handleGenerateFile = (row) => {
     console.log(row);
@@ -511,7 +533,7 @@ const handleGenerateFile = (row) => {
         console.log(response);
         if (response.status === 'need_fill') {
             const need_fill_result = {
-                pre_condition_signal: response?.unmatched?.pre_condition_signalo,
+                pre_condition_signal: response?.unmatched?.pre_condition_signal,
                 action_signal: response?.unmatched?.action_signal,
                 result_signal: response?.unmatched?.result_signal,
             }
