@@ -458,6 +458,7 @@
     :preConditionSignals="need_fill_result.pre_condition_signal"
     :actionSignals="need_fill_result.action_signal"
     :resultSignals="need_fill_result.result_signal"
+    @removeSignal="handleRemoveSignal"
     @update:visible="fillModalVisible = $event"
     @ok="handleFillModalOk"
   />
@@ -521,6 +522,17 @@ const showFillModal = (result) => {
   fillModalVisible.value = true;
 };
 
+const handleRemoveSignal = ({ type, signal }) => {
+  if (type === 'preCondition') {
+    need_fill_result.value.pre_condition_signal = need_fill_result.value.pre_condition_signal.filter(s => s.name + s.value !== signal);
+  } else if (type === 'action') {
+    need_fill_result.value.action_signal = need_fill_result.value.action_signal.filter(s => s.name + s.value !== signal);
+  } else if (type === 'result') {
+    need_fill_result.value.result_signal = need_fill_result.value.result_signal.filter(s => s.name + s.value !== signal);
+  }
+  need_fill_result.value = { ...need_fill_result.value };
+};
+
 const handleFillModalOk = (formData) => {
   // 处理表单提交
   console.log(formData);
@@ -528,7 +540,6 @@ const handleFillModalOk = (formData) => {
 };
 
 const handleGenerateFile = (row) => {
-    console.log(row);
     http.post('/api/generate_script_file', row).then(response => {
         console.log(response);
         if (response.status === 'need_fill') {
@@ -541,7 +552,7 @@ const handleGenerateFile = (row) => {
             ElMessage.success('需要创建元动作');
             refreshAllProjects();
         } else if (response.status === 'success') {
-            ElMessage.error('生成成功')
+            ElMessage.success('生成成功')
         } else {
             ElMessage.error('生成失败');
         }

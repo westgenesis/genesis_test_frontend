@@ -14,9 +14,11 @@
   <div class="m-[20px]">
     <div class="mt-[20px] mb-[20px] flex justify-end">
       <a-button type="primary" size="large" @click="showDrawer" class="custom-purple-button mr-[2rem]">添加元动作</a-button>
+      <a-button type="primary" size="large" @click="deleteSelectedActions" class="custom-purple-button mr-[2rem]">删除选中项</a-button>
     </div>
 
-    <a-table :columns="columns" bordered :data-source="pagedDataSource" size="middle" :pagination="false" :scroll="{ y: table_height}">
+    <a-table :columns="columns" :row-key="record => record._id" bordered :data-source="pagedDataSource" size="middle" :pagination="false" :scroll="{ y: table_height}" 
+    :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }">
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
           <a-button type="link" size="small" @click="showEditDrawer(record)">编辑</a-button>
@@ -64,12 +66,12 @@
           </a-select>
         </a-form-item>
         <a-form-item label="动作支持的方法" name="allowed_methods">
-          <a-checkbox-group v-model:value="formData.allowed_methods" :disabled="true">
-            <a-checkbox value="set">Set</a-checkbox>
-            <a-checkbox value="get">Get</a-checkbox>
-            <a-checkbox value="write">Write</a-checkbox>
-            <a-checkbox value="read">Read</a-checkbox>
-          </a-checkbox-group>
+          <a-radio-group v-model:value="formData.allowed_methods">
+            <a-radio value="set">Set</a-radio>
+            <a-radio value="check">Check</a-radio>
+            <a-radio value="write">Write</a-radio>
+            <a-radio value="read">Read</a-radio>
+          </a-radio-group>
         </a-form-item>
       </a-form>
       <div slot="footer" class="flex justify-end">
@@ -98,13 +100,13 @@
         </a-form-item>
 
         <a-form-item label="动作类型" name="action_type">
-          <a-select v-model:value="editFormData.action_type" style="width: 100%" @change="updateAllowedMethods">
+          <a-select v-model:value="editFormData.action_type" style="width: 100%" @change="updateAllowedMethodsEdit">
             <a-select-option value="In">In</a-select-option>
             <a-select-option value="Out">Out</a-select-option>
           </a-select>
         </a-form-item>
         <a-form-item label="所属对象" name="belongs_to">
-          <a-select v-model:value="editFormData.belongs_to" style="width: 100%" @change="updateAllowedMethods">
+          <a-select v-model:value="editFormData.belongs_to" style="width: 100%" @change="updateAllowedMethodsEdit">
             <a-select-option value="Vector_IO">Vector_IO</a-select-option>
             <a-select-option value="CAN">CAN</a-select-option>
             <a-select-option value="LIN">LIN</a-select-option>
@@ -113,12 +115,12 @@
           </a-select>
         </a-form-item>
         <a-form-item label="动作支持的方法" name="allowed_methods">
-          <a-checkbox-group v-model:value="editFormData.allowed_methods" :disabled="true">
-            <a-checkbox value="set">Set</a-checkbox>
-            <a-checkbox value="get">Get</a-checkbox>
-            <a-checkbox value="write">Write</a-checkbox>
-            <a-checkbox value="read">Read</a-checkbox>
-          </a-checkbox-group>
+          <a-radio-group v-model:value="editFormData.allowed_methods">
+            <a-radio value="set">Set</a-radio>
+            <a-radio value="check">Check</a-radio>
+            <a-radio value="write">Write</a-radio>
+            <a-radio value="read">Read</a-radio>
+          </a-radio-group>
         </a-form-item>
       </a-form>
       <div slot="footer" class="flex justify-end">
@@ -133,9 +135,9 @@
 
 <script setup>
 import { ref, reactive, onMounted, computed } from 'vue';
-import { Form, Input, Drawer, Table, Button, Select, CheckboxGroup, Pagination } from 'ant-design-vue';
+import { Form, Input, Drawer, Table, Button, Select, Radio, Pagination, Checkbox } from 'ant-design-vue';
 import { http } from '../../http';
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElMessageBox } from 'element-plus';
 import { HomeOutlined, UserOutlined } from '@ant-design/icons-vue';
 
 const dataSource = ref([]);
@@ -144,6 +146,8 @@ const pageSize = 10;
 const visible = ref(false);
 const editVisible = ref(false);
 const submitting = ref(false);
+const selectedRowKeys = ref([]);
+
 const formData = reactive({
   name: '',
   description: '',
@@ -151,7 +155,7 @@ const formData = reactive({
   path_parameter: '',
   action_type: 'In',
   belongs_to: 'Vector_IO',
-  allowed_methods: ['set']
+  allowed_methods: 'set' // 改为单选
 });
 const editFormData = reactive({
   _id: '',
@@ -161,15 +165,19 @@ const editFormData = reactive({
   path_parameter: '',
   action_type: 'In',
   belongs_to: 'Vector_IO',
-  allowed_methods: ['set']
+  allowed_methods: 'set' // 改为单选
 });
+
+const onSelectChange = (selectedKeys) => {
+  selectedRowKeys.value = selectedKeys;
+}
 
 const rules = {
   name: [{ required: true, message: '请输入动作名称' }],
   description: [{ required: true, message: '请输入动作描述' }],
   exec_path: [{ required: false, message: '请输入动作执行路径' }],
   path_parameter: [{ required: false, message: '请输入路径参数' }],
-  value: [{ required: true, message: '请输入Value' }]
+  value: [{ required: false, message: '请输入Value' }]
 };
 
 onMounted(() => {
@@ -215,10 +223,6 @@ const handleOk = async () => {
     ElMessage.error('描述不能为空');
     return;
   }
-  if (!formData.exec_path) {
-    ElMessage.error('执行路径不能为空');
-    return;
-  }
   try {
     const resp = await http.post('/api/create_new_action', formData);
     console.log(resp);
@@ -232,20 +236,36 @@ const handleOk = async () => {
 const updateAllowedMethods = () => {
   const { action_type, belongs_to } = formData;
   if (action_type && belongs_to) {
-    formData.allowed_methods = [];
     if (action_type === 'In' && (belongs_to === 'Vector_IO' || belongs_to === 'CAN' || belongs_to === 'LIN')) {
-      formData.allowed_methods = ['set'];
+      formData.allowed_methods = 'set';
     } else if (action_type === 'Out' && (belongs_to === 'Vector_IO' || belongs_to === 'CAN' || belongs_to === 'LIN')) {
-      formData.allowed_methods = ['get'];
+      formData.allowed_methods = 'check';
     } else if (action_type === 'In' && (belongs_to === 'dSpace_IO' || belongs_to === 'dSpace_CAN')) {
-      formData.allowed_methods = ['write'];
+      formData.allowed_methods = 'write';
     } else if (action_type === 'Out' && (belongs_to === 'dSpace_IO' || belongs_to === 'dSpace_CAN')) {
-      formData.allowed_methods = ['read'];
+      formData.allowed_methods = 'read';
     }
   } else {
-    formData.allowed_methods = [];
+    formData.allowed_methods = '';
   }
 };
+
+const updateAllowedMethodsEdit = () => {
+  const { action_type, belongs_to } = editFormData;
+  if (action_type && belongs_to) {
+    if (action_type === 'In' && (belongs_to === 'Vector_IO' || belongs_to === 'CAN' || belongs_to === 'LIN')) {
+      editFormData.allowed_methods = 'set';
+    } else if (action_type === 'Out' && (belongs_to === 'Vector_IO' || belongs_to === 'CAN' || belongs_to === 'LIN')) {
+      editFormData.allowed_methods = 'check';
+    } else if (action_type === 'In' && (belongs_to === 'dSpace_IO' || belongs_to === 'dSpace_CAN')) {
+      editFormData.allowed_methods = 'write';
+    } else if (action_type === 'Out' && (belongs_to === 'dSpace_IO' || belongs_to === 'dSpace_CAN')) {
+      editFormData.allowed_methods = 'read';
+    }
+  } else {
+    editFormData.allowed_methods = '';
+  }
+}
 
 const columns = [
   {
@@ -316,10 +336,6 @@ const handleEditOk = async () => {
     ElMessage.error('描述不能为空');
     return;
   }
-  if (!editFormData.value) {
-    ElMessage.error('值不能为空');
-    return;
-  }
   try {
     const resp = await http.put(`/api/update_action/${editFormData._id}`, editFormData);
     console.log(resp);
@@ -328,6 +344,30 @@ const handleEditOk = async () => {
   } catch (errInfo) {
     console.error(errInfo);
   }
+};
+
+const deleteSelectedActions = async () => {
+  if (selectedRowKeys.value.length === 0) {
+    ElMessage.warning('请选择要删除的项');
+    return;
+  }
+
+  ElMessageBox.confirm('确定要删除选中的功能模块吗？', '删除确认', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  }).then(async () => {
+    try {
+      const resp = await http.delete('/api/delete_actions', {
+        data: { ids: selectedRowKeys.value }
+      });
+      console.log(resp);
+      fetchActions();
+      selectedIds.value = [];
+    } catch (errInfo) {
+      console.error(errInfo);
+    }
+  });
 };
 
 const deleteAction = async (id) => {
@@ -343,8 +383,7 @@ const deleteAction = async (id) => {
     } catch (errInfo) {
       console.error(errInfo);
     }
-  })
-
+  });
 };
 </script>
 
