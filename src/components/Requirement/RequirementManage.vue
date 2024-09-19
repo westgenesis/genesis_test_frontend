@@ -108,8 +108,15 @@ const onBeforeUpload: UploadProps['onChange'] = async (file) => {
         target: '#requirement-card'
     })
     try {
-        await http.post(`/api/upload_project_file`, formData);
+        const result = await http.post(`/api/upload_project_file`, formData);
+        console.log(result)
         await projectStore.refreshProject(currentProject.value['_id']['$oid']);
+    } catch(e) {
+        console.log(e)
+        console.log(e?.response?.data?.message)
+        if (e?.response?.data?.message) {
+            ElMessage.error(e.response.data.message);
+        }
     } finally {
         loadingInstance.close()
     }

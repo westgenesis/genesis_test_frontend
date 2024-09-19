@@ -11,7 +11,7 @@
     </a-breadcrumb>
   </div>
   
-  <div class="m-[20px]">
+  <div class="m-[32px]">
     <div class="mt-[20px] mb-[20px] flex justify-end">
       <a-button type="primary" size="large" @click="showDrawer" class="custom-purple-button mr-[2rem]">添加元动作</a-button>
       <a-button type="primary" size="large" @click="deleteSelectedActions" class="custom-purple-button mr-[2rem]">删除选中项</a-button>
@@ -20,6 +20,11 @@
     <a-table :columns="columns" :row-key="record => record._id" bordered :data-source="pagedDataSource" size="middle" :pagination="false" :scroll="{ y: table_height}" 
     :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }">
       <template #bodyCell="{ column, record }">
+        <template v-if="column.key === 'values'">
+          <div v-for="value in record.values" :key="value">
+            {{ value.name + ' ' }} 
+          </div>
+        </template>
         <template v-if="column.key === 'action'">
           <a-button type="link" size="small" @click="showEditDrawer(record)">编辑</a-button>
           <a-button type="link" size="small" @click="deleteAction(record._id)">删除</a-button>
@@ -39,9 +44,6 @@
         </a-form-item>
         <a-form-item label="动作描述" name="description">
           <a-input v-model:value="formData.description" placeholder="请输入内容" />
-        </a-form-item>
-        <a-form-item label="值" name="value">
-          <a-input v-model:value="formData.value" placeholder="请输入内容" />
         </a-form-item>
         <a-form-item label="动作执行路径" name="exec_path">
           <a-input v-model:value="formData.exec_path" placeholder="请输入内容" />
@@ -66,13 +68,27 @@
           </a-select>
         </a-form-item>
         <a-form-item label="动作支持的方法" name="allowed_methods">
-          <a-radio-group v-model:value="formData.allowed_methods">
+          <a-radio-group v-model:value="formData.allowed_methods" disabled>
             <a-radio value="set">Set</a-radio>
             <a-radio value="check">Check</a-radio>
             <a-radio value="write">Write</a-radio>
             <a-radio value="read">Read</a-radio>
           </a-radio-group>
         </a-form-item>
+
+        <!-- 动态添加值的表单 -->
+        <div v-for="(value, index) in formData.values" :key="index">
+          <a-card>
+            <a-form-item label="值名称" :name="['values', index, 'name']">
+              <a-input v-model:value="value.name" placeholder="请输入值名称" />
+            </a-form-item>
+            <a-form-item label="值描述" :name="['values', index, 'description']">
+              <a-input v-model:value="value.description" placeholder="请输入值描述" />
+            </a-form-item>
+            <a-button type="link" @click="removeValue(index)">删除</a-button>
+          </a-card>
+        </div>
+        <a-button style="margin-top: 1rem" type="dashed" @click="addValue">添加值</a-button>
       </a-form>
       <div slot="footer" class="flex justify-end">
         <a-button class="custom-purple-button mr-[2rem]" type="primary" @click="handleClose" size="large">关闭</a-button>
@@ -88,9 +104,6 @@
         </a-form-item>
         <a-form-item label="动作描述" name="description">
           <a-input v-model:value="editFormData.description" placeholder="请输入内容" />
-        </a-form-item>
-        <a-form-item label="Value" name="value">
-          <a-input v-model:value="editFormData.value" placeholder="请输入内容" />
         </a-form-item>
         <a-form-item label="动作执行路径" name="exec_path">
           <a-input v-model:value="editFormData.exec_path" placeholder="请输入内容" />
@@ -114,14 +127,28 @@
             <a-select-option value="dSpace_CAN">dSpace_CAN</a-select-option>
           </a-select>
         </a-form-item>
-        <a-form-item label="动作支持的方法" name="allowed_methods">
-          <a-radio-group v-model:value="editFormData.allowed_methods">
+        <a-form-item label="动作支持的方法" name="allowed_methods" >
+          <a-radio-group v-model:value="editFormData.allowed_methods" disabled>
             <a-radio value="set">Set</a-radio>
             <a-radio value="check">Check</a-radio>
             <a-radio value="write">Write</a-radio>
             <a-radio value="read">Read</a-radio>
           </a-radio-group>
         </a-form-item>
+
+        <!-- 动态添加值的表单 -->
+        <div v-for="(value, index) in editFormData.values" :key="index">
+          <a-card>
+            <a-form-item label="值名称" :name="['values', index, 'name']">
+              <a-input v-model:value="value.name" placeholder="请输入值名称" />
+            </a-form-item>
+            <a-form-item label="值描述" :name="['values', index, 'description']">
+              <a-input v-model:value="value.description" placeholder="请输入值描述" />
+            </a-form-item>
+            <a-button type="link" @click="removeEditValue(index)">删除</a-button>
+          </a-card>
+        </div>
+        <a-button style="margin-top: 1rem" type="dashed" @click="addEditValue">添加值</a-button>
       </a-form>
       <div slot="footer" class="flex justify-end">
         <a-button class="custom-purple-button mr-[2rem]" type="primary" @click="handleEditClose"
@@ -155,7 +182,8 @@ const formData = reactive({
   path_parameter: '',
   action_type: 'In',
   belongs_to: 'Vector_IO',
-  allowed_methods: 'set' // 改为单选
+  allowed_methods: 'set',
+  values: [{ name: '', description: '' }] // 默认有一个值
 });
 const editFormData = reactive({
   _id: '',
@@ -165,7 +193,8 @@ const editFormData = reactive({
   path_parameter: '',
   action_type: 'In',
   belongs_to: 'Vector_IO',
-  allowed_methods: 'set' // 改为单选
+  allowed_methods: 'set',
+  values: [{ name: '', description: '' }] // 默认有一个值
 });
 
 const onSelectChange = (selectedKeys) => {
@@ -177,7 +206,10 @@ const rules = {
   description: [{ required: true, message: '请输入动作描述' }],
   exec_path: [{ required: false, message: '请输入动作执行路径' }],
   path_parameter: [{ required: false, message: '请输入路径参数' }],
-  value: [{ required: false, message: '请输入Value' }]
+  values: {
+    name: [{ required: true, message: '请输入值名称' }],
+    description: [{ required: true, message: '请输入值描述' }]
+  }
 };
 
 onMounted(() => {
@@ -208,10 +240,6 @@ const table_height = window.innerHeight * 0.6
 
 const showDrawer = () => {
   visible.value = true;
-};
-
-const handleClose = () => {
-  visible.value = false;
 };
 
 const handleOk = async () => {
@@ -279,9 +307,9 @@ const columns = [
     key: 'description',
   },
   {
-    title: 'Value',
-    dataIndex: 'value',
-    key: 'value',
+    title: 'Values',
+    dataIndex: 'values',
+    key: 'values',
   },
   {
     title: '执行路径',
@@ -320,11 +348,41 @@ const showEditDrawer = (record) => {
   editFormData.action_type = record.action_type;
   editFormData.belongs_to = record.belongs_to;
   editFormData.allowed_methods = record.allowed_methods;
+  editFormData.values = JSON.parse(JSON.stringify(record.values)) || [{ name: '', description: '' }]; // 确保有默认值
   editVisible.value = true;
+};
+
+const resetFormData = () => {
+  formData.name = '';
+  formData.description = '';
+  formData.exec_path = '';
+  formData.path_parameter = '';
+  formData.action_type = 'In';
+  formData.belongs_to = 'Vector_IO';
+  formData.allowed_methods = 'set';
+  formData.values = [{ name: '', description: '' }];
+};
+
+const resetEditFormData = () => {
+  editFormData._id = '';
+  editFormData.name = '';
+  editFormData.description = '';
+  editFormData.exec_path = '';
+  editFormData.path_parameter = '';
+  editFormData.action_type = 'In';
+  editFormData.belongs_to = 'Vector_IO';
+  editFormData.allowed_methods = 'set';
+  editFormData.values = [{ name: '', description: '' }];
+};
+
+const handleClose = () => {
+  visible.value = false;
+  resetFormData(); // 重置表单数据
 };
 
 const handleEditClose = () => {
   editVisible.value = false;
+  resetEditFormData(); // 重置表单数据
 };
 
 const handleEditOk = async () => {
@@ -385,8 +443,27 @@ const deleteAction = async (id) => {
     }
   });
 };
-</script>
 
+// 添加值
+const addValue = () => {
+  formData.values.push({ name: '', description: '' });
+};
+
+// 删除值
+const removeValue = (index) => {
+  formData.values.splice(index, 1);
+};
+
+// 添加编辑值
+const addEditValue = () => {
+  editFormData.values.push({ name: '', description: '' });
+};
+
+// 删除编辑值
+const removeEditValue = (index) => {
+  editFormData.values.splice(index, 1);
+};
+</script>
 
 <style scoped>
 .custom-purple-button {
