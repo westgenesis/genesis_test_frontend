@@ -202,7 +202,6 @@ const fetchAvailableActions = () => {
   http.get('/api/get_actions').then(response => {
     availableActions.value = response.actions;
   }).catch(error => {
-    ElMessage.error('');
   });
 };
 
