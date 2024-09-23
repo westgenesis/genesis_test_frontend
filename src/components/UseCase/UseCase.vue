@@ -453,6 +453,12 @@
             </a-drawer>
         </div>
     </div>
+    <a-modal v-model:visible="selectBelongsToModalVisible" title="选择所属对象" @ok="handleSelectBelongsToOk">
+        <a-radio-group v-model:value="selectedBelongsTo">
+            <a-radio value="Vector">Vector</a-radio>
+            <a-radio value="dSpace">dSpace</a-radio>
+        </a-radio-group>
+    </a-modal>
     <FillModal
     :visible="fillModalVisible"
     :preConditionSignals="need_fill_result.pre_condition_signal"
@@ -474,7 +480,8 @@ import { http } from '../../http';
 import { storeToRefs } from 'pinia';
 import { ApiOutlined, ProjectOutlined, DatabaseOutlined, ProfileOutlined, DownOutlined, SmileOutlined, FrownOutlined, FrownFilled, ExperimentOutlined } from '@ant-design/icons-vue';
 import FillModal from './FillModal.vue';
-
+const selectBelongsToModalVisible = ref(false);
+const selectedBelongsTo = ref('Vector');
 const currentType = ref();
 const visible = ref(false);
 const editVisible = ref(false);
@@ -539,26 +546,42 @@ const handleFillModalOk = (formData) => {
   fillModalVisible.value = false;
 };
 
+const currentRow = ref({
+    belongs_to: '',
+});
+
 const handleGenerateFile = (row) => {
-    http.post('/api/generate_script_file', row).then(response => {
-        console.log(response);
-        if (response.status === 'need_fill') {
-            const need_fill_result = {
-                pre_condition_signal: response?.unmatched?.pre_condition_signal,
-                action_signal: response?.unmatched?.action_signal,
-                result_signal: response?.unmatched?.result_signal,
-            }
-            showFillModal(need_fill_result);
-            ElMessage.success('需要创建元动作');
-            refreshAllProjects();
-        } else if (response.status === 'success') {
-            ElMessage.success('生成成功')
-        } else {
-            ElMessage.error('生成失败');
+    selectBelongsToModalVisible.value = true;
+    currentRow.value = row;
+};
+
+const handleSelectBelongsToOk = () => {
+        if (!selectedBelongsTo.value) {
+            ElMessage.error('请选择所属对象');
+            return;
         }
-    });
-    
-}
+
+        currentRow.value.belongs_to = selectedBelongsTo.value;
+        selectBelongsToModalVisible.value = false;
+
+        http.post('/api/generate_script_file', currentRow.value).then(response => {
+            console.log(response);
+            if (response.status === 'need_fill') {
+                const need_fill_result = {
+                    pre_condition_signal: response?.unmatched?.pre_condition_signal,
+                    action_signal: response?.unmatched?.action_signal,
+                    result_signal: response?.unmatched?.result_signal,
+                }
+                showFillModal(need_fill_result);
+                ElMessage.success('需要创建元动作');
+                refreshAllProjects();
+            } else if (response.status === 'success') {
+                ElMessage.success('生成成功')
+            } else {
+                ElMessage.error('生成失败');
+            }
+        });
+    };
 const form = ref({
     name: '',
     pre_condition: '',

@@ -9,19 +9,19 @@
           <div v-if="preConditionSignals.length">
             <h3>初始条件信号</h3>
             <div v-for="signal in preConditionSignals" :key="signal.name + signal.value" @click="handlePreConditionSignalChange(signal)" :class="['signal-item', { 'selected': selectedSignal === signal.name + signal.value }]">
-              {{ signal.name }} = {{ signal.value }}
+              {{ signal.name }} {{ signal.value ? '=' : '' }}  {{ signal.value }}
             </div>
           </div>
           <div v-if="actionSignals.length">
             <h3>触发条件信号</h3>
             <div v-for="signal in actionSignals" :key="signal.name + signal.value" @click="handleActionSignalChange(signal)" :class="['signal-item', { 'selected': selectedSignal === signal.name + signal.value }]">
-              {{ signal.name }} = {{ signal.value }}
+              {{ signal.name }} {{ signal.value ? '=' : '' }}  {{ signal.value }}
             </div>
           </div>
           <div v-if="resultSignals.length">
             <h3>预期结果信号</h3>
             <div v-for="signal in resultSignals" :key="signal.name + signal.value" @click="handleResultSignalChange(signal)" :class="['signal-item', { 'selected': selectedSignal === signal.name + signal.value }]">
-              {{ signal.name }} = {{ signal.value }}
+              {{ signal.name }} {{ signal.value ? '=' : '' }} {{ signal.value }}
             </div>
           </div>
         </div>
@@ -45,26 +45,27 @@
             <a-input v-model:value="form.pathParameter" placeholder="请输入路径参数" />
           </a-form-item>
           <a-form-item label="动作类型" name="action_type">
-            <a-select v-model:value="form.actionType" style="width: 100%">
+            <a-select v-model:value="form.actionType" style="width: 100%" @change="updateAllowedMethods">
               <a-select-option value="In">In</a-select-option>
               <a-select-option value="Out">Out</a-select-option>
             </a-select>
           </a-form-item>
           <a-form-item label="所属对象" name="belongs_to">
-            <a-select v-model:value="form.belongsTo" style="width: 100%">
+            <a-select v-model:value="form.belongsTo" style="width: 100%" @change="updateAllowedMethods">
               <a-select-option value="Vector_IO">Vector_IO</a-select-option>
-              <a-select-option value="CAN">CAN</a-select-option>
-              <a-select-option value="LIN">LIN</a-select-option>
-              <a-select-option value="dSpace_IO">dSpace</a-select-option>
-              <a-select-option value="dSpace_CAN">dSpace_CAN</a-select-option>
+            <a-select-option value="Vector_CAN">Vector_CAN</a-select-option>
+            <a-select-option value="Vector_LIN">Vector_LIN</a-select-option>
+            <a-select-option value="dSpace_IO">dSpace_IO</a-select-option>
+            <a-select-option value="dSpace_CAN">dSpace_CAN</a-select-option>
+            <a-select-option value="dSpace_LIN">dSpace_LIN</a-select-option>
             </a-select>
           </a-form-item>
-          <a-form-item label="动作支持的方法" name="allowed_methods" disabled>
-            <a-radio-group v-model:value="form.allowedMethods">
-              <a-radio v-if="selectedSignalType === 'preCondition' || selectedSignalType === 'action'" value="set">Set</a-radio>
-              <a-radio v-if="selectedSignalType === 'preCondition' || selectedSignalType === 'action'" value="write">Write</a-radio>
-              <a-radio v-if="selectedSignalType === 'result'" value="check">Check</a-radio>
-              <a-radio v-if="selectedSignalType === 'result'" value="read">Read</a-radio>
+          <a-form-item label="动作支持的方法" name="allowed_methods">
+            <a-radio-group v-model:value="form.allowedMethods" disabled>
+              <a-radio value="set">Set</a-radio>
+              <a-radio value="write">Write</a-radio>
+              <a-radio value="check">Check</a-radio>
+              <a-radio value="read">Read</a-radio>
             </a-radio-group>
           </a-form-item>
 
@@ -87,7 +88,7 @@
         </div>
         <a-form :model="formData" :rules="rules" layout="vertical" v-if="activeTab === 'combination'">
         <a-form-item label="动作组合名称" name="name">
-          <a-input v-model:value="formData.name" placeholder="请输入内容" />
+          <a-input v-model:value="formData.name" placeholder="请输入内容" disabled/>
         </a-form-item>
         <a-form-item label="动作组合描述" name="description">
           <a-input v-model:value="formData.description" placeholder="请输入内容" />
@@ -231,6 +232,7 @@ const handlePreConditionSignalChange = (signal) => {
   selectedResultSignal.value = '';
   selectedSignal.value = signal.name + signal.value;
   selectedSignalType.value = 'preCondition';
+  form.actionType = 'In'
   form.allowedMethods = 'set'; // 默认选中 set
 };
 
@@ -240,7 +242,8 @@ const handleActionSignalChange = (signal) => {
   selectedResultSignal.value = '';
   selectedSignal.value = signal.name + signal.value;
   selectedSignalType.value = 'action';
-  form.allowedMethods = 'check'; // 默认选中 check
+  form.actionType = 'In'
+  form.allowedMethods = 'set'; // 默认选中 check
 };
 
 const handleResultSignalChange = (signal) => {
@@ -249,6 +252,7 @@ const handleResultSignalChange = (signal) => {
   selectedResultSignal.value = signal.name + signal.value;
   selectedSignal.value = signal.name + signal.value;
   selectedSignalType.value = 'result';
+  form.actionType = 'Out'
   form.allowedMethods = 'check'; // 默认选中 check
 };
 
@@ -431,6 +435,24 @@ const handleOk = async () => {
     }
   } catch (errInfo) {
     console.error(errInfo);
+  }
+};
+
+const updateAllowedMethods = () => {
+  const { actionType, belongsTo } = form;
+  console.log(actionType, belongsTo)
+  if (actionType && belongsTo) {
+    if (actionType === 'In' && (belongsTo === 'Vector_IO' || belongsTo === 'Vector_CAN' || belongsTo === 'Vector_LIN')) {
+      form.allowedMethods = 'set';
+    } else if (actionType === 'Out' && (belongsTo === 'Vector_IO' || belongsTo === 'Vector_CAN' || belongsTo === 'Vector_LIN')) {
+      form.allowedMethods = 'check';
+    } else if (actionType === 'In' && (belongsTo === 'dSpace_IO' || belongsTo === 'dSpace_CAN' || belongsTo === 'dSpace_LIN')) {
+      form.allowedMethods = 'write';
+    } else if (actionType === 'Out' && (belongsTo === 'dSpace_IO' || belongsTo === 'dSpace_CAN' || belongsTo === 'dSpace_LIN')) {
+      form.allowedMethods = 'read';
+    }
+  } else {
+    form.allowedMethods = '';
   }
 };
 </script>

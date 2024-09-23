@@ -64,6 +64,9 @@
               <a-select-option v-for="action in availableActions" :key="action.name" :value="action._id">{{ action.name
                 }}</a-select-option>
             </a-select>
+            <a-button type="link" size="small" @click="deleteStep(index)" class="ml-[10px]">
+              <delete-outlined />
+            </a-button>
           </div>
           <a-button type="dashed" @click="addStep" class="w-[200px]">添加步骤</a-button>
         </a-form-item>
@@ -103,11 +106,14 @@
         <a-form-item v-if="editFormData.is_file === '元动作'" label="动作组合内容" name="exec_path">
           <div v-for="(step, index) in editFormData.steps" :key="index" class="mb-[10px]">
             <span class="mr-[10px]">Step {{ index + 1 }}</span>
-            <a-select :value="editFormData.steps?.[index]?._id" @change="(v) => { handleEditChange(v, index) }" placeholder="请选择动作"
-              class="w-[200px]">
+            <a-select :value="editFormData.steps[index]._id" @change="(v) => { handleEditChange(v, index) }"
+              placeholder="请选择动作" class="w-[200px]">
               <a-select-option v-for="action in availableActions" :key="action.name" :value="action._id">{{ action.name
                 }}</a-select-option>
             </a-select>
+            <a-button type="link" size="small" @click="deleteEditStep(index)" class="ml-[10px]">
+              <delete-outlined />
+            </a-button>
           </div>
           <a-button type="dashed" @click="addEditStep" class="w-[200px]">添加步骤</a-button>
         </a-form-item>
@@ -128,7 +134,7 @@ import { ElMessageBox } from 'element-plus';
 import { http } from '../../http';
 import { ElMessage } from 'element-plus';
 import { HomeOutlined } from '@ant-design/icons-vue';
-
+import { DownloadOutlined, DeleteOutlined} from '@ant-design/icons-vue';
 const dataSource = ref([]);
 const currentPage = ref(1);
 const pageSize = 10;
@@ -165,6 +171,7 @@ const handleChange = (v, index) => {
 }
 
 const handleEditChange = (v, index) => {
+  console.log(v, index);
   const action = availableActions.value.find(x => x._id === v)
   editFormData.steps[index] = { action: action };
 }
@@ -234,6 +241,15 @@ const handleOk = async () => {
       ElMessage.error('请为每个步骤选择动作');
       return;
     }
+    formData.file_name = undefined;
+  } else if (formData.is_file === '动作组合文件') {
+    if (!formData.file_name) {
+      ElMessage.error('请选择动作组合文件');
+      return;
+    }
+    formData.steps = [];
+  } else {
+    return;
   }
 
   try {
@@ -245,8 +261,26 @@ const handleOk = async () => {
     const resp = await http.post('/api/action_combinations', payload);
     visible.value = false;
     fetchActionCombinations();
-  } catch (errInfo) {
-    console.error(errInfo);
+  } catch (e) {
+    if (e?.response?.data?.message) {
+
+    }
+    formData.steps = [];
+  }
+
+  try {
+    const steps = formData.steps.map(step => step.action);
+    const payload = {
+      ...formData,
+      steps,
+    };
+    const resp = await http.post('/api/action_combinations', payload);
+    visible.value = false;
+    fetchActionCombinations();
+  } catch (e) {
+    if (e?.response?.data?.message) {
+      ElMessage.error(e.response.data.message);
+    }
   }
 };
 
@@ -290,12 +324,17 @@ const showEditDrawer = (record) => {
   editFormData.steps = [{ action: '' }];
   editFormData.file_name = '';
   editFormData.is_file = '元动作'; // 默认值为元动作
-
-  // 设置编辑表单的数据
   editFormData._id = record._id;
   editFormData.name = record.name;
   editFormData.description = record.description;
-  editFormData.steps = record.steps;
+  const steps = JSON.parse(JSON.stringify(record.steps)).map(s => {
+    if (s.action) {
+      return s.action
+    }
+    return s;
+  });
+  editFormData.steps = steps;
+  console.log(steps)
   editFormData.is_file = record.is_file; // 设置 is_file 的值
   editFormData.file_name = record.file_name;
 
@@ -319,10 +358,18 @@ const handleEditOk = async () => {
   }
 
   if (editFormData.is_file === '元动作') {
-    const hasEmptyAction = editFormData.steps.some(step => !step.action);
-    if (hasEmptyAction) {
-      ElMessage.error('请为每个步骤选择动作');
-      return;
+    console.log(editFormData.steps)
+    editFormData.steps = editFormData.steps.map(step => {
+      if (step.action) {
+        return step.action;
+      }
+      return step;
+    })
+    for (const step of editFormData.steps) {
+      if (!step.name) {
+        ElMessage.error('请选择正确的步骤名称');
+        return;
+      }
     }
   }
 
@@ -404,6 +451,14 @@ const onBeforeUploadEdit = async (file) => {
     loadingInstance.close()
   }
 }
+
+const deleteStep = (index) => {
+  formData.steps.splice(index, 1);
+};
+
+const deleteEditStep = (index) => {
+  editFormData.steps.splice(index, 1);
+};
 </script>
 
 <style scoped>

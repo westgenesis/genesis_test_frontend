@@ -12,6 +12,7 @@ import UseCase from '../components/UseCase/UseCase.vue';
 import ScriptFile from '../components/Script/ScriptFile.vue';
 import MetaAction from '../components/Script/MetaAction.vue';
 import ActionCombination from '../components/Script/ActionCombination.vue';
+import RequirementMain from '../components/Requirement/RequirementMain.vue';
 
 const routes = [
   {
@@ -47,6 +48,10 @@ const routes = [
   {
     path: '/requirement/functionPoints',
     component: FunctionPoint
+  },
+  {
+    path: '/requirement/requirementMain',
+    component: RequirementMain
   },
   {
     path: '/usecase/usecaseManage',

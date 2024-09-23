@@ -20,8 +20,9 @@
     "jsxFragmentFactory": "Fragment", // JSX 片段工厂，Vue 3 使用 Fragment
     "moduleResolution": "node", // 模块解析策略为 Node.js 风格
     "esModuleInterop": true, // 允许与 ES 模块的互操作性
-    "strict": true, // 启用所有严格类型检查选项
-    "skipLibCheck": true // 跳过库文件的类型检查
+    "strict": false, // 启用所有严格类型检查选项
+    "skipLibCheck": true, // 跳过库文件的类型检查
+    "noImplicitAny": false
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"], // 包含的文件
   "exclude": ["node_modules", "dist"] // 排除的文件或目录

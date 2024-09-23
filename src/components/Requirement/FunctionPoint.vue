@@ -136,7 +136,7 @@
                             class="custom-purple-button mr-[2rem] mb-[1rem]">新建功能点</a-button>
                     </div>
                     <el-table :data="currentRequirement?.splitReq?.split_case" style="width: 100%"
-                        id="function_point_table" :height="table_height" @selection-change="onPointsSelectionChange">
+                        id="function_point_table" @selection-change="onPointsSelectionChange">
                         <el-table-column type="selection" width="50" />
                         <el-table-column type="expand">
                             <template #default="scope">

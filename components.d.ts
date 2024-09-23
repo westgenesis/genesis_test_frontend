@@ -32,11 +32,17 @@ declare module 'vue' {
     ProjectManage: typeof import('./src/components/Project/ProjectManage.vue')['default']
     Registry: typeof import('./src/components/Registry.vue')['default']
     RequirementDocx: typeof import('./src/components/Requirement/RequirementDocx.vue')['default']
+    RequirementInner: typeof import('./src/components/Requirement/RequirementInner.vue')['default']
+    RequirementMain: typeof import('./src/components/Requirement/RequirementMain.vue')['default']
     RequirementManage: typeof import('./src/components/Requirement/RequirementManage.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     ScriptFile: typeof import('./src/components/Script/ScriptFile.vue')['default']
+    SplitCaseInner: typeof import('./src/components/Requirement/SplitCaseInner.vue')['default']
+    SplitRequirementInner: typeof import('./src/components/Requirement/SplitRequirementInner.vue')['default']
+    TestCaseInner: typeof import('./src/components/Requirement/TestCaseInner.vue')['default']
     TopBar: typeof import('./src/components/TopBar.vue')['default']
     UseCase: typeof import('./src/components/UseCase/UseCase.vue')['default']
+    UseCaseInner: typeof import('./src/components/Requirement/UseCaseInner.vue')['default']
   }
 }

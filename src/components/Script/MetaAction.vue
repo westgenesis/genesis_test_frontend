@@ -10,19 +10,21 @@
       <a-breadcrumb-item>元动作库</a-breadcrumb-item>
     </a-breadcrumb>
   </div>
-  
+
   <div class="m-[32px]">
     <div class="mt-[20px] mb-[20px] flex justify-end">
       <a-button type="primary" size="large" @click="showDrawer" class="custom-purple-button mr-[2rem]">添加元动作</a-button>
-      <a-button type="primary" size="large" @click="deleteSelectedActions" class="custom-purple-button mr-[2rem]">删除选中项</a-button>
+      <a-button type="primary" size="large" @click="deleteSelectedActions"
+        class="custom-purple-button mr-[2rem]">删除选中项</a-button>
     </div>
 
-    <a-table :columns="columns" :row-key="record => record._id" bordered :data-source="pagedDataSource" size="middle" :pagination="false" :scroll="{ y: table_height}" 
-    :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }">
+    <a-table :columns="columns" :row-key="record => record._id" bordered :data-source="pagedDataSource" size="middle"
+      :pagination="false" :scroll="{ y: table_height }"
+      :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }">
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'values'">
           <div v-for="value in record.values" :key="value">
-            {{ value.name + ' ' }} 
+            {{ value.name + ' ' }}
           </div>
         </template>
         <template v-if="column.key === 'action'">
@@ -61,10 +63,11 @@
         <a-form-item label="所属对象" name="belongs_to">
           <a-select v-model:value="formData.belongs_to" style="width: 100%" @change="updateAllowedMethods">
             <a-select-option value="Vector_IO">Vector_IO</a-select-option>
-            <a-select-option value="CAN">CAN</a-select-option>
-            <a-select-option value="LIN">LIN</a-select-option>
-            <a-select-option value="dSpace_IO">dSpace</a-select-option>
+            <a-select-option value="Vector_CAN">Vector_CAN</a-select-option>
+            <a-select-option value="Vector_LIN">Vector_LIN</a-select-option>
+            <a-select-option value="dSpace_IO">dSpace_IO</a-select-option>
             <a-select-option value="dSpace_CAN">dSpace_CAN</a-select-option>
+            <a-select-option value="dSpace_LIN">dSpace_LIN</a-select-option>
           </a-select>
         </a-form-item>
         <a-form-item label="动作支持的方法" name="allowed_methods">
@@ -121,13 +124,14 @@
         <a-form-item label="所属对象" name="belongs_to">
           <a-select v-model:value="editFormData.belongs_to" style="width: 100%" @change="updateAllowedMethodsEdit">
             <a-select-option value="Vector_IO">Vector_IO</a-select-option>
-            <a-select-option value="CAN">CAN</a-select-option>
-            <a-select-option value="LIN">LIN</a-select-option>
-            <a-select-option value="dSpace_IO">dSpace</a-select-option>
+            <a-select-option value="Vector_CAN">Vector_CAN</a-select-option>
+            <a-select-option value="Vector_LIN">Vector_LIN</a-select-option>
+            <a-select-option value="dSpace_IO">dSpace_IO</a-select-option>
             <a-select-option value="dSpace_CAN">dSpace_CAN</a-select-option>
+            <a-select-option value="dSpace_LIN">dSpace_LIN</a-select-option>
           </a-select>
         </a-form-item>
-        <a-form-item label="动作支持的方法" name="allowed_methods" >
+        <a-form-item label="动作支持的方法" name="allowed_methods">
           <a-radio-group v-model:value="editFormData.allowed_methods" disabled>
             <a-radio value="set">Set</a-radio>
             <a-radio value="check">Check</a-radio>
@@ -251,26 +255,36 @@ const handleOk = async () => {
     ElMessage.error('描述不能为空');
     return;
   }
+  for (const v of formData.values) {
+    if (!v.name) {
+      ElMessage.error('值名称不能为空');
+      return;
+    }
+  }
+
+
   try {
     const resp = await http.post('/api/create_new_action', formData);
     console.log(resp);
     visible.value = false;
     fetchActions();
-  } catch (errInfo) {
-    console.error(errInfo);
+  } catch (e) {
+    if (e?.response?.data?.message) {
+      ElMessage.error(e.response.data.message);
+    }
   }
 };
 
 const updateAllowedMethods = () => {
   const { action_type, belongs_to } = formData;
   if (action_type && belongs_to) {
-    if (action_type === 'In' && (belongs_to === 'Vector_IO' || belongs_to === 'CAN' || belongs_to === 'LIN')) {
+    if (action_type === 'In' && (belongs_to === 'Vector_IO' || belongs_to === 'Vector_CAN' || belongs_to === 'Vector_LIN')) {
       formData.allowed_methods = 'set';
-    } else if (action_type === 'Out' && (belongs_to === 'Vector_IO' || belongs_to === 'CAN' || belongs_to === 'LIN')) {
+    } else if (action_type === 'Out' && (belongs_to === 'Vector_IO' || belongs_to === 'Vector_CAN' || belongs_to === 'Vector_LIN')) {
       formData.allowed_methods = 'check';
-    } else if (action_type === 'In' && (belongs_to === 'dSpace_IO' || belongs_to === 'dSpace_CAN')) {
+    } else if (action_type === 'In' && (belongs_to === 'dSpace_IO' || belongs_to === 'dSpace_CAN' || belongs_to === 'dSpace_LIN')) {
       formData.allowed_methods = 'write';
-    } else if (action_type === 'Out' && (belongs_to === 'dSpace_IO' || belongs_to === 'dSpace_CAN')) {
+    } else if (action_type === 'Out' && (belongs_to === 'dSpace_IO' || belongs_to === 'dSpace_CAN' || belongs_to === 'dSpace_LIN')) {
       formData.allowed_methods = 'read';
     }
   } else {
@@ -281,19 +295,19 @@ const updateAllowedMethods = () => {
 const updateAllowedMethodsEdit = () => {
   const { action_type, belongs_to } = editFormData;
   if (action_type && belongs_to) {
-    if (action_type === 'In' && (belongs_to === 'Vector_IO' || belongs_to === 'CAN' || belongs_to === 'LIN')) {
+    if (action_type === 'In' && (belongs_to === 'Vector_IO' || belongs_to === 'Vector_CAN' || belongs_to === 'Vector_LIN')) {
       editFormData.allowed_methods = 'set';
-    } else if (action_type === 'Out' && (belongs_to === 'Vector_IO' || belongs_to === 'CAN' || belongs_to === 'LIN')) {
+    } else if (action_type === 'Out' && (belongs_to === 'Vector_IO' || belongs_to === 'Vector_CAN' || belongs_to === 'Vector_LIN')) {
       editFormData.allowed_methods = 'check';
-    } else if (action_type === 'In' && (belongs_to === 'dSpace_IO' || belongs_to === 'dSpace_CAN')) {
+    } else if (action_type === 'In' && (belongs_to === 'dSpace_IO' || belongs_to === 'dSpace_CAN' || belongs_to === 'dSpace_LIN')) {
       editFormData.allowed_methods = 'write';
-    } else if (action_type === 'Out' && (belongs_to === 'dSpace_IO' || belongs_to === 'dSpace_CAN')) {
+    } else if (action_type === 'Out' && (belongs_to === 'dSpace_IO' || belongs_to === 'dSpace_CAN' || belongs_to === 'dSpace_LIN')) {
       editFormData.allowed_methods = 'read';
     }
   } else {
     editFormData.allowed_methods = '';
   }
-}
+};
 
 const columns = [
   {
@@ -393,6 +407,12 @@ const handleEditOk = async () => {
   if (!editFormData.description) {
     ElMessage.error('描述不能为空');
     return;
+  }
+  for (const v of editFormData.values) {
+    if (!v.name) {
+      ElMessage.error('值名称不能为空');
+      return;
+    }
   }
   try {
     const resp = await http.put(`/api/update_action/${editFormData._id}`, editFormData);
