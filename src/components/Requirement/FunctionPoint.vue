@@ -475,7 +475,6 @@ const pagedData = computed(() => {
 
 const currentPageModules = ref(1);
 const pageSizeModules = ref(10);
-const table_width = ref(1000);
 
 const pagedDataModules = computed(() => {
     const start = (currentPageModules.value - 1) * pageSizeModules.value;
@@ -674,8 +673,6 @@ const handleModify = (row) => {
 
 
 const drawerVisible = ref(false);
-const newModuleName = ref('');
-const newModuleDescription = ref('');
 
 const openAddDrawer = () => {
     drawerVisible.value = true;

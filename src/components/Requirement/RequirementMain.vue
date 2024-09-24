@@ -7,7 +7,7 @@
             </div>
             
             <div style="height: calc(100vh - 10.3rem); overflow: scroll; background-color: rgba(248, 248, 254, 0.5);">
-                <a-tree :show-line="false" :show-icon="true" :default-expanded-keys="[treeData?.[0]?._id?.$oid]" :tree-data="treeData"
+                <a-tree :show-line="false" :show-icon="true" :default-expanded-keys="[projects?.[0]?._id?.$oid + '-' + projects?.[0]?.requirement_files?.[0]?.req_id]" :tree-data="treeData"
                     @select="onSelect" v-model:selectedKeys="selectedKeys">
                     <template #switcherIcon="{ switcherCls }"><down-outlined :class="switcherCls" /></template>
                     <template #icon="node">
@@ -32,7 +32,7 @@
         </div>
 
         
-        <div class="w-full h-[90vh] pt-[2rem] overflow-scroll">
+        <div class="w-full h-[96vh] pt-[2rem] overflow-scroll">
             <div v-if="currentType === 'requirement'">
                 <RequirementInner :currentRequirement="currentRequirement" :selectNodeByKey="selectNodeByKey" />
             </div>
@@ -67,7 +67,6 @@ const projectStore = useProjectStore();
 const { projects } = storeToRefs(projectStore);
 const currentRequirement = ref();
 const selectedKeys = ref<string[]>([]);
-const treeRef = ref();
 
 const searchValue = ref('');
 
@@ -124,7 +123,7 @@ const treeData = computed(() => {
                     const fileName = parts.pop();
                     return {
                         title: fileName,
-                        key: `${project._id.$oid}-${req.id}`,
+                        key: `${project._id.$oid}-${req.req_id}`,
                         fullPath: req.name,
                         req: req,
                         project: project,

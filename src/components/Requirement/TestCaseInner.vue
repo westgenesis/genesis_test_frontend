@@ -1,6 +1,6 @@
 <template>
     <a-tabs v-model:activeKey="activeTab">
-        <a-tab-pane key="detail" tab="详情"></a-tab-pane>
+        <a-tab-pane key="detail" tab="测试用例详情"></a-tab-pane>
     </a-tabs>
     <a-form :model="form" layout="vertical">
         <a-form-item label="测试用例类型">

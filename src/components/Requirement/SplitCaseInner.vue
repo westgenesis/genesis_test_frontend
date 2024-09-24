@@ -1,7 +1,7 @@
 <template>
     <a-tabs v-model:activeKey="activeTab">
         <a-tab-pane key="detail" tab="功能点详情"></a-tab-pane>
-        <a-tab-pan key="testcase_table" tab="测试用例"></a-tab-pan>
+        <a-tab-pane key="testcase_table" tab="测试用例"></a-tab-pane>
     </a-tabs>
     <div v-if="activeTab === 'detail'">
         <div style="border-left: 2px solid purple; margin-left: 0.25rem; padding-left: 1rem; margin-bottom: 1rem;">
@@ -28,14 +28,14 @@
             </a-form-item>
         </a-form>
     </div>
-    <div v-if="activeTab === 'testcase_table'">
-        <div style="display: flex; justify-content: flex-end;">
+    <div v-if="activeTab === 'testcase_table'" style="margin: 1rem">
+        <div style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
             <a-button type="primary" class="custom-purple-button" size="large" style="margin-right: 1rem;"
             @click="showDrawer">新建测试用例</a-button>
-        <a-button type="primary" class="custom-purple-button" size="large" @click="handleExport">导出全部</a-button>
+            <a-button type="primary" class="custom-purple-button" size="large" @click="handleExport">导出全部</a-button>
         </div>
 
-        <el-table :data="tableData" style="width: 100%" id="function_point_table" :height="table_height1"
+        <el-table :data="pagedTableData" style="width: 100%" id="function_point_table" :height="table_height1"
             @selection-change="handleSelectionChange">
             <el-table-column type="expand">
                 <template #default="scope">
@@ -83,8 +83,10 @@
             <el-table-column prop="testcase_id" label="测试用例ID" :width="table_width1 / 8 || 100" />
             <el-table-column prop="testcase_name" label="测试用例名称" :width="table_width1 / 5 || 100">
                 <template #default="scope">
-                    <el-button type="primary" text @click="clickTitle(scope.row)">{{ scope.row.testcase_name
-                        }}</el-button>
+                    <el-tooltip class="box-item" effect="dark" :content="scope.row.testcase_name"
+                            placement="top-start">                    <el-button type="primary" text @click="clickTitle(scope.row)">{{ scope.row.testcase_name
+                        }}</el-button></el-tooltip>
+
                 </template>
             </el-table-column>
             <el-table-column prop="version" label="版本" :width="table_width1 / 8 || 100" />
@@ -103,12 +105,24 @@
                     {{ scope.row.status ? scope.row.status : '待操作' }}
                 </template>
             </el-table-column>
-            <el-table-column label="操作" :width="250">
+            <el-table-column label="操作" :width="150">
                 <template #default="scope">
                     <el-button type="text" @click="handleDelete(scope.row)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
+
+        <!-- 分页组件 -->
+        <a-pagination
+            v-model:current="currentPage"
+            v-model:pageSize="pageSize"
+            :total="tableData.length"
+            show-size-changer
+            :page-size-options="['10', '20', '50']"
+            @change="handlePageChange"
+            @showSizeChange="handlePageSizeChange"
+            style="margin-top: 1rem; text-align: center;"
+        />
     </div>
     <a-drawer title="新建测试用例" :visible="visible" :width="720" @close="onDrawerClose">
         <a-form :model="newForm" layout="vertical">
@@ -173,6 +187,7 @@ const props = defineProps({
         type: Function
     }
 });
+const { currentRequirement } = props;
 const table_height1 = ref(500);
 const activeTab = ref('detail')
 const selectedRowsPoints = ref([]);
@@ -255,8 +270,6 @@ onUpdated(() => {
     }
 });
 
-
-
 onMounted(() => {
     fetchData();
 });
@@ -264,7 +277,6 @@ onMounted(() => {
 watch([project_id, req_id, split_file_id, split_case_id], () => {
     fetchData();
 });
-
 
 const handleSave = async () => {
     const params = {
@@ -305,24 +317,24 @@ const handleDelete = (row) => {
 }
 
 const handleExport = () => {
-    if (!currentRequirement.value.splitCase?.testcases?.length) {
+    if (!currentRequirement.splitCase?.testcases?.length) {
         ElMessage.error('请先生成或添加用例');
         return;
     }
     const params = {
-        project_id: currentRequirement.value.project._id.$oid,
-        split_file_id: currentRequirement.value.splitReq.split_file_id,
-        req_id: currentRequirement.value.req.req_id,
-        split_case_id: currentRequirement.value.splitCase.testcase_id,
+        project_id: currentRequirement.project._id.$oid,
+        split_file_id: currentRequirement.splitReq.split_file_id,
+        req_id: currentRequirement.req.req_id,
+        split_case_id: currentRequirement.splitCase.testcase_id,
     }
 
     http.post('/api/export_by_splitcase', params, { responseType: 'blob' })
-        .then(response => {
+    .then(response => {
             const blob = new Blob([response as any], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.setAttribute('download', currentRequirement.value.splitCase.testcase_id + '.xlsx');
+            link.setAttribute('download', currentRequirement.splitCase.testcase_id + '.xlsx');
             document.body.appendChild(link);
             link.click();
         }).catch(() => {
@@ -334,8 +346,61 @@ const onDrawerClose = () => {
     visible.value = false;
 };
 
-</script>
+const handleNewSave = async () => {
+    if (!newForm.value.name) {
+        ElMessage.error('名称不能为空');
+        return;
+    } else if (!newForm.value.pre_condition) {
+        ElMessage.error('初始条件不能为空');
+        return;
+    } else if (!newForm.value.action) {
+        ElMessage.error('操作步骤不能为空');
+        return;
+    } else if (!newForm.value.result) {
+        ElMessage.error('预期结果不能为空');
+        return;
+    }
 
+    const params = {
+        ...newForm.value,
+        split_req_version: currentRequirement.splitReq.version,
+        testcase_name: newForm.value.name,
+        split_case_id: split_case_id.value,
+        split_case_version: currentRequirement.splitCase.version,
+    }
+    delete params.name;
+    return http.post('/api/create_testcase', params).then(async response => {
+        if (response) {
+            ElMessage.success('保存成功');
+            tableData.value = response.testcases;
+            onDrawerClose();
+        } else {
+            ElMessage.error('保存失败');
+        }
+    }).catch(() => {
+        ElMessage.error('保存失败');
+    })
+}
+
+// 分页相关逻辑
+const currentPage = ref(1);
+const pageSize = ref(10);
+
+const pagedTableData = computed(() => {
+    const start = (currentPage.value - 1) * pageSize.value;
+    const end = start + pageSize.value;
+    return tableData.value.slice(start, end);
+});
+
+const handlePageChange = (page: number) => {
+    currentPage.value = page;
+};
+
+const handlePageSizeChange = (current: number, size: number) => {
+    pageSize.value = size;
+    currentPage.value = 1; // 切换每页条数时，重置到第一页
+};
+</script>
 
 <style scoped lang="less">
 .custom-purple-button {

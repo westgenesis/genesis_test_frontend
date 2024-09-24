@@ -32,7 +32,7 @@ const props = defineProps({
         type: Object,
     }
 })
-const fileName = ref(props.record.file_name.replace('.docx', ''));
+const fileName = ref(props.record?.file_name?.replace('.docx', ''));
 console.log(props.record);
 console.log(props.currentRequirement);
 const quillEditorRef = ref();
