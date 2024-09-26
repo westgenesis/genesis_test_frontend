@@ -1,17 +1,23 @@
 <template>
-    <div>
-        <div class="flex mt-[2rem] mb-[1rem]">
-            <div class="w-[160px] ml-[1rem] flex items-center justify-center">
-                功能模块名称
+    <div style="width: 100%;">
+        <div class="flex mt-[2rem] mb-[1rem]" style="align-items: center; justify-content: space-between; width: 100%;">
+            <div class="ml-[1rem] flex items-center justify-center">
+                <div class="mr-[1rem]">
+                    功能模块名称
+                </div>
+                <a-input v-model:value="fileName" placeholder="输入文件名" style="width: 18.5rem;" />
             </div>
-            <a-input v-model:value="fileName" placeholder="输入文件名" style="width: 18.5rem;" />
+
+            <div class="flex justify-center mr-[1rem]" style="gap: 1rem">
+                <a-button type="primary" size="" @click="onSplit"
+                class="custom-purple-button">拆分</a-button>
+                    <a-button type="primary" size="" @click="onSaveContent"
+                        class="custom-purple-button">保存</a-button>
+                </div>
         </div>
     </div>
     <div ref="quillEditorRef" class="docx-editor"></div>
-    <div class="flex justify-center mt-[1rem]">
-                    <a-button type="primary" size="large" @click="onSaveContent"
-                        class="custom-purple-button">保存</a-button>
-                </div>
+
 </template>
 
 <script setup lang="ts">
@@ -21,6 +27,7 @@ import { ref, defineProps, onMounted } from 'vue';
 import { useProductFetch } from '../../handler/handler';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { useProjectStore } from '../../stores/project';
+import { http } from '../../http';
 const { handler } = useProductFetch();
 
 const props = defineProps({
@@ -80,6 +87,28 @@ const onSaveContent = () => {
                 }
             });
         });
+    });
+};
+
+const onSplit = () => {
+    ElMessageBox.confirm('拆分会覆盖当前模块的已有功能点，是否继续？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+    }).then(() => {
+        const params = {
+            project_id: props.currentRequirement.project._id.$oid,
+            ...props.record,
+            req_id: props.currentRequirement.req.req_id
+        };
+        ElMessage.success('已下发功能点拆解任务，请等待或刷新后去功能点页面查看结果');
+        http.post('/api/subrequire_generate_points', params).then((res) => {
+            console.log(res);
+        });
+    }).catch((e) => {
+        console.log(e)
+        // 用户点击取消，不做任何操作
+        ElMessage.info('已取消拆分操作');
     });
 };
 
