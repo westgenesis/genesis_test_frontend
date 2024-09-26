@@ -20,7 +20,7 @@
                 </a-form-item>
                 <a-form-item label="项目知识库" name="repository">
                     <el-upload ref="uploadRef" :auto-upload="false" :on-change="onBeforeUpload"
-                        accept=".doc,.docx,.pdf,.xlsx,.png"
+                        accept=".pdf"
                         v-model:file-list="fileList"    
                     >
                         <template #trigger>
@@ -28,6 +28,7 @@
                                 上传文件
                             </el-button>
                         </template>
+                        当前仅支持解析.pdf文件
                     </el-upload>
                 </a-form-item>
                 <a-form-item :wrapper-col="{ offset: 4, span: 14 }">

@@ -76,17 +76,12 @@ const topBarItems = [
     },
     {
         name: '需求管理',
-        to: '/requirement/functionPoints'
-    },
-    {
-        name: '用例管理',
-        to: '/usecase/usecaseManage'
+        to: '/requirement/requirementMain'
     },
     {
         name: '脚本管理',
         to: '/script/file',
         children: [
-            { name: '脚本文件', to: '/script/file' },
             { name: '元动作库', to: '/script/metaAction' },
             { name: '动作组合库', to: '/script/actionCombination' }
         ]

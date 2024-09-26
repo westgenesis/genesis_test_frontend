@@ -43,7 +43,7 @@ importers:
         version: 1.2.10
       vite-plugin-node-stdlib-browser:
         specifier: ^0.2.1
-        version: 0.2.1(node-stdlib-browser@1.2.0)(rollup@4.18.0)(vite@5.3.3(less@4.2.0)(terser@5.31.6))
+        version: 0.2.1(node-stdlib-browser@1.2.0)(rollup@4.18.0)(vite@5.3.3(@types/node@22.7.2)(less@4.2.0)(terser@5.31.6))
       vue:
         specifier: ^3.4.29
         version: 3.4.31(typescript@5.5.3)
@@ -59,10 +59,10 @@ importers:
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^5.0.5
-        version: 5.0.5(vite@5.3.3(less@4.2.0)(terser@5.31.6))(vue@3.4.31(typescript@5.5.3))
+        version: 5.0.5(vite@5.3.3(@types/node@22.7.2)(less@4.2.0)(terser@5.31.6))(vue@3.4.31(typescript@5.5.3))
       '@vitejs/plugin-vue-jsx':
         specifier: ^4.0.1
-        version: 4.0.1(vite@5.3.3(less@4.2.0)(terser@5.31.6))(vue@3.4.31(typescript@5.5.3))
+        version: 4.0.1(vite@5.3.3(@types/node@22.7.2)(less@4.2.0)(terser@5.31.6))(vue@3.4.31(typescript@5.5.3))
       '@vue/runtime-dom':
         specifier: ^3.4.38
         version: 3.4.38
@@ -72,6 +72,9 @@ importers:
       postcss:
         specifier: ^8.4.39
         version: 8.4.39
+      rollup-plugin-terser:
+        specifier: ^7.0.2
+        version: 7.0.2(rollup@4.18.0)
       tailwindcss:
         specifier: ^3.4.4
         version: 3.4.4
@@ -89,10 +92,10 @@ importers:
         version: 0.27.4(@babel/parser@7.25.3)(rollup@4.18.0)(vue@3.4.31(typescript@5.5.3))
       vite:
         specifier: ^5.3.1
-        version: 5.3.3(less@4.2.0)(terser@5.31.6)
+        version: 5.3.3(@types/node@22.7.2)(less@4.2.0)(terser@5.31.6)
       vite-plugin-node-polyfills:
         specifier: ^0.22.0
-        version: 0.22.0(rollup@4.18.0)(vite@5.3.3(less@4.2.0)(terser@5.31.6))
+        version: 0.22.0(rollup@4.18.0)(vite@5.3.3(@types/node@22.7.2)(less@4.2.0)(terser@5.31.6))
       vue-tsc:
         specifier: ^2.0.21
         version: 2.0.26(typescript@5.5.3)
@@ -646,6 +649,9 @@ packages:
 
   '@types/lodash@4.17.6':
     resolution: {integrity: sha512-OpXEVoCKSS3lQqjx9GGGOapBeuW5eUboYHRlHP9urXPX25IKZ6AnP5ZRxtVf63iieUbsHxLn8NQ5Nlftc6yzAA==}
+
+  '@types/node@22.7.2':
+    resolution: {integrity: sha512-866lXSrpGpgyHBZUa2m9YNWqHDjjM0aBTJlNtYaGEw4rqY/dcD7deRVTbBBAJelfA7oaGDbNftXF/TL/A6RgoA==}
 
   '@types/web-bluetooth@0.0.16':
     resolution: {integrity: sha512-oh8q2Zc32S6gd/j50GowEjKLoOVOwHP/bWVjKJInBwQqdOYMdPrf1oVlelTlyfFK3CKxL1uahMDAr+vy8T7yMQ==}
@@ -1258,6 +1264,10 @@ packages:
     resolution: {integrity: sha512-sKJf1+ceQBr4SMkvQnBDNDtf4TXpVhVGateu0t918bl30FnbE2m4vNLX+VWe/dpjlb+HugGYzW7uQXH98HPEYw==}
     engines: {node: '>=4'}
 
+  has-flag@4.0.0:
+    resolution: {integrity: sha512-EykJT/Q1KjTWctppgIAgfSO0tKVuZUjhgMr17kqTumMl6Afv3EISleU7qZUzoXDFTAHTDC4NOoG/ZxU3EvlMPQ==}
+    engines: {node: '>=8'}
+
   has-property-descriptors@1.0.2:
     resolution: {integrity: sha512-55JNKuIW+vq4Ke1BjOTjM2YctQIvCT7GFzHwmfZPGo5wnrgkid0YQtnAleFSqumZm4az3n2BS+erby5ipJdgrg==}
 
@@ -1411,6 +1421,10 @@ packages:
     resolution: {integrity: sha512-U23pQPDnmYybVkYjObcuYMk43VRlMLLqLI+RdZy8s8WV8WsxO9SnqSroKaluuvcNOdCAlauKszDwd+umbot5Mg==}
     engines: {node: '>=18'}
 
+  jest-worker@26.6.2:
+    resolution: {integrity: sha512-KWYVV1c4i+jbMpaBC+U++4Va0cp8OisU185o73T1vo99hqi7w8tSJfUXYswwqqrjzwxa6KpRK54WhPvwf5w6PQ==}
+    engines: {node: '>= 10.13.0'}
+
   jiti@1.21.6:
     resolution: {integrity: sha512-2yTgeWTWzMWkHu6Jp9NKgePDaYHbntiwvYuuJLbbN9vl7DC9DvXKOB2BC3ZZ92D3cvV/aflH0osDfwpHepQ53w==}
     hasBin: true
@@ -1518,6 +1532,9 @@ packages:
 
   memoize-one@6.0.0:
     resolution: {integrity: sha512-rkpe71W0N0c0Xz6QD0eJETuWAJGnJ9afsl1srmwPrI+yBCkge5EycXXbYRyvL29zZVUWQCY7InPRCv3GDXuZNw==}
+
+  merge-stream@2.0.0:
+    resolution: {integrity: sha512-abv/qOcuPfk3URPfDzmZU1LKmuw8kT+0nIHvKrKgFrwifol/doWcdA4ZqsWQ8ENrFKkd67Mfpo/LovbIUsbt3w==}
 
   merge2@1.4.1:
     resolution: {integrity: sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==}
@@ -1864,6 +1881,12 @@ packages:
   ripemd160@2.0.2:
     resolution: {integrity: sha512-ii4iagi25WusVoiC4B4lq7pbXfAp3D9v5CwfkY33vffw2+pkDjY1D8GaN7spsxvCSx8dkPqOZCEZyfxcmJG2IA==}
 
+  rollup-plugin-terser@7.0.2:
+    resolution: {integrity: sha512-w3iIaU4OxcF52UUXiZNsNeuXIMDvFrr+ZXK6bFZ0Q60qyVfq4uLptoS4bbq3paG3x216eQllFZX7zt6TIImguQ==}
+    deprecated: This package has been deprecated and is no longer maintained. Please use @rollup/plugin-terser
+    peerDependencies:
+      rollup: ^2.0.0
+
   rollup@4.18.0:
     resolution: {integrity: sha512-QmJz14PX3rzbJCN1SG4Xe/bAAX2a6NpCP8ab2vfu2GiUr8AQcr2nCV/oEO3yneFarB67zk8ShlIyWb2LGTb3Sg==}
     engines: {node: '>=18.0.0', npm: '>=8.0.0'}
@@ -1902,6 +1925,9 @@ packages:
     resolution: {integrity: sha512-FNAIBWCx9qcRhoHcgcJ0gvU7SN1lYU2ZXuSfl04bSC5OpvDHFyJCjdNHomPXxjQlCBU67YW64PzY7/VIEH7F2w==}
     engines: {node: '>=10'}
     hasBin: true
+
+  serialize-javascript@4.0.0:
+    resolution: {integrity: sha512-GaNA54380uFefWghODBWEGisLZFj00nS5ACs6yHa9nLqlLpVLO8ChDGeKRjZnV4Nh4n0Qi7nhYZD/9fCPzEqkw==}
 
   set-function-length@1.2.2:
     resolution: {integrity: sha512-pgRc4hJ4/sNjWCSS9AmnS40x3bNMDTknHgL5UaMBTMyJnU90EgWh1Rz+MC9eFu4BuN/UwZjKQuY/1v3rM7HMfg==}
@@ -1990,6 +2016,10 @@ packages:
     resolution: {integrity: sha512-QjVjwdXIt408MIiAqCX4oUKsgU2EqAGzs2Ppkm4aQYbjm+ZEWEcW4SfFNTr4uMNZma0ey4f5lgLrkB0aX0QMow==}
     engines: {node: '>=4'}
 
+  supports-color@7.2.0:
+    resolution: {integrity: sha512-qpCAvRl9stuOHveKsn7HncJRvv501qIacKzQlO/+Lwxc9+0q2wLyv4Dfvt80/DPn2pqOBsJdDiogXGR9+OvwRw==}
+    engines: {node: '>=8'}
+
   supports-preserve-symlinks-flag@1.0.0:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
@@ -2052,6 +2082,9 @@ packages:
 
   underscore@1.13.6:
     resolution: {integrity: sha512-+A5Sja4HP1M08MaXya7p5LvjuM7K6q/2EaC0+iovj/wOcMsTzMvDFbasi/oSapiwOlt252IqsKqPjCl7huKS0A==}
+
+  undici-types@6.19.8:
+    resolution: {integrity: sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw==}
 
   unimport@3.11.0:
     resolution: {integrity: sha512-mPrvWwy+li8TLUeglC7CIREFAbeEMkJ8X2Bhxg4iLdh+HraxjFyxqWv8V+4lzekoGHChx9ofv1qGOfvHBJBl0A==}
@@ -2766,21 +2799,25 @@ snapshots:
 
   '@types/lodash@4.17.6': {}
 
+  '@types/node@22.7.2':
+    dependencies:
+      undici-types: 6.19.8
+
   '@types/web-bluetooth@0.0.16': {}
 
-  '@vitejs/plugin-vue-jsx@4.0.1(vite@5.3.3(less@4.2.0)(terser@5.31.6))(vue@3.4.31(typescript@5.5.3))':
+  '@vitejs/plugin-vue-jsx@4.0.1(vite@5.3.3(@types/node@22.7.2)(less@4.2.0)(terser@5.31.6))(vue@3.4.31(typescript@5.5.3))':
     dependencies:
       '@babel/core': 7.25.2
       '@babel/plugin-transform-typescript': 7.25.2(@babel/core@7.25.2)
       '@vue/babel-plugin-jsx': 1.2.2(@babel/core@7.25.2)
-      vite: 5.3.3(less@4.2.0)(terser@5.31.6)
+      vite: 5.3.3(@types/node@22.7.2)(less@4.2.0)(terser@5.31.6)
       vue: 3.4.31(typescript@5.5.3)
     transitivePeerDependencies:
       - supports-color
 
-  '@vitejs/plugin-vue@5.0.5(vite@5.3.3(less@4.2.0)(terser@5.31.6))(vue@3.4.31(typescript@5.5.3))':
+  '@vitejs/plugin-vue@5.0.5(vite@5.3.3(@types/node@22.7.2)(less@4.2.0)(terser@5.31.6))(vue@3.4.31(typescript@5.5.3))':
     dependencies:
-      vite: 5.3.3(less@4.2.0)(terser@5.31.6)
+      vite: 5.3.3(@types/node@22.7.2)(less@4.2.0)(terser@5.31.6)
       vue: 3.4.31(typescript@5.5.3)
 
   '@volar/language-core@2.4.0-alpha.15':
@@ -3526,6 +3563,8 @@ snapshots:
 
   has-flag@3.0.0: {}
 
+  has-flag@4.0.0: {}
+
   has-property-descriptors@1.0.2:
     dependencies:
       es-define-property: 1.0.0
@@ -3686,6 +3725,12 @@ snapshots:
     optionalDependencies:
       '@pkgjs/parseargs': 0.11.0
 
+  jest-worker@26.6.2:
+    dependencies:
+      '@types/node': 22.7.2
+      merge-stream: 2.0.0
+      supports-color: 7.2.0
+
   jiti@1.21.6: {}
 
   js-tokens@4.0.0: {}
@@ -3805,6 +3850,8 @@ snapshots:
       safe-buffer: 5.1.2
 
   memoize-one@6.0.0: {}
+
+  merge-stream@2.0.0: {}
 
   merge2@1.4.1: {}
 
@@ -4151,6 +4198,14 @@ snapshots:
       hash-base: 3.1.0
       inherits: 2.0.4
 
+  rollup-plugin-terser@7.0.2(rollup@4.18.0):
+    dependencies:
+      '@babel/code-frame': 7.24.7
+      jest-worker: 26.6.2
+      rollup: 4.18.0
+      serialize-javascript: 4.0.0
+      terser: 5.31.6
+
   rollup@4.18.0:
     dependencies:
       '@types/estree': 1.0.5
@@ -4199,6 +4254,10 @@ snapshots:
   semver@6.3.1: {}
 
   semver@7.6.2: {}
+
+  serialize-javascript@4.0.0:
+    dependencies:
+      randombytes: 2.1.0
 
   set-function-length@1.2.2:
     dependencies:
@@ -4302,6 +4361,10 @@ snapshots:
     dependencies:
       has-flag: 3.0.0
 
+  supports-color@7.2.0:
+    dependencies:
+      has-flag: 4.0.0
+
   supports-preserve-symlinks-flag@1.0.0: {}
 
   svg-tags@1.0.0: {}
@@ -4373,6 +4436,8 @@ snapshots:
   ufo@1.5.4: {}
 
   underscore@1.13.6: {}
+
+  undici-types@6.19.8: {}
 
   unimport@3.11.0(rollup@4.18.0):
     dependencies:
@@ -4465,28 +4530,29 @@ snapshots:
       x-is-array: 0.1.0
       x-is-string: 0.1.0
 
-  vite-plugin-node-polyfills@0.22.0(rollup@4.18.0)(vite@5.3.3(less@4.2.0)(terser@5.31.6)):
+  vite-plugin-node-polyfills@0.22.0(rollup@4.18.0)(vite@5.3.3(@types/node@22.7.2)(less@4.2.0)(terser@5.31.6)):
     dependencies:
       '@rollup/plugin-inject': 5.0.5(rollup@4.18.0)
       node-stdlib-browser: 1.2.0
-      vite: 5.3.3(less@4.2.0)(terser@5.31.6)
+      vite: 5.3.3(@types/node@22.7.2)(less@4.2.0)(terser@5.31.6)
     transitivePeerDependencies:
       - rollup
 
-  vite-plugin-node-stdlib-browser@0.2.1(node-stdlib-browser@1.2.0)(rollup@4.18.0)(vite@5.3.3(less@4.2.0)(terser@5.31.6)):
+  vite-plugin-node-stdlib-browser@0.2.1(node-stdlib-browser@1.2.0)(rollup@4.18.0)(vite@5.3.3(@types/node@22.7.2)(less@4.2.0)(terser@5.31.6)):
     dependencies:
       '@rollup/plugin-inject': 5.0.5(rollup@4.18.0)
       node-stdlib-browser: 1.2.0
-      vite: 5.3.3(less@4.2.0)(terser@5.31.6)
+      vite: 5.3.3(@types/node@22.7.2)(less@4.2.0)(terser@5.31.6)
     transitivePeerDependencies:
       - rollup
 
-  vite@5.3.3(less@4.2.0)(terser@5.31.6):
+  vite@5.3.3(@types/node@22.7.2)(less@4.2.0)(terser@5.31.6):
     dependencies:
       esbuild: 0.21.5
       postcss: 8.4.39
       rollup: 4.18.0
     optionalDependencies:
+      '@types/node': 22.7.2
       fsevents: 2.3.3
       less: 4.2.0
       terser: 5.31.6

@@ -4,8 +4,12 @@
         <a-tab-pane key="testcase_table" tab="测试用例"></a-tab-pane>
     </a-tabs>
     <div v-if="activeTab === 'detail'">
-        <div style="border-left: 2px solid purple; margin-left: 0.25rem; padding-left: 1rem; margin-bottom: 1rem;">
+        <div style="border-left: 2px solid purple; margin-left: 0.25rem; padding-left: 1rem; margin-bottom: 1rem; display:flex; justify-content: space-between;">
             功能点
+            <div class="flex justify-center items-center" style="gap: 2rem; margin-right: 2rem;">
+                <a-button type="primary" @click="handleSave" class="custom-purple-button">保存</a-button>
+                <a-button type="primary" @click="handleGenerate"  class="custom-purple-button">保存并生成用例</a-button>
+            </div>
         </div>
         <a-form :model="form" layout="vertical">
             <a-form-item label="功能点名称">
@@ -20,18 +24,12 @@
             <a-form-item label="预期结果">
                 <a-textarea v-model:value="form.result" placeholder="请输入预期结果" :rows="3" />
             </a-form-item>
-            <a-form-item>
-                <div class="flex justify-center items-center" style="flex-direction: column;">
-                    <a-button type="primary" @click="handleSave" class="custom-purple-button">保存</a-button>
-                    <div style="color: red">提示：当前为V{{ form.version }}版本 保存后版本新增</div>
-                </div>
-            </a-form-item>
         </a-form>
     </div>
     <div v-if="activeTab === 'testcase_table'" style="margin: 1rem">
         <div style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
             <a-button type="primary" class="custom-purple-button" size="large" style="margin-right: 1rem;"
-            @click="showDrawer">新建测试用例</a-button>
+                @click="showDrawer">新建测试用例</a-button>
             <a-button type="primary" class="custom-purple-button" size="large" @click="handleExport">导出全部</a-button>
         </div>
 
@@ -83,9 +81,9 @@
             <el-table-column prop="testcase_id" label="测试用例ID" :width="table_width1 / 8 || 100" />
             <el-table-column prop="testcase_name" label="测试用例名称" :width="table_width1 / 5 || 100">
                 <template #default="scope">
-                    <el-tooltip class="box-item" effect="dark" :content="scope.row.testcase_name"
-                            placement="top-start">                    <el-button type="primary" text @click="clickTitle(scope.row)">{{ scope.row.testcase_name
-                        }}</el-button></el-tooltip>
+                    <el-tooltip class="box-item" effect="dark" :content="scope.row.testcase_name" placement="top-start">
+                        <el-button type="primary" text @click="clickTitle(scope.row)">{{ scope.row.testcase_name
+                            }}</el-button></el-tooltip>
 
                 </template>
             </el-table-column>
@@ -108,21 +106,15 @@
             <el-table-column label="操作" :width="150">
                 <template #default="scope">
                     <el-button type="text" @click="handleDelete(scope.row)">删除</el-button>
+                    <el-button type="text" @click="handleGenerateFile(scope.row)">生成脚本</el-button>
                 </template>
             </el-table-column>
         </el-table>
 
         <!-- 分页组件 -->
-        <a-pagination
-            v-model:current="currentPage"
-            v-model:pageSize="pageSize"
-            :total="tableData.length"
-            show-size-changer
-            :page-size-options="['10', '20', '50']"
-            @change="handlePageChange"
-            @showSizeChange="handlePageSizeChange"
-            style="margin-top: 1rem; text-align: center;"
-        />
+        <a-pagination v-model:current="currentPage" v-model:pageSize="pageSize" :total="tableData.length"
+            show-size-changer :page-size-options="['10', '20', '50']" @change="handlePageChange"
+            @showSizeChange="handlePageSizeChange" style="margin-top: 1rem; text-align: center;" />
     </div>
     <a-drawer title="新建测试用例" :visible="visible" :width="720" @close="onDrawerClose">
         <a-form :model="newForm" layout="vertical">
@@ -157,9 +149,19 @@
                 <div class="flex justify-center items-center" style="flex-direction: column;">
                     <a-button type="primary" @click="handleNewSave" class="custom-purple-button">保存</a-button>
                 </div>
+                
             </a-form-item>
         </a-form>
     </a-drawer>
+    <a-modal v-model:visible="selectBelongsToModalVisible" title="选择所属对象" @ok="handleSelectBelongsToOk">
+        <a-radio-group v-model:value="selectedBelongsTo">
+            <a-radio value="Vector">Vector</a-radio>
+            <a-radio value="dSpace">dSpace</a-radio>
+        </a-radio-group>
+    </a-modal>
+    <FillModal :visible="fillModalVisible" :preConditionSignals="need_fill_result.pre_condition_signal"
+        :actionSignals="need_fill_result.action_signal" :resultSignals="need_fill_result.result_signal"
+        @removeSignal="handleRemoveSignal" @update:visible="fillModalVisible = $event" @ok="handleFillModalOk" />
 </template>
 
 <script setup lang="ts">
@@ -329,7 +331,7 @@ const handleExport = () => {
     }
 
     http.post('/api/export_by_splitcase', params, { responseType: 'blob' })
-    .then(response => {
+        .then(response => {
             const blob = new Blob([response as any], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement('a');
@@ -400,6 +402,95 @@ const handlePageSizeChange = (current: number, size: number) => {
     pageSize.value = size;
     currentPage.value = 1; // 切换每页条数时，重置到第一页
 };
+const selectBelongsToModalVisible = ref(false);
+const selectedBelongsTo = ref('Vector');
+
+const currentRow = ref({
+    belongs_to: '',
+});
+
+const handleGenerateFile = (row) => {
+    selectBelongsToModalVisible.value = true;
+    currentRow.value = row;
+};
+
+const fillModalVisible = ref(false);
+const need_fill_result = ref({
+    pre_condition_signal: [],
+    action_signal: [],
+    result_signal: [],
+});
+
+const showFillModal = (result) => {
+    need_fill_result.value = result;
+    fillModalVisible.value = true;
+};
+
+const handleSelectBelongsToOk = () => {
+    if (!selectedBelongsTo.value) {
+        ElMessage.error('请选择所属对象');
+        return;
+    }
+
+    currentRow.value.belongs_to = selectedBelongsTo.value;
+    selectBelongsToModalVisible.value = false;
+
+    http.post('/api/generate_script_file', currentRow.value).then(response => {
+        if (response.status === 'need_fill') {
+            const need_fill_result = {
+                pre_condition_signal: response?.unmatched?.pre_condition_signal,
+                action_signal: response?.unmatched?.action_signal,
+                result_signal: response?.unmatched?.result_signal,
+            }
+            showFillModal(need_fill_result);
+            ElMessage.success('需要创建元动作');
+            refreshAllProjects();
+        } else if (response.status === 'success') {
+            ElMessage.success('生成成功')
+        } else {
+            ElMessage.error('生成失败');
+        }
+    });
+};
+
+const handleRemoveSignal = ({ type, signal }) => {
+  if (type === 'preCondition') {
+    need_fill_result.value.pre_condition_signal = need_fill_result.value.pre_condition_signal.filter(s => s.name + s.value !== signal);
+  } else if (type === 'action') {
+    need_fill_result.value.action_signal = need_fill_result.value.action_signal.filter(s => s.name + s.value !== signal);
+  } else if (type === 'result') {
+    need_fill_result.value.result_signal = need_fill_result.value.result_signal.filter(s => s.name + s.value !== signal);
+  }
+  need_fill_result.value = { ...need_fill_result.value };
+};
+
+const handleFillModalOk = (formData) => {
+
+  fillModalVisible.value = false;
+};
+
+const handleGenerate = async () => {
+    await handleSave();
+    console.log(form.value)
+    const singleCase = {
+        ...form.value,
+        project_id: project_id.value,
+        split_file_id: split_file_id.value,
+        req_id: req_id.value,
+        split_case_id: split_case_id.value,
+    }
+    console.log(singleCase);
+    delete singleCase.testcases;
+    http.post('/api/generate_testcases_by_points', {
+        points: [singleCase]
+    }).then(async response => {
+        if (response?.status === 'OK') {
+            ElMessage.success('已下发生成用例任务');
+        } else {
+            ElMessage.error('下发生成用例任务失败');
+        }
+    });
+}
 </script>
 
 <style scoped lang="less">

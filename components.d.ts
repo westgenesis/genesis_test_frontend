@@ -44,6 +44,5 @@ declare module 'vue' {
     TestCaseInner: typeof import('./src/components/Requirement/TestCaseInner.vue')['default']
     TopBar: typeof import('./src/components/TopBar.vue')['default']
     UseCase: typeof import('./src/components/UseCase/UseCase.vue')['default']
-    UseCaseInner: typeof import('./src/components/Requirement/UseCaseInner.vue')['default']
   }
 }

@@ -12,24 +12,61 @@
         <a-form-item label="测试用例名称">
             <a-input v-model:value="form.testcase_name" placeholder="请输入测试用例名称" />
         </a-form-item>
-        <a-form-item label="初始条件">
-            <a-textarea v-model:value="form.pre_condition" placeholder="请输入初始条件" :rows="3" />
-        </a-form-item>
-        <a-form-item label="初始条件信号">
-            <a-textarea v-model:value="form.pre_condition_signal" placeholder="请输入初始条件信号" :rows="3" />
-        </a-form-item>
-        <a-form-item label="触发条件">
-            <a-textarea v-model:value="form.action" placeholder="请输入触发条件" :rows="3" />
-        </a-form-item>
-        <a-form-item label="触发条件信号">
-            <a-textarea v-model:value="form.action_signal" placeholder="请输入触发条件信号" :rows="3" />
-        </a-form-item>
-        <a-form-item label="预期结果">
-            <a-textarea v-model:value="form.result" placeholder="请输入预期结果" :rows="3" />
-        </a-form-item>
-        <a-form-item label="预期结果信号">
-            <a-textarea v-model:value="form.result_signal" placeholder="请输入预期结果" :rows="3" />
-        </a-form-item>
+
+        <!-- 初始条件 -->
+        <a-card title="初始条件描述/信号" style="margin-bottom: 1rem;">
+            <div v-for="(item, index) in form.pre_condition_items" :key="index" class="condition-row">
+                <a-row :gutter="16">
+                    <a-col :span="12">
+                        <a-input v-model:value="item.description" placeholder="请输入初始条件描述" />
+                    </a-col>
+                    <a-col :span="12">
+                        <a-input v-model:value="item.signal" placeholder="请输入初始条件信号" />
+                    </a-col>
+                </a-row>
+            </div>
+            <div>
+                <a-button type="dashed" @click="addPreConditionItem" style="margin-right: 1rem;">+ 添加一行</a-button>
+                <a-button type="dashed" @click="removePreConditionItem">- 删除一行</a-button>
+            </div>
+        </a-card>
+
+        <!-- 触发条件 -->
+        <a-card title="触发条件描述/信号" style="margin-bottom: 1rem;">
+            <div v-for="(item, index) in form.action_items" :key="index" class="condition-row">
+                <a-row :gutter="16">
+                    <a-col :span="12">
+                        <a-input v-model:value="item.description" placeholder="请输入触发条件描述" />
+                    </a-col>
+                    <a-col :span="12">
+                        <a-input v-model:value="item.signal" placeholder="请输入触发条件信号" />
+                    </a-col>
+                </a-row>
+            </div>
+            <div>
+                <a-button type="dashed" @click="addActionItem" style="margin-right: 1rem;">+ 添加一行</a-button>
+                <a-button type="dashed" @click="removeActionItem">- 删除一行</a-button>
+            </div>
+        </a-card>
+
+        <!-- 预期结果 -->
+        <a-card title="预期结果描述/信号" style="margin-bottom: 1rem;">
+            <div v-for="(item, index) in form.result_items" :key="index" class="condition-row">
+                <a-row :gutter="16">
+                    <a-col :span="12">
+                        <a-input v-model:value="item.description" placeholder="请输入预期结果描述" />
+                    </a-col>
+                    <a-col :span="12">
+                        <a-input v-model:value="item.signal" placeholder="请输入预期结果信号" />
+                    </a-col>
+                </a-row>
+            </div>
+            <div>
+                <a-button type="dashed" @click="addResultItem" style="margin-right: 1rem;">+ 添加一行</a-button>
+                <a-button type="dashed" @click="removeResultItem">- 删除一行</a-button>
+            </div>
+        </a-card>
+
         <a-form-item>
             <div class="flex justify-center items-center" style="flex-direction: column;">
                 <a-button type="primary" @click="handleSave" class="custom-purple-button">保存</a-button>
@@ -83,9 +120,12 @@ const form = ref({
     version: '',
     project_id: '',
     testcase_id: '',
+    pre_condition_items: [] as { description: string; signal: string }[],
+    action_items: [] as { description: string; signal: string }[],
+    result_items: [] as { description: string; signal: string }[],
 });
 
-onMounted(() => {
+const fetchData = () => {
     http.post('/api/query_testcase_by_id', {
         project_id: project_id.value,
         req_id: req_id.value,
@@ -94,11 +134,34 @@ onMounted(() => {
         testcase_id: testcase_id.value
     }).then(resp => {
         if (resp.result) {
-            form.value = resp
+            form.value = {
+                ...resp,
+                pre_condition_items: resp.pre_condition.split('\n').map((description, index) => ({
+                    description,
+                    signal: resp.pre_condition_signal.split('\n')[index] || ''
+                })),
+                action_items: resp.action.split('\n').map((description, index) => ({
+                    description,
+                    signal: resp.action_signal.split('\n')[index] || ''
+                })),
+                result_items: resp.result.split('\n').map((description, index) => ({
+                    description,
+                    signal: resp.result_signal.split('\n')[index] || ''
+                })),
+            };
         }
     })
+}
 
-})
+onMounted(() => {
+    fetchData();
+});
+
+
+watch([project_id, req_id, split_file_id, split_case_id, testcase_id], () => {
+    fetchData();
+});
+
 
 const handleSave = async () => {
     const params = {
@@ -107,7 +170,13 @@ const handleSave = async () => {
         req_id: req_id.value,
         split_file_id: split_file_id.value,
         split_case_id: split_case_id.value,
-        testcase_id: testcase_id.value
+        testcase_id: testcase_id.value,
+        pre_condition: form.value.pre_condition_items.map(item => item.description).join('\n'),
+        pre_condition_signal: form.value.pre_condition_items.map(item => item.signal).join('\n'),
+        action: form.value.action_items.map(item => item.description).join('\n'),
+        action_signal: form.value.action_items.map(item => item.signal).join('\n'),
+        result: form.value.result_items.map(item => item.description).join('\n'),
+        result_signal: form.value.result_items.map(item => item.signal).join('\n'),
     }
     return http.post('/api/modify_testcase', params).then(async response => {
         if (response.status === 'OK') {
@@ -117,10 +186,38 @@ const handleSave = async () => {
     })
 }
 
+// 添加行逻辑
+const addPreConditionItem = () => {
+    form.value.pre_condition_items.push({ description: '', signal: '' });
+};
 
+const addActionItem = () => {
+    form.value.action_items.push({ description: '', signal: '' });
+};
 
+const addResultItem = () => {
+    form.value.result_items.push({ description: '', signal: '' });
+};
+
+// 删除行逻辑
+const removePreConditionItem = () => {
+    if (form.value.pre_condition_items.length > 0) {
+        form.value.pre_condition_items.pop();
+    }
+};
+
+const removeActionItem = () => {
+    if (form.value.action_items.length > 0) {
+        form.value.action_items.pop();
+    }
+};
+
+const removeResultItem = () => {
+    if (form.value.result_items.length > 0) {
+        form.value.result_items.pop();
+    }
+};
 </script>
-
 
 <style scoped lang="less">
 .custom-purple-button {
@@ -135,18 +232,7 @@ const handleSave = async () => {
     filter: opacity(0.9);
 }
 
-:deep(.el-radio-button__orig-radio:checked + .el-radio-button__inner) {
-    background-color: purple;
-    border-color: purple;
-}
-
-:deep(.el-radio-button__inner) {
-    color: purple;
-    border-color: purple;
-}
-
-:deep(.el-radio-button__original-radio:checked+.el-radio-button__inner) {
-    background-color: purple;
-    border-color: purple !important;
+.condition-row {
+    margin-bottom: 1rem;
 }
 </style>

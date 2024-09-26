@@ -33,8 +33,6 @@ const props = defineProps({
     }
 })
 const fileName = ref(props.record?.file_name?.replace('.docx', ''));
-console.log(props.record);
-console.log(props.currentRequirement);
 const quillEditorRef = ref();
 let documentWordEdit: DocumentWordEdit
 onMounted(async () => {

@@ -2,14 +2,17 @@ import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import path from 'path';
 import nodePolyfills from 'vite-plugin-node-stdlib-browser';
-import AutoImport from 'unplugin-auto-import/vite'
-import Components from 'unplugin-vue-components/vite'
-import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
-import vueJsx from '@vitejs/plugin-vue-jsx'
+import AutoImport from 'unplugin-auto-import/vite';
+import Components from 'unplugin-vue-components/vite';
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
+import vueJsx from '@vitejs/plugin-vue-jsx';
+import { terser } from 'rollup-plugin-terser';
 
 export default defineConfig({
-  plugins: [vue(), vueJsx(), nodePolyfills(),   
-    // ...
+  plugins: [
+    vue(),
+    vueJsx(),
+    nodePolyfills(),
     AutoImport({
       resolvers: [ElementPlusResolver()],
     }),
@@ -48,7 +51,14 @@ export default defineConfig({
           }
           return '[name].[ext]'; // 其他文件保持默认输出
         },
-      }
-    }
-  }
+      },
+      plugins: [
+        terser({
+          compress: {
+            drop_console: true, // 移除 console 语句
+          },
+        }),
+      ],
+    },
+  },
 });

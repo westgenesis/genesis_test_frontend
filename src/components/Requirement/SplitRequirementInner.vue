@@ -234,7 +234,6 @@ const fetchData = () => {
         req_id: req_id.value,
         split_file_id: split_file_id.value,
     }).then(resp => {
-        console.log(resp)
         currentRecord.value = resp
         pointsTableData.value = resp.split_case
         testcaseTableData.value = resp.testcases
@@ -260,7 +259,6 @@ onUpdated(() => {
     }
 });
 const clickTitle = (row) => {
-    console.log(row)
     props.selectNodeByKey([project_id.value, req_id.value, split_file_id.value, row.testcase_id].join('-'))
 }
 
@@ -340,7 +338,6 @@ const showDrawer = () => {
 };
 
 const handleNewSave = async () => {
-    console.log(newForm.value);
     if (!newForm.value.name) {
         ElMessage.error('名称不能为空');
         return;
