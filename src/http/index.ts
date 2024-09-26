@@ -1,6 +1,9 @@
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
+import NProgress from 'nprogress'; // 引入 nprogress
+
 const baseURL = import.meta.env.VITE_API_BASE_URL || '';
+
 // 创建 Axios 实例
 const http = axios.create({
   baseURL: baseURL, // 设置基本的请求 URL
@@ -24,10 +27,13 @@ http.interceptors.request.use(
         }
       }
     })
+
+    NProgress.start(); // 开始进度条
     return config
   },
   (error) => {
     // 处理请求错误
+    NProgress.done(); // 结束进度条
     return Promise.reject(error)
   }
 )
@@ -36,6 +42,7 @@ http.interceptors.request.use(
 http.interceptors.response.use(
   (response) => {
     // 对响应数据进行处理，例如解析数据、错误处理等
+    NProgress.done(); // 结束进度条
     if (response.status === 500) {
       ElMessage.error(response.data.message)
       return Promise.reject(response)
@@ -43,6 +50,7 @@ http.interceptors.response.use(
     return response.data
   },
   (error) => {
+    NProgress.done(); // 结束进度条
     if (error?.response?.status === 401) {
       ElMessage.error('未授权，请重新登录')
       window.location.href = '#/login'
