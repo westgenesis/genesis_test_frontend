@@ -1,12 +1,11 @@
 <template>
     <div class="flex">
-        <div style="height: 100%;border-right: 1px solid #ddd;" class="m-[20px] w-[28rem]">
-            <div style="border-bottom: 1px solid #ddd; padding-bottom: 1rem">全部项目 ({{ projects.length }})</div>
+        <div style="height: 100%;border-right: 1px solid #ddd;" class="m-[20px] mt-[0] w-[28rem]">
             <div style="height: 2rem; margin: 1rem">
                 <a-input-search placeholder="请输入要搜索的名称" style="width: 100%" @search="onSearch" />
             </div>
             
-            <div style="height: calc(100vh - 10.3rem); overflow: scroll; background-color: rgba(248, 248, 254, 0.5);">
+            <div style="height: calc(100vh - 6.3rem); overflow: scroll; background-color: rgba(248, 248, 254, 0.5);">
                 <a-tree :show-line="false" :show-icon="true" :default-expanded-keys="[projects?.[0]?._id?.$oid + '-' + projects?.[0]?.requirement_files?.[0]?.req_id]" :tree-data="treeData"
                     @select="onSelect" v-model:selectedKeys="selectedKeys">
                     <template #switcherIcon="{ switcherCls }"><down-outlined :class="switcherCls" /></template>
