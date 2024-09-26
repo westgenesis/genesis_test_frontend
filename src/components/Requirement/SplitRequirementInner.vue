@@ -1,6 +1,6 @@
 <template>
     <a-tabs v-model:activeKey="activeTab">
-        <a-tab-pane key="detail" tab="功能点详情"></a-tab-pane>
+        <a-tab-pane key="detail" tab="功能模块详情"></a-tab-pane>
         <a-tab-pane key="points" tab="功能点列表"></a-tab-pane>
         <a-tab-pane key="testcase_table" tab="测试用例列表"></a-tab-pane>
     </a-tabs>
@@ -144,7 +144,7 @@
             <el-table-column prop="testcase_name" label="测试用例名称" :width="table_width1 / 5 || 100">
                 <template #default="scope">
                     <el-tooltip class="box-item" effect="dark" :content="scope.row.testcase_name" placement="top-start">
-                        <el-button type="primary" text @click="clickTitle(scope.row)">{{ scope.row.testcase_name
+                        <el-button type="primary" text @click="clickTitleTestcase(scope.row)">{{ scope.row.testcase_name
                             }}</el-button></el-tooltip>
 
                 </template>
@@ -260,6 +260,10 @@ onUpdated(() => {
 });
 const clickTitle = (row) => {
     props.selectNodeByKey([project_id.value, req_id.value, split_file_id.value, row.testcase_id].join('-'))
+}
+
+const clickTitleTestcase = (row) => {
+    props.selectNodeByKey([project_id.value, req_id.value, split_file_id.value, row.split_case_id, row.testcase_id].join('-'))
 }
 
 const onPointsSelectionChange = (rows) => {

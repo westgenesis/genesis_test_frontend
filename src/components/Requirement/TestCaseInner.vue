@@ -3,6 +3,13 @@
         <a-tab-pane key="detail" tab="测试用例详情"></a-tab-pane>
     </a-tabs>
     <a-form :model="form" layout="vertical">
+        <div style="border-left: 2px solid purple; margin-left: 0.25rem; padding-left: 1rem; margin-bottom: 1rem; display:flex; justify-content: space-between;">
+            测试用例
+            <div class="flex justify-center items-center" style="gap: 2rem; margin-right: 2rem;">
+                <a-button type="primary" @click="handleSave" class="custom-purple-button">保存</a-button>
+                <a-button type="primary" @click="handleGenerateFile"  class="custom-purple-button">保存并生成脚本</a-button>
+            </div>
+        </div>
         <a-form-item label="测试用例类型">
             <a-select v-model:value="form.type" placeholder="请选择测试用例类型">
                 <a-select-option value="positive">正例</a-select-option>
@@ -66,14 +73,16 @@
                 <a-button type="dashed" @click="removeResultItem">- 删除一行</a-button>
             </div>
         </a-card>
-
-        <a-form-item>
-            <div class="flex justify-center items-center" style="flex-direction: column;">
-                <a-button type="primary" @click="handleSave" class="custom-purple-button">保存</a-button>
-                <div style="color: red">提示：当前为V{{ form.version }}版本 保存后版本新增</div>
-            </div>
-        </a-form-item>
     </a-form>
+    <a-modal v-model:visible="selectBelongsToModalVisible" title="选择所属对象" @ok="handleSelectBelongsToOk">
+        <a-radio-group v-model:value="selectedBelongsTo">
+            <a-radio value="Vector">Vector</a-radio>
+            <a-radio value="dSpace">dSpace</a-radio>
+        </a-radio-group>
+    </a-modal>
+    <FillModal :visible="fillModalVisible" :preConditionSignals="need_fill_result.pre_condition_signal"
+        :actionSignals="need_fill_result.action_signal" :resultSignals="need_fill_result.result_signal"
+        @removeSignal="handleRemoveSignal" @update:visible="fillModalVisible = $event" @ok="handleFillModalOk" />
 </template>
 
 <script setup lang="ts">
@@ -81,6 +90,7 @@ import { onMounted, watch, defineProps, computed, ref } from 'vue';
 import { http } from '../../http';
 import { ElMessage } from 'element-plus';
 import { useProjectStore } from '../../stores/project';
+import FillModal from '../UseCase/FillModal.vue';
 const { refreshAllProjects } = useProjectStore();
 const activeTab = ref('detail');
 
@@ -217,6 +227,96 @@ const removeResultItem = () => {
         form.value.result_items.pop();
     }
 };
+
+const selectBelongsToModalVisible = ref(false);
+const selectedBelongsTo = ref('Vector');
+
+const currentRow = ref({
+    belongs_to: '',
+});
+
+const handleGenerateFile = () => {
+    selectBelongsToModalVisible.value = true;
+    currentRow.value = form.value;
+};
+
+const fillModalVisible = ref(false);
+const need_fill_result = ref({
+    pre_condition_signal: [],
+    action_signal: [],
+    result_signal: [],
+});
+
+const showFillModal = (result) => {
+    need_fill_result.value = result;
+    fillModalVisible.value = true;
+};
+
+const handleSelectBelongsToOk = () => {
+    if (!selectedBelongsTo.value) {
+        ElMessage.error('请选择所属对象');
+        return;
+    }
+
+    currentRow.value.belongs_to = selectedBelongsTo.value;
+    selectBelongsToModalVisible.value = false;
+
+    http.post('/api/generate_script_file', currentRow.value).then(response => {
+        if (response.status === 'need_fill') {
+            const need_fill_result = {
+                pre_condition_signal: response?.unmatched?.pre_condition_signal,
+                action_signal: response?.unmatched?.action_signal,
+                result_signal: response?.unmatched?.result_signal,
+            }
+            showFillModal(need_fill_result);
+            ElMessage.success('需要创建元动作');
+            refreshAllProjects();
+        } else if (response.status === 'success') {
+            ElMessage.success('生成成功')
+        } else {
+            ElMessage.error('生成失败');
+        }
+    });
+};
+
+const handleRemoveSignal = ({ type, signal }) => {
+  if (type === 'preCondition') {
+    need_fill_result.value.pre_condition_signal = need_fill_result.value.pre_condition_signal.filter(s => s.name + s.value !== signal);
+  } else if (type === 'action') {
+    need_fill_result.value.action_signal = need_fill_result.value.action_signal.filter(s => s.name + s.value !== signal);
+  } else if (type === 'result') {
+    need_fill_result.value.result_signal = need_fill_result.value.result_signal.filter(s => s.name + s.value !== signal);
+  }
+  need_fill_result.value = { ...need_fill_result.value };
+};
+
+const handleFillModalOk = (formData) => {
+
+  fillModalVisible.value = false;
+};
+
+const handleGenerate = async () => {
+    await handleSave();
+    console.log(form.value)
+    const singleCase = {
+        ...form.value,
+        project_id: project_id.value,
+        split_file_id: split_file_id.value,
+        req_id: req_id.value,
+        split_case_id: split_case_id.value,
+    }
+    console.log(singleCase);
+    delete singleCase.testcases;
+    http.post('/api/generate_testcases_by_points', {
+        points: [singleCase]
+    }).then(async response => {
+        if (response?.status === 'OK') {
+            ElMessage.success('已下发生成用例任务');
+        } else {
+            ElMessage.error('下发生成用例任务失败');
+        }
+    });
+}
 </script>
 
 <style scoped lang="less">

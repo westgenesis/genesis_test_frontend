@@ -169,6 +169,7 @@ import { onMounted, watch, defineProps, computed, ref, onUpdated } from 'vue';
 import { http } from '../../http';
 import { ElMessage } from 'element-plus';
 import { useProjectStore } from '../../stores/project';
+import FillModal from '../UseCase/FillModal.vue';
 const { refreshAllProjects } = useProjectStore();
 
 const form = ref({
