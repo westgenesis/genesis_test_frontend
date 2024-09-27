@@ -74,11 +74,22 @@
             </div>
         </a-card>
     </a-form>
-    <a-modal v-model:visible="selectBelongsToModalVisible" title="选择所属对象" @ok="handleSelectBelongsToOk">
-        <a-radio-group v-model:value="selectedBelongsTo">
-            <a-radio value="Vector">Vector</a-radio>
-            <a-radio value="dSpace">dSpace</a-radio>
-        </a-radio-group>
+    <a-modal v-model:visible="selectBelongsToModalVisible" title="脚本信息" @ok="handleSelectBelongsToOk">
+        <a-form-item label="脚本环境">
+            <a-radio-group v-model:value="selectForm.selectedBelongsTo">
+                <a-radio value="Vector">Vector</a-radio>
+                <a-radio value="dSpace">dSpace</a-radio>
+            </a-radio-group>
+        </a-form-item>
+        <a-form-item label="Version">
+            <a-input v-model:value="selectForm.version" placeholder="请输入版本号" />
+        </a-form-item>
+        <a-form-item label="Min Required Version">
+            <a-input v-model:value="selectForm.minRequiredVersion" placeholder="请输入最小要求版本号" />
+        </a-form-item>
+        <a-form-item label="Min Required CANoe Version">
+            <a-input v-model:value="selectForm.minRequiredCANoeVersion" placeholder="请输入最小要求CANoe版本号" />
+        </a-form-item>
     </a-modal>
     <FillModal :visible="fillModalVisible" :preConditionSignals="need_fill_result.pre_condition_signal"
         :actionSignals="need_fill_result.action_signal" :resultSignals="need_fill_result.result_signal"
@@ -119,6 +130,13 @@ const testcase_id = computed(() => {
     return props.currentRequirement?.testcase.testcase_id;
 })
 
+const selectForm = ref({
+    selectedBelongsTo: 'Vector',
+    version: '',
+    minRequiredVersion: '',
+    minRequiredCANoeVersion: ''
+})
+
 const form = ref({
     testcase_name: '',
     pre_condition: '',
@@ -128,6 +146,8 @@ const form = ref({
     result: '',
     result_signal: '',
     version: '',
+    minRequiredVersion: '',
+    minRequiredCANoeVersion: '',
     project_id: '',
     testcase_id: '',
     pre_condition_items: [] as { description: string; signal: string }[],
@@ -229,15 +249,22 @@ const removeResultItem = () => {
 };
 
 const selectBelongsToModalVisible = ref(false);
-const selectedBelongsTo = ref('Vector');
 
 const currentRow = ref({
     belongs_to: '',
+    version: '',
+    minRequiredVersion: '',
+    minRequiredCANoeVersion: '',
 });
 
 const handleGenerateFile = () => {
     selectBelongsToModalVisible.value = true;
-    currentRow.value = form.value;
+    currentRow.value = {
+        ...form.value,
+        version: form.value.version,
+        minRequiredVersion: form.value.minRequiredVersion,
+        minRequiredCANoeVersion: form.value.minRequiredCANoeVersion,
+    };
 };
 
 const fillModalVisible = ref(false);
@@ -253,15 +280,14 @@ const showFillModal = (result) => {
 };
 
 const handleSelectBelongsToOk = () => {
-    if (!selectedBelongsTo.value) {
+    if (!selectForm.value.selectedBelongsTo) {
         ElMessage.error('请选择所属对象');
         return;
     }
 
-    currentRow.value.belongs_to = selectedBelongsTo.value;
     selectBelongsToModalVisible.value = false;
 
-    http.post('/api/generate_script_file', currentRow.value).then(response => {
+    http.post('/api/generate_script_file', { ...currentRow.value, ...selectForm.value}).then(response => {
         if (response.status === 'need_fill') {
             const need_fill_result = {
                 pre_condition_signal: response?.unmatched?.pre_condition_signal,
