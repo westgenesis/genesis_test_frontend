@@ -153,11 +153,22 @@
             </a-form-item>
         </a-form>
     </a-drawer>
-    <a-modal v-model:visible="selectBelongsToModalVisible" title="选择所属对象" @ok="handleSelectBelongsToOk">
-        <a-radio-group v-model:value="selectedBelongsTo">
-            <a-radio value="Vector">Vector</a-radio>
-            <a-radio value="dSpace">dSpace</a-radio>
-        </a-radio-group>
+    <a-modal v-model:visible="selectBelongsToModalVisible" title="脚本信息" @ok="handleSelectBelongsToOk">
+        <a-form-item label="脚本环境">
+            <a-radio-group v-model:value="selectForm.selectedBelongsTo">
+                <a-radio value="Vector">Vector</a-radio>
+                <a-radio value="dSpace">dSpace</a-radio>
+            </a-radio-group>
+        </a-form-item>
+        <a-form-item label="Version">
+            <a-input v-model:value="selectForm.version" placeholder="请输入版本号" />
+        </a-form-item>
+        <a-form-item label="Min Required Version">
+            <a-input v-model:value="selectForm.minRequiredVersion" placeholder="请输入最小要求版本号" />
+        </a-form-item>
+        <a-form-item label="Min Required CANoe Version">
+            <a-input v-model:value="selectForm.minRequiredCANoeVersion" placeholder="请输入最小要求CANoe版本号" />
+        </a-form-item>
     </a-modal>
     <FillModal :visible="fillModalVisible" :preConditionSignals="need_fill_result.pre_condition_signal"
         :actionSignals="need_fill_result.action_signal" :resultSignals="need_fill_result.result_signal"
@@ -171,6 +182,13 @@ import { ElMessage } from 'element-plus';
 import { useProjectStore } from '../../stores/project';
 import FillModal from '../UseCase/FillModal.vue';
 const { refreshAllProjects } = useProjectStore();
+
+const selectForm = ref({
+    selectedBelongsTo: 'Vector',
+    version: '',
+    minRequiredVersion: '',
+    minRequiredCANoeVersion: ''
+})
 
 const form = ref({
     testcase_name: '',
@@ -428,15 +446,14 @@ const showFillModal = (result) => {
 };
 
 const handleSelectBelongsToOk = () => {
-    if (!selectedBelongsTo.value) {
+    if (!selectForm.value.selectedBelongsTo) {
         ElMessage.error('请选择所属对象');
         return;
     }
 
-    currentRow.value.belongs_to = selectedBelongsTo.value;
     selectBelongsToModalVisible.value = false;
 
-    http.post('/api/generate_script_file', currentRow.value).then(response => {
+    http.post('/api/generate_script_file', { ...currentRow.value, ...selectForm.value}).then(response => {
         if (response.status === 'need_fill') {
             const need_fill_result = {
                 pre_condition_signal: response?.unmatched?.pre_condition_signal,
