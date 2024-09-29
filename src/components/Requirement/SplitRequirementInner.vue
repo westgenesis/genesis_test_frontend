@@ -180,7 +180,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, watch, defineProps, computed, ref, onUpdated } from 'vue';
+import { onMounted, watch, defineProps, computed, ref, onUpdated, nextTick } from 'vue';
 import { http } from '../../http';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { useProjectStore } from '../../stores/project';
@@ -248,7 +248,12 @@ onMounted(() => {
 });
 
 watch([project_id, req_id, split_file_id], () => {
-    fetchData();
+    fetchData().then(() => {
+        activeTab.value = '';
+        nextTick(() => {
+            activeTab.value = 'detail';
+        })
+    })
 });
 
 onUpdated(() => {
