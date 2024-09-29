@@ -336,7 +336,7 @@
                             <!-- <el-button type="text" @click="handleGeneralize(scope.row)"
                                 :disabled="scope.row.is_generalized">泛化</el-button> -->
                             <el-button type="text" @click="handleDelete(scope.row)">删除</el-button>
-                            <el-button type="text" @click="handleGenerateFile(scope.row)">生成脚本</el-button>
+                            <!-- <el-button type="text" @click="handleGenerateFile(scope.row)">生成脚本</el-button> -->
                         </template>
                     </el-table-column>
                 </el-table>

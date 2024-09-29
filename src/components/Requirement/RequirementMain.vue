@@ -63,6 +63,7 @@ import TestCaseInner from './TestCaseInner.vue';
 import SplitRequirementInner from './SplitRequirementInner.vue';
 const currentType = ref();
 const projectStore = useProjectStore();
+const refreshAllProjects = projectStore.refreshAllProjects
 const { projects } = storeToRefs(projectStore);
 const currentRequirement = ref();
 const selectedKeys = ref<string[]>([]);

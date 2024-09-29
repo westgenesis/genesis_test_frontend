@@ -237,8 +237,9 @@ const fetchData = () => {
         currentRecord.value = resp
         pointsTableData.value = resp.split_case
         testcaseTableData.value = resp.testcases
-        
-    });
+    }).then(() => {
+        refreshAllProjects()
+    })
 };
 
 onMounted(() => {

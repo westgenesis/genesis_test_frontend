@@ -279,6 +279,8 @@ const fetchData = () => {
         testcaseTableData.value = resp.testcases;
         currentPage.value = 1;
         currentPagePoints.value = 1;
+    }).then(() => {
+        refreshAllProjects()
     });
 };
 
@@ -332,7 +334,6 @@ const handleModuleDelete = () => {
         http.post('/api/delete_function_module', deleteSplitRequireParams).then((res) => {
             if (res) {
                 ElMessage.success('删除成功');
-                refreshAllProjects();
                 fetchData();
             } else {
                 ElMessage.error('删除失败');
@@ -368,7 +369,7 @@ const openAddDrawer = () => {
 
 const closeAddDrawer = async () => {
     drawerVisible.value = false;
-    const result = await refreshAllProjects();
+    refreshAllProjects();
 };
 
 const handleSplit = (row: any) => {
@@ -568,7 +569,6 @@ const handleDelete = (row) => {
     http.post('/api/delete_testcases', params).then(response => {
         if (response.status === 'OK') {
             ElMessage.success('删除成功');
-            refreshAllProjects();
             fetchData();
             currentRequirement.value.splitCase.testcases = response.testcases
         } else {
@@ -600,7 +600,6 @@ const handleBatchDelete = () => {
     http.post('/api/delete_testcases', params).then(response => {
         if (response.status === 'OK') {
             ElMessage.success('批量删除成功');
-            refreshAllProjects();
             fetchData();
         } else {
             ElMessage.error('批量删除失败');

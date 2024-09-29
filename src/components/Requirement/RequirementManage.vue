@@ -61,7 +61,7 @@
             <div v-else class="flex justify-center items-center w-full">
                 <div>暂无数据，请</div>
                 <el-upload ref="uploadRef" :auto-upload="false" :on-change="onBeforeUpload" :show-file-list="false"
-                    accept=".doc,.docx,.pdf">
+                    accept=".doc,.docx">
                     <template #trigger>
                         <span style="color: purple; cursor: pointer;">上传需求</span>
                     </template>

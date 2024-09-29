@@ -7,7 +7,7 @@
             测试用例
             <div class="flex justify-center items-center" style="gap: 2rem; margin-right: 2rem;">
                 <a-button type="primary" @click="handleSave" class="custom-purple-button">保存</a-button>
-                <a-button type="primary" @click="handleGenerateFile"  class="custom-purple-button">保存并生成脚本</a-button>
+                <!-- <a-button type="primary" @click="handleGenerateFile"  class="custom-purple-button">保存并生成脚本</a-button> -->
             </div>
         </div>
         <a-form-item label="测试用例类型">
@@ -180,6 +180,8 @@ const fetchData = () => {
                 })),
             };
         }
+    }).finally(() => {
+        refreshAllProjects();
     })
 }
 
@@ -211,7 +213,6 @@ const handleSave = async () => {
     return http.post('/api/modify_testcase', params).then(async response => {
         if (response.status === 'OK') {
             ElMessage.success('保存成功');
-            refreshAllProjects();
         }
     })
 }
@@ -296,7 +297,6 @@ const handleSelectBelongsToOk = () => {
             }
             showFillModal(need_fill_result);
             ElMessage.success('需要创建元动作');
-            refreshAllProjects();
         } else if (response.status === 'success') {
             ElMessage.success('生成成功')
         } else {
