@@ -53,7 +53,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineProps, watch } from 'vue';
+import { ref, defineProps, watch, onMounted } from 'vue';
 import { statusMap } from './projectModal';
 import dayjs, { Dayjs } from 'dayjs';
 import { DownloadOutlined, DeleteOutlined} from '@ant-design/icons-vue';
@@ -111,6 +111,7 @@ watch(() => props.project, (newProject) => {
     isEditing.value = false;
 }, { immediate: true, deep: false });
 
+
 const downloadFile = (filename) => {
     http.post(`/api/get_document`, {
         project_id: props.project._id.$oid,
@@ -133,6 +134,10 @@ const downloadFile = (filename) => {
             console.error('下载文件失败', error);
         });
 };
+
+onMounted(() => {
+    window.downloadFile = downloadFile;
+})
 const form = ref({
     dateFrom: props.project.period_start,
     dateTo: props.project.period_end,
