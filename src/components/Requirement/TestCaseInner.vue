@@ -7,7 +7,7 @@
             测试用例
             <div class="flex justify-center items-center" style="gap: 2rem; margin-right: 2rem;">
                 <a-button type="primary" @click="handleSave" class="custom-purple-button">保存</a-button>
-                <!-- <a-button type="primary" @click="handleGenerateFile"  class="custom-purple-button">保存并生成脚本</a-button> -->
+                <a-button type="primary" @click="handleGenerateFile"  class="custom-purple-button">保存并生成脚本</a-button>
             </div>
         </div>
         <a-form-item label="测试用例类型">
@@ -24,17 +24,17 @@
         <a-card title="初始条件描述/信号" style="margin-bottom: 1rem;">
             <div v-for="(item, index) in form.pre_condition_items" :key="index" class="condition-row">
                 <a-row :gutter="16">
-                    <a-col :span="12">
+                    <a-col :span="10">
                         <a-input v-model:value="item.description" placeholder="请输入初始条件描述" />
                     </a-col>
-                    <a-col :span="12">
+                    <a-col :span="10">
                         <a-input v-model:value="item.signal" placeholder="请输入初始条件信号" />
                     </a-col>
+                    <a-col :span="4" style="display: flex; justify-content: space-between;">
+                        <a-button type="dashed" @click="addPreConditionItem(index)" style="margin-right: 0.5rem;">+</a-button>
+                        <a-button type="dashed" @click="removePreConditionItem(index)">-</a-button>
+                    </a-col>
                 </a-row>
-            </div>
-            <div>
-                <a-button type="dashed" @click="addPreConditionItem" style="margin-right: 1rem;">+ 添加一行</a-button>
-                <a-button type="dashed" @click="removePreConditionItem">- 删除一行</a-button>
             </div>
         </a-card>
 
@@ -42,17 +42,17 @@
         <a-card title="触发条件描述/信号" style="margin-bottom: 1rem;">
             <div v-for="(item, index) in form.action_items" :key="index" class="condition-row">
                 <a-row :gutter="16">
-                    <a-col :span="12">
+                    <a-col :span="10">
                         <a-input v-model:value="item.description" placeholder="请输入触发条件描述" />
                     </a-col>
-                    <a-col :span="12">
+                    <a-col :span="10">
                         <a-input v-model:value="item.signal" placeholder="请输入触发条件信号" />
                     </a-col>
+                    <a-col :span="4" style="display: flex; justify-content: space-between;">
+                        <a-button type="dashed" @click="addActionItem(index)" style="margin-right: 0.5rem;">+</a-button>
+                        <a-button type="dashed" @click="removeActionItem(index)">-</a-button>
+                    </a-col>
                 </a-row>
-            </div>
-            <div>
-                <a-button type="dashed" @click="addActionItem" style="margin-right: 1rem;">+ 添加一行</a-button>
-                <a-button type="dashed" @click="removeActionItem">- 删除一行</a-button>
             </div>
         </a-card>
 
@@ -60,17 +60,17 @@
         <a-card title="预期结果描述/信号" style="margin-bottom: 1rem;">
             <div v-for="(item, index) in form.result_items" :key="index" class="condition-row">
                 <a-row :gutter="16">
-                    <a-col :span="12">
+                    <a-col :span="10">
                         <a-input v-model:value="item.description" placeholder="请输入预期结果描述" />
                     </a-col>
-                    <a-col :span="12">
+                    <a-col :span="10">
                         <a-input v-model:value="item.signal" placeholder="请输入预期结果信号" />
                     </a-col>
+                    <a-col :span="4" style="display: flex; justify-content: space-between;">
+                        <a-button type="dashed" @click="addResultItem(index)" style="margin-right: 0.5rem;">+</a-button>
+                        <a-button type="dashed" @click="removeResultItem(index)">-</a-button>
+                    </a-col>
                 </a-row>
-            </div>
-            <div>
-                <a-button type="dashed" @click="addResultItem" style="margin-right: 1rem;">+ 添加一行</a-button>
-                <a-button type="dashed" @click="removeResultItem">- 删除一行</a-button>
             </div>
         </a-card>
     </a-form>
@@ -218,35 +218,29 @@ const handleSave = async () => {
 }
 
 // 添加行逻辑
-const addPreConditionItem = () => {
-    form.value.pre_condition_items.push({ description: '', signal: '' });
+const addPreConditionItem = (index: number) => {
+    form.value.pre_condition_items.splice(index + 1, 0, { description: '', signal: '' });
 };
 
-const addActionItem = () => {
-    form.value.action_items.push({ description: '', signal: '' });
+const addActionItem = (index: number) => {
+    form.value.action_items.splice(index + 1, 0, { description: '', signal: '' });
 };
 
-const addResultItem = () => {
-    form.value.result_items.push({ description: '', signal: '' });
+const addResultItem = (index: number) => {
+    form.value.result_items.splice(index + 1, 0, { description: '', signal: '' });
 };
 
 // 删除行逻辑
-const removePreConditionItem = () => {
-    if (form.value.pre_condition_items.length > 0) {
-        form.value.pre_condition_items.pop();
-    }
+const removePreConditionItem = (index: number) => {
+    form.value.pre_condition_items.splice(index, 1);
 };
 
-const removeActionItem = () => {
-    if (form.value.action_items.length > 0) {
-        form.value.action_items.pop();
-    }
+const removeActionItem = (index: number) => {
+    form.value.action_items.splice(index, 1);
 };
 
-const removeResultItem = () => {
-    if (form.value.result_items.length > 0) {
-        form.value.result_items.pop();
-    }
+const removeResultItem = (index: number) => {
+    form.value.result_items.splice(index, 1);
 };
 
 const selectBelongsToModalVisible = ref(false);

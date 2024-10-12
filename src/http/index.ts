@@ -28,7 +28,10 @@ http.interceptors.request.use(
       }
     })
 
-    NProgress.start(); // 开始进度条
+    if (config.url !== '/api/display_user_projects') {
+      NProgress.start(); // 开始进度条
+    }
+
     return config
   },
   (error) => {

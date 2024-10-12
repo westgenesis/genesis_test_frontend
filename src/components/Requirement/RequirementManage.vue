@@ -54,6 +54,7 @@
                             </template>
                         </el-upload>
                         <el-button type="text" @click="doSplitRequirement(requirement)">解析</el-button>
+                        <el-button type="text" @click="doDelete(requirement)">删除</el-button>
                     </div>
                 </div>
 
@@ -153,6 +154,11 @@ const onBeforeUpdate: UploadProps['onChange'] = async (file, requirement) => {
 const doSplitRequirement = async (requirement) => {
     ElMessage.success('已下发解析请求, 请等待一段时间或刷新后查看需求管理');
     const result = await http.post('/api/do_split_requirement', requirement);
+    doRefresh();
+}
+
+const doDelete = async (requirement) => {
+    
 }
 </script>
 

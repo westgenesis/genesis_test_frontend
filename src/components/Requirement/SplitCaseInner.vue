@@ -106,7 +106,7 @@
             <el-table-column label="操作" :width="150">
                 <template #default="scope">
                     <el-button type="text" @click="handleDelete(scope.row)">删除</el-button>
-                    <!-- <el-button type="text" @click="handleGenerateFile(scope.row)">生成脚本</el-button> -->
+                    <el-button type="text" @click="handleGenerateFile(scope.row)">生成脚本</el-button>
                 </template>
             </el-table-column>
         </el-table>
