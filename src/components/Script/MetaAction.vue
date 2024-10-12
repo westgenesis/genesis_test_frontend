@@ -78,6 +78,13 @@
             <a-radio value="read">Read</a-radio>
           </a-radio-group>
         </a-form-item>
+        <a-form-item label="关系" name="relation">
+          <a-select v-model:value="formData.relation" style="width: 100%">
+            <a-select-option value="greater_than">大于</a-select-option>
+            <a-select-option value="equal_to">等于</a-select-option>
+            <a-select-option value="less_than">小于</a-select-option>
+          </a-select>
+        </a-form-item>
 
         <!-- 动态添加值的表单 -->
         <div v-for="(value, index) in formData.values" :key="index">
@@ -139,6 +146,13 @@
             <a-radio value="read">Read</a-radio>
           </a-radio-group>
         </a-form-item>
+        <a-form-item label="关系" name="relation">
+          <a-select v-model:value="editFormData.relation" style="width: 100%">
+            <a-select-option value="greater_than">大于</a-select-option>
+            <a-select-option value="equal_to">等于</a-select-option>
+            <a-select-option value="less_than">小于</a-select-option>
+          </a-select>
+        </a-form-item>
 
         <!-- 动态添加值的表单 -->
         <div v-for="(value, index) in editFormData.values" :key="index">
@@ -187,8 +201,10 @@ const formData = reactive({
   action_type: 'In',
   belongs_to: 'Vector_IO',
   allowed_methods: 'set',
+  relation: 'greater_than', // 新增字段
   values: [{ name: '', description: '' }] // 默认有一个值
 });
+
 const editFormData = reactive({
   _id: '',
   name: '',
@@ -346,6 +362,11 @@ const columns = [
     key: 'belongs_to',
   },
   {
+    title: '关系',
+    dataIndex: 'relation',
+    key: 'relation',
+  },
+  {
     title: '操作',
     key: 'action',
     fixed: 'right',
@@ -363,6 +384,7 @@ const showEditDrawer = (record) => {
   editFormData.belongs_to = record.belongs_to;
   editFormData.allowed_methods = record.allowed_methods;
   editFormData.values = JSON.parse(JSON.stringify(record.values)) || [{ name: '', description: '' }]; // 确保有默认值
+  editFormData.relation = record.relation || 'greater_than'; // 新增字段
   editVisible.value = true;
 };
 
