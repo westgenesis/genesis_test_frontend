@@ -68,6 +68,13 @@
               <a-radio value="read">Read</a-radio>
             </a-radio-group>
           </a-form-item>
+          <a-form-item label="关系" name="relation">
+          <a-select v-model:value="form.relation" style="width: 100%">
+            <a-select-option value="greater_than">大于</a-select-option>
+            <a-select-option value="equal_to">等于</a-select-option>
+            <a-select-option value="less_than">小于</a-select-option>
+          </a-select>
+        </a-form-item>
 
           <!-- 动态添加值的表单 -->
           <div v-for="(value, index) in form.values" :key="index">
@@ -178,7 +185,8 @@ const form = reactive({
   actionType: 'In',
   belongsTo: 'Vector_IO',
   allowedMethods: 'set', // 改为单选
-  values: [{ name: '', description: '' }] // 默认有一个值
+  values: [{ name: '', description: '' }], // 默认有一个值,
+  relation: 'greater_than'
 });
 
 const availableActions = ref([]);
@@ -297,6 +305,7 @@ const handleCreateAction = async () => {
       action_type: form.actionType,
       belongs_to: form.belongsTo,
       allowed_methods: form.allowedMethods,
+      relation: form.relation,
     });
 
     if (resp.status === 'ok') {
