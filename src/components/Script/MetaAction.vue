@@ -68,15 +68,20 @@
             <a-select-option value="dSpace_IO">dSpace_IO</a-select-option>
             <a-select-option value="dSpace_CAN">dSpace_CAN</a-select-option>
             <a-select-option value="dSpace_LIN">dSpace_LIN</a-select-option>
+            <a-select-option value="Robot">Robot</a-select-option>
           </a-select>
         </a-form-item>
         <a-form-item label="动作支持的方法" name="allowed_methods">
-          <a-radio-group v-model:value="formData.allowed_methods" disabled>
+          <a-radio-group v-model:value="formData.allowed_methods">
             <a-radio value="set">Set</a-radio>
             <a-radio value="check">Check</a-radio>
             <a-radio value="write">Write</a-radio>
             <a-radio value="read">Read</a-radio>
+            <a-radio value="caplfunction">caplfunction</a-radio>
           </a-radio-group>
+        </a-form-item>
+        <a-form-item label="VT信号" name="vt_signal">
+          <a-input v-model:value="formData.vt_signal" placeholder="请输入内容" />
         </a-form-item>
         <a-form-item label="关系" name="relation">
           <a-select v-model:value="formData.relation" style="width: 100%">
@@ -136,15 +141,20 @@
             <a-select-option value="dSpace_IO">dSpace_IO</a-select-option>
             <a-select-option value="dSpace_CAN">dSpace_CAN</a-select-option>
             <a-select-option value="dSpace_LIN">dSpace_LIN</a-select-option>
+            <a-select-option value="Robot">Robot</a-select-option>
           </a-select>
         </a-form-item>
         <a-form-item label="动作支持的方法" name="allowed_methods">
-          <a-radio-group v-model:value="editFormData.allowed_methods" disabled>
+          <a-radio-group v-model:value="editFormData.allowed_methods">
             <a-radio value="set">Set</a-radio>
             <a-radio value="check">Check</a-radio>
             <a-radio value="write">Write</a-radio>
             <a-radio value="read">Read</a-radio>
+            <a-radio value="caplfunction">caplfunction</a-radio>
           </a-radio-group>
+        </a-form-item>
+        <a-form-item label="VT信号" name="vt_signal">
+          <a-input v-model:value="editFormData.vt_signal" placeholder="请输入内容" />
         </a-form-item>
         <a-form-item label="关系" name="relation">
           <a-select v-model:value="editFormData.relation" style="width: 100%">
@@ -180,7 +190,6 @@
 
 <script setup>
 import { ref, reactive, onMounted, computed } from 'vue';
-import { Form, Input, Drawer, Table, Button, Select, Radio, Pagination, Checkbox } from 'ant-design-vue';
 import { http } from '../../http';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { HomeOutlined, UserOutlined } from '@ant-design/icons-vue';
@@ -202,7 +211,8 @@ const formData = reactive({
   belongs_to: 'Vector_IO',
   allowed_methods: 'set',
   relation: 'greater_than', // 新增字段
-  values: [{ name: '', description: '' }] // 默认有一个值
+  values: [{ name: '', description: '' }], // 默认有一个值
+  vt_signal: ''
 });
 
 const editFormData = reactive({
@@ -214,7 +224,8 @@ const editFormData = reactive({
   action_type: 'In',
   belongs_to: 'Vector_IO',
   allowed_methods: 'set',
-  values: [{ name: '', description: '' }] // 默认有一个值
+  values: [{ name: '', description: '' }], // 默认有一个值
+  vt_signal: ''
 });
 
 const onSelectChange = (selectedKeys) => {
@@ -294,6 +305,9 @@ const handleOk = async () => {
 const updateAllowedMethods = () => {
   const { action_type, belongs_to } = formData;
   if (action_type && belongs_to) {
+    if (belongs_to === 'Robot') {
+      formData.allowed_methods = 'caplfunction';
+    }
     if (action_type === 'In' && (belongs_to === 'Vector_IO' || belongs_to === 'Vector_CAN' || belongs_to === 'Vector_LIN')) {
       formData.allowed_methods = 'set';
     } else if (action_type === 'Out' && (belongs_to === 'Vector_IO' || belongs_to === 'Vector_CAN' || belongs_to === 'Vector_LIN')) {
@@ -311,6 +325,9 @@ const updateAllowedMethods = () => {
 const updateAllowedMethodsEdit = () => {
   const { action_type, belongs_to } = editFormData;
   if (action_type && belongs_to) {
+    if (belongs_to === 'Robot') {
+      editFormData.allowed_methods = 'caplfunction';
+    }
     if (action_type === 'In' && (belongs_to === 'Vector_IO' || belongs_to === 'Vector_CAN' || belongs_to === 'Vector_LIN')) {
       editFormData.allowed_methods = 'set';
     } else if (action_type === 'Out' && (belongs_to === 'Vector_IO' || belongs_to === 'Vector_CAN' || belongs_to === 'Vector_LIN')) {
@@ -385,6 +402,7 @@ const showEditDrawer = (record) => {
   editFormData.allowed_methods = record.allowed_methods;
   editFormData.values = JSON.parse(JSON.stringify(record.values)) || [{ name: '', description: '' }]; // 确保有默认值
   editFormData.relation = record.relation || 'greater_than'; // 新增字段
+  editFormData.vt_signal = record.vt_signal || '';
   editVisible.value = true;
 };
 
@@ -396,6 +414,7 @@ const resetFormData = () => {
   formData.action_type = 'In';
   formData.belongs_to = 'Vector_IO';
   formData.allowed_methods = 'set';
+  formData.vt_signal = '';
   formData.values = [{ name: '', description: '' }];
 };
 
@@ -408,6 +427,7 @@ const resetEditFormData = () => {
   editFormData.action_type = 'In';
   editFormData.belongs_to = 'Vector_IO';
   editFormData.allowed_methods = 'set';
+  editFormData.vt_signal = '';
   editFormData.values = [{ name: '', description: '' }];
 };
 

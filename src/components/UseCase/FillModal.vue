@@ -68,6 +68,9 @@
               <a-radio value="read">Read</a-radio>
             </a-radio-group>
           </a-form-item>
+          <a-form-item label="VT信号" name="vt_signal">
+          <a-input v-model:value="form.vt_signal" placeholder="请输入vt信号" />
+        </a-form-item>
           <a-form-item label="关系" name="relation">
           <a-select v-model:value="form.relation" style="width: 100%">
             <a-select-option value="greater_than">大于</a-select-option>
@@ -186,7 +189,8 @@ const form = reactive({
   belongsTo: 'Vector_IO',
   allowedMethods: 'set', // 改为单选
   values: [{ name: '', description: '' }], // 默认有一个值,
-  relation: 'greater_than'
+  relation: 'greater_than',
+  vt_signal: ''
 });
 
 const availableActions = ref([]);
@@ -273,6 +277,7 @@ const resetForm = () => {
   form.belongsTo = 'Vector_IO';
   form.allowedMethods = 'set';
   form.values = [{ name: '', description: '' }];
+  form.vt_signal = '';
   selectedPreConditionSignal.value = '';
   selectedActionSignal.value = '';
   selectedResultSignal.value = '';
@@ -374,6 +379,7 @@ const handleTabChange = (tabKey) => {
       form.actionType = 'In';
       form.belongsTo = 'Vector_IO';
       form.allowedMethods = 'set';
+      form.vt_signal = '';
       form.values = [{ name: '', description: '' }];
     }
   }
@@ -451,6 +457,9 @@ const updateAllowedMethods = () => {
   const { actionType, belongsTo } = form;
   console.log(actionType, belongsTo)
   if (actionType && belongsTo) {
+    if (belongs_to === 'Robot') {
+      form.allowed_methods = 'caplfunction';
+    }
     if (actionType === 'In' && (belongsTo === 'Vector_IO' || belongsTo === 'Vector_CAN' || belongsTo === 'Vector_LIN')) {
       form.allowedMethods = 'set';
     } else if (actionType === 'Out' && (belongsTo === 'Vector_IO' || belongsTo === 'Vector_CAN' || belongsTo === 'Vector_LIN')) {
