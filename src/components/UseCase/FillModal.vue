@@ -58,6 +58,7 @@
             <a-select-option value="dSpace_IO">dSpace_IO</a-select-option>
             <a-select-option value="dSpace_CAN">dSpace_CAN</a-select-option>
             <a-select-option value="dSpace_LIN">dSpace_LIN</a-select-option>
+            <a-select-option value="Robot">Robot</a-select-option>
             </a-select>
           </a-form-item>
           <a-form-item label="动作支持的方法" name="allowed_methods">
@@ -66,6 +67,7 @@
               <a-radio value="write">Write</a-radio>
               <a-radio value="check">Check</a-radio>
               <a-radio value="read">Read</a-radio>
+              <a-radio value="caplfunction">caplfunction</a-radio>
             </a-radio-group>
           </a-form-item>
           <a-form-item label="VT信号" name="vt_signal">
