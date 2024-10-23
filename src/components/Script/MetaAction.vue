@@ -284,8 +284,7 @@ const handleOk = async () => {
   }
   for (const v of formData.values) {
     if (!v.name) {
-      ElMessage.error('值名称不能为空');
-      return;
+      v.name = '';
     }
   }
 
@@ -452,8 +451,7 @@ const handleEditOk = async () => {
   }
   for (const v of editFormData.values) {
     if (!v.name) {
-      ElMessage.error('值名称不能为空');
-      return;
+      v.name = '';
     }
   }
   try {

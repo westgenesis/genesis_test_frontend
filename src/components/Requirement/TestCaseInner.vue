@@ -7,7 +7,7 @@
             测试用例
             <div class="flex justify-center items-center" style="gap: 2rem; margin-right: 2rem;">
                 <a-button type="primary" @click="handleSave" class="custom-purple-button">保存</a-button>
-                <a-button type="primary" @click="handleGenerateFile"  class="custom-purple-button">保存并生成脚本</a-button>
+                <a-button type="primary" @click="handleGenerateFile"  class="custom-purple-button">生成脚本</a-button>
                 <a-button type="primary" @click="downloadFile" class="custom-purple-button" v-if="form.script_status === 'generated'">下载脚本</a-button>
             </div>
         </div>
@@ -323,7 +323,8 @@ const handleSelectBelongsToOk = () => {
             showFillModal(need_fill_result);
             ElMessage.success('需要创建元动作');
         } else if (response.status === 'success') {
-            ElMessage.success('生成成功')
+            ElMessage.success('生成成功, 现在可以下载文件');
+            fetchData();
         } else {
             ElMessage.error('生成失败');
         }

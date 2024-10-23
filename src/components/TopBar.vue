@@ -80,7 +80,7 @@ const topBarItems = [
     },
     {
         name: '脚本管理',
-        to: '/script/file',
+        to: '/script/metaAction',
         children: [
             { name: '元动作库', to: '/script/metaAction' },
             { name: '动作组合库', to: '/script/actionCombination' }
