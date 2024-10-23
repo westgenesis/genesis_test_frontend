@@ -8,6 +8,7 @@
             <div class="flex justify-center items-center" style="gap: 2rem; margin-right: 2rem;">
                 <a-button type="primary" @click="handleSave" class="custom-purple-button">保存</a-button>
                 <a-button type="primary" @click="handleGenerateFile"  class="custom-purple-button">保存并生成脚本</a-button>
+                <a-button type="primary" @click="downloadFile" class="custom-purple-button" v-if="form.script_status === 'generated'">下载脚本</a-button>
             </div>
         </div>
         <a-form-item label="测试用例类型">
@@ -155,6 +156,29 @@ const form = ref({
     result_items: [] as { description: string; signal: string }[],
 });
 
+const downloadFile = (filename) => {
+    http.post(`/api/get_document_by_path`, {
+        object_name: testcase_id.value + '/' + 'vtt_export.vtt',
+        file_name: 'vtt_export.vtt'
+    }, { responseType: 'blob' })
+        .then(response => {
+            const blob = new Blob([response as any], { type: 'application/octet-stream' });
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `vtt_export_${testcase_id.value}.vtt`);
+            document.body.appendChild(link);
+            link.click();
+
+            // 移除下载链接
+            link.remove();
+            window.URL.revokeObjectURL(url);
+        })
+        .catch(error => {
+            console.error('下载文件失败', error);
+        });
+};
+
 const fetchData = () => {
     http.post('/api/query_testcase_by_id', {
         project_id: project_id.value,
@@ -282,7 +306,14 @@ const handleSelectBelongsToOk = () => {
 
     selectBelongsToModalVisible.value = false;
 
-    http.post('/api/generate_script_file', { ...currentRow.value, ...selectForm.value}).then(response => {
+    http.post('/api/generate_script_file', { 
+        ...currentRow.value,
+        ...selectForm.value,
+        project_id: project_id.value, 
+        req_id: req_id.value,
+        split_file_id: split_file_id.value,
+        split_case_id: split_case_id.value,
+    }).then(response => {
         if (response.status === 'need_fill') {
             const need_fill_result = {
                 pre_condition_signal: response?.unmatched?.pre_condition_signal,

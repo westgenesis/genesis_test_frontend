@@ -150,7 +150,6 @@
 
 <script setup>
 import { ref, reactive, watch, onMounted } from 'vue';
-import { Modal, Form, Input, Select, Radio, Button, Result, Tabs } from 'ant-design-vue';
 import { http } from '../../http';
 import { ElMessage } from 'element-plus';
 
