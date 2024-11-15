@@ -5,31 +5,78 @@
         <home-outlined />
       </a-breadcrumb-item>
       <a-breadcrumb-item href="">
-        <span>脚本管理</span>
+        <span>动作库</span>
       </a-breadcrumb-item>
       <a-breadcrumb-item>元动作库</a-breadcrumb-item>
     </a-breadcrumb>
   </div>
 
-  <div class="m-[32px]">
-    <div class="mt-[20px] mb-[20px] flex justify-end">
-      <a-button type="primary" size="large" @click="showDrawer" class="custom-purple-button mr-[2rem]">添加元动作</a-button>
+  <a-tabs v-model:activeKey="activeTab" class="ml-[30px]">
+    <a-tab-pane key="1" tab="IO信号"></a-tab-pane>
+    <a-tab-pane key="2" tab="总线信号"></a-tab-pane>
+  </a-tabs>
+
+  <div class="flex-row flex mt-[20px] mb-[20px] pl-[30px]">
+    <a-form :model="searchForm" layout="inline" style="width:100%">
+      <a-row style="width:80%">
+        <a-col :span="10" style="max-width: 300px">
+          <a-form-item label="关键字" name="key">
+            <a-input v-model:value="searchForm.name" placeholder="请输入关键字" :allowClear="true" />
+          </a-form-item>
+        </a-col>
+
+        <a-col :span="10" style="max-width: 300px">
+          <a-form-item label="所属项目" name="projectid">
+            <ProjectSelect v-model="searchForm.projectId" placeholder="请选择所属项目" :allowClear="true"></ProjectSelect>
+          </a-form-item>
+        </a-col>
+      </a-row>
+    </a-form>
+
+    <div class="flex justify-end">
+      <a-button type="primary" size="large" @click="query" class="custom-purple-button mr-[2rem]">查询</a-button>
+      <a-button type="primary" v-if="activeTab === '1'" size="large" @click="showDrawer"
+        class="custom-purple-button mr-[2rem]">添加IO信号动作</a-button>
+      <a-button type="primary" v-if="activeTab === '2'" size="large" @click="showDrawer"
+        class="custom-purple-button mr-[2rem]">添加总线信号动作</a-button>
+      <a-button type="primary" v-if="activeTab === '2'" size="large" @click="showDrawer"
+        class="custom-purple-button mr-[2rem]">上传DBC文件</a-button>
       <a-button type="primary" size="large" @click="deleteSelectedActions"
-        class="custom-purple-button mr-[2rem]">删除选中项</a-button>
+        class="custom-purple-button mr-[2rem]">删除</a-button>
     </div>
 
-    <a-table :columns="columns" :row-key="record => record._id" bordered :data-source="pagedDataSource" size="middle"
-      :pagination="false" :scroll="{ y: table_height }"
-      :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }">
+  </div>
+
+  <div class="m-[32px]">
+
+    <a-table :columns="ioColumns" :row-key="record => record._id" bordered :data-source="pagedDataSource" size="middle"
+      :pagination="false" :scroll="{ y: table_height }" :row-selection="{
+        selectedRowKeys: selectedRowKeys, onChange: onSelectChange, getCheckboxProps: (record) => ({
+          disabled: !Boolean(record.values)   // Column configuration not to be checked
+          // name: record.name,
+        }),
+      }" childrenColumnName="values">
       <template #bodyCell="{ column, record }">
-        <template v-if="column.key === 'values'">
-          <div v-for="value in record.values" :key="value">
-            {{ value.name + ' ' }}
-          </div>
+
+        <template v-if="column.key === 'name'">
+          <span>{{ record.name || record.status }}</span>
         </template>
+
+        <template v-if="column.key === 'relation'">
+          <span v-if="record.values">{{ record.relation }}</span>
+          <span v-else></span>
+        </template>
+
+        <template v-if="column.key === 'acton_parameter'">
+          <span v-if="record.values">{{ record.values[0].vt_signal }}</span>
+          <span v-else>{{ `${record.vt_signal}${record.relation}${record.value}` }}</span>
+        </template>
+
         <template v-if="column.key === 'action'">
-          <a-button type="link" size="small" @click="showEditDrawer(record)">编辑</a-button>
-          <a-button type="link" size="small" @click="deleteAction(record._id)">删除</a-button>
+          <template v-if="record.values">
+            <a-button type="link" size="small" @click="showEditDrawer(record)">编辑</a-button>
+            <a-button type="link" size="small" @click="deleteAction(record._id)">删除</a-button>
+          </template>
         </template>
       </template>
     </a-table>
@@ -39,152 +86,10 @@
         @change="handlePageChange" />
     </div>
 
-    <a-drawer v-model:visible="visible" title="添加元动作" placement="right" width="40%" @close="handleClose">
-      <a-form :model="formData" :rules="rules" layout="vertical">
-        <a-form-item label="动作名称" name="name">
-          <a-input v-model:value="formData.name" placeholder="请输入内容" />
-        </a-form-item>
-        <a-form-item label="动作描述" name="description">
-          <a-input v-model:value="formData.description" placeholder="请输入内容" />
-        </a-form-item>
-        <a-form-item label="动作执行路径" name="exec_path">
-          <a-input v-model:value="formData.exec_path" placeholder="请输入内容" />
-        </a-form-item>
-        <a-form-item label="路径参数" name="path_parameter">
-          <a-input v-model:value="formData.path_parameter" placeholder="请输入内容" />
-        </a-form-item>
-
-        <a-form-item label="动作类型" name="action_type">
-          <a-select v-model:value="formData.action_type" style="width: 100%" @change="updateAllowedMethods">
-            <a-select-option value="In">In</a-select-option>
-            <a-select-option value="Out">Out</a-select-option>
-          </a-select>
-        </a-form-item>
-        <a-form-item label="所属对象" name="belongs_to">
-          <a-select v-model:value="formData.belongs_to" style="width: 100%" @change="updateAllowedMethods">
-            <a-select-option value="Vector_IO">Vector_IO</a-select-option>
-            <a-select-option value="Vector_CAN">Vector_CAN</a-select-option>
-            <a-select-option value="Vector_LIN">Vector_LIN</a-select-option>
-            <a-select-option value="dSpace_IO">dSpace_IO</a-select-option>
-            <a-select-option value="dSpace_CAN">dSpace_CAN</a-select-option>
-            <a-select-option value="dSpace_LIN">dSpace_LIN</a-select-option>
-            <a-select-option value="Robot">Robot</a-select-option>
-          </a-select>
-        </a-form-item>
-        <a-form-item label="动作支持的方法" name="allowed_methods">
-          <a-radio-group v-model:value="formData.allowed_methods">
-            <a-radio value="set">Set</a-radio>
-            <a-radio value="check">Check</a-radio>
-            <a-radio value="write">Write</a-radio>
-            <a-radio value="read">Read</a-radio>
-            <a-radio value="caplfunction">caplfunction</a-radio>
-          </a-radio-group>
-        </a-form-item>
-        <a-form-item label="VT信号" name="vt_signal">
-          <a-input v-model:value="formData.vt_signal" placeholder="请输入内容" />
-        </a-form-item>
-        <a-form-item label="关系" name="relation">
-          <a-select v-model:value="formData.relation" style="width: 100%">
-            <a-select-option value="greater_than">大于</a-select-option>
-            <a-select-option value="equal_to">等于</a-select-option>
-            <a-select-option value="less_than">小于</a-select-option>
-          </a-select>
-        </a-form-item>
-
-        <!-- 动态添加值的表单 -->
-        <div v-for="(value, index) in formData.values" :key="index">
-          <a-card>
-            <a-form-item label="值名称" :name="['values', index, 'name']">
-              <a-input v-model:value="value.name" placeholder="请输入值名称" />
-            </a-form-item>
-            <a-form-item label="值描述" :name="['values', index, 'description']">
-              <a-input v-model:value="value.description" placeholder="请输入值描述" />
-            </a-form-item>
-            <a-button type="link" @click="removeValue(index)">删除</a-button>
-          </a-card>
-        </div>
-        <a-button style="margin-top: 1rem" type="dashed" @click="addValue">添加值</a-button>
-      </a-form>
-      <div slot="footer" class="flex justify-end">
-        <a-button class="custom-purple-button mr-[2rem]" type="primary" @click="handleClose" size="large">关闭</a-button>
-        <a-button class="custom-purple-button mr-[2rem]" type="primary" @click="handleOk" size="large"
-          :loading="submitting">提交</a-button>
-      </div>
+    <a-drawer v-model:visible="visible" title="添加元动作 I/O信号" placement="right" width="50%" @close="handleClose">
+      <IOEdit :data="editData" :status="editStatus" @close="visible = false" @success="query"></IOEdit>
     </a-drawer>
 
-    <a-drawer v-model:visible="editVisible" title="编辑元动作" placement="right" width="40%" @close="handleEditClose">
-      <a-form :model="editFormData" :rules="rules" layout="vertical">
-        <a-form-item label="动作名称" name="name">
-          <a-input v-model:value="editFormData.name" placeholder="请输入内容" />
-        </a-form-item>
-        <a-form-item label="动作描述" name="description">
-          <a-input v-model:value="editFormData.description" placeholder="请输入内容" />
-        </a-form-item>
-        <a-form-item label="动作执行路径" name="exec_path">
-          <a-input v-model:value="editFormData.exec_path" placeholder="请输入内容" />
-        </a-form-item>
-        <a-form-item label="路径参数" name="path_parameter">
-          <a-input v-model:value="editFormData.path_parameter" placeholder="请输入内容" />
-        </a-form-item>
-
-        <a-form-item label="动作类型" name="action_type">
-          <a-select v-model:value="editFormData.action_type" style="width: 100%" @change="updateAllowedMethodsEdit">
-            <a-select-option value="In">In</a-select-option>
-            <a-select-option value="Out">Out</a-select-option>
-          </a-select>
-        </a-form-item>
-        <a-form-item label="所属对象" name="belongs_to">
-          <a-select v-model:value="editFormData.belongs_to" style="width: 100%" @change="updateAllowedMethodsEdit">
-            <a-select-option value="Vector_IO">Vector_IO</a-select-option>
-            <a-select-option value="Vector_CAN">Vector_CAN</a-select-option>
-            <a-select-option value="Vector_LIN">Vector_LIN</a-select-option>
-            <a-select-option value="dSpace_IO">dSpace_IO</a-select-option>
-            <a-select-option value="dSpace_CAN">dSpace_CAN</a-select-option>
-            <a-select-option value="dSpace_LIN">dSpace_LIN</a-select-option>
-            <a-select-option value="Robot">Robot</a-select-option>
-          </a-select>
-        </a-form-item>
-        <a-form-item label="动作支持的方法" name="allowed_methods">
-          <a-radio-group v-model:value="editFormData.allowed_methods">
-            <a-radio value="set">Set</a-radio>
-            <a-radio value="check">Check</a-radio>
-            <a-radio value="write">Write</a-radio>
-            <a-radio value="read">Read</a-radio>
-            <a-radio value="caplfunction">caplfunction</a-radio>
-          </a-radio-group>
-        </a-form-item>
-        <a-form-item label="VT信号" name="vt_signal">
-          <a-input v-model:value="editFormData.vt_signal" placeholder="请输入内容" />
-        </a-form-item>
-        <a-form-item label="关系" name="relation">
-          <a-select v-model:value="editFormData.relation" style="width: 100%">
-            <a-select-option value="greater_than">大于</a-select-option>
-            <a-select-option value="equal_to">等于</a-select-option>
-            <a-select-option value="less_than">小于</a-select-option>
-          </a-select>
-        </a-form-item>
-
-        <!-- 动态添加值的表单 -->
-        <div v-for="(value, index) in editFormData.values" :key="index">
-          <a-card>
-            <a-form-item label="值名称" :name="['values', index, 'name']">
-              <a-input v-model:value="value.name" placeholder="请输入值名称" />
-            </a-form-item>
-            <a-form-item label="值描述" :name="['values', index, 'description']">
-              <a-input v-model:value="value.description" placeholder="请输入值描述" />
-            </a-form-item>
-            <a-button type="link" @click="removeEditValue(index)">删除</a-button>
-          </a-card>
-        </div>
-        <a-button style="margin-top: 1rem" type="dashed" @click="addEditValue">添加值</a-button>
-      </a-form>
-      <div slot="footer" class="flex justify-end">
-        <a-button class="custom-purple-button mr-[2rem]" type="primary" @click="handleEditClose"
-          size="large">关闭</a-button>
-        <a-button class="custom-purple-button mr-[2rem]" type="primary" @click="handleEditOk" size="large"
-          :loading="submitting">提交</a-button>
-      </div>
-    </a-drawer>
   </div>
 </template>
 
@@ -193,6 +98,9 @@ import { ref, reactive, onMounted, computed } from 'vue';
 import { http } from '../../http';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { HomeOutlined, UserOutlined } from '@ant-design/icons-vue';
+import ProjectSelect from '@common/projectSelect.vue'
+import IOEdit from './MetaIOEdit.vue'
+import { cloneDeep } from 'lodash-es'
 
 const dataSource = ref([]);
 const currentPage = ref(1);
@@ -214,6 +122,13 @@ const formData = reactive({
   values: [{ name: '', description: '' }], // 默认有一个值
   vt_signal: ''
 });
+
+const searchForm = ref({
+  keyword: null,
+  projectId: null,
+})
+
+const activeTab = ref("1")
 
 const editFormData = reactive({
   _id: '',
@@ -248,13 +163,27 @@ onMounted(() => {
 });
 
 const fetchActions = () => {
-  http.get('/api/get_actions').then(response => {
+  // console.log(searchForm.value)
+  const params = Object.assign({}, searchForm.value)
+
+  params.belongs_to === activeTab.value === '1' ? 'Vector_IO' : 'Vector_CAN'
+
+  http({
+    url: '/api/get_actions',
+    params: searchForm.value,
+  }).then(response => {
     console.log(response);
+
+    // response.forEach((row) => {
+    //   row.children = 
+    // })
+
     dataSource.value = response.actions;
   }).catch(error => {
     console.error(error);
     ElMessage.error('获取数据失败');
   });
+
 };
 
 const pagedDataSource = computed(() => {
@@ -270,8 +199,14 @@ const handlePageChange = (page) => {
 const table_height = window.innerHeight * 0.6
 
 const showDrawer = () => {
+  editStatus.value = 'new'
+  editData.value = {}
   visible.value = true;
 };
+
+function query() {
+  fetchActions()
+}
 
 const handleOk = async () => {
   if (!formData.name) {
@@ -301,47 +236,7 @@ const handleOk = async () => {
   }
 };
 
-const updateAllowedMethods = () => {
-  const { action_type, belongs_to } = formData;
-  if (action_type && belongs_to) {
-    if (belongs_to === 'Robot') {
-      formData.allowed_methods = 'caplfunction';
-    }
-    if (action_type === 'In' && (belongs_to === 'Vector_IO' || belongs_to === 'Vector_CAN' || belongs_to === 'Vector_LIN')) {
-      formData.allowed_methods = 'set';
-    } else if (action_type === 'Out' && (belongs_to === 'Vector_IO' || belongs_to === 'Vector_CAN' || belongs_to === 'Vector_LIN')) {
-      formData.allowed_methods = 'check';
-    } else if (action_type === 'In' && (belongs_to === 'dSpace_IO' || belongs_to === 'dSpace_CAN' || belongs_to === 'dSpace_LIN')) {
-      formData.allowed_methods = 'write';
-    } else if (action_type === 'Out' && (belongs_to === 'dSpace_IO' || belongs_to === 'dSpace_CAN' || belongs_to === 'dSpace_LIN')) {
-      formData.allowed_methods = 'read';
-    }
-  } else {
-    formData.allowed_methods = '';
-  }
-};
-
-const updateAllowedMethodsEdit = () => {
-  const { action_type, belongs_to } = editFormData;
-  if (action_type && belongs_to) {
-    if (belongs_to === 'Robot') {
-      editFormData.allowed_methods = 'caplfunction';
-    }
-    if (action_type === 'In' && (belongs_to === 'Vector_IO' || belongs_to === 'Vector_CAN' || belongs_to === 'Vector_LIN')) {
-      editFormData.allowed_methods = 'set';
-    } else if (action_type === 'Out' && (belongs_to === 'Vector_IO' || belongs_to === 'Vector_CAN' || belongs_to === 'Vector_LIN')) {
-      editFormData.allowed_methods = 'check';
-    } else if (action_type === 'In' && (belongs_to === 'dSpace_IO' || belongs_to === 'dSpace_CAN' || belongs_to === 'dSpace_LIN')) {
-      editFormData.allowed_methods = 'write';
-    } else if (action_type === 'Out' && (belongs_to === 'dSpace_IO' || belongs_to === 'dSpace_CAN' || belongs_to === 'dSpace_LIN')) {
-      editFormData.allowed_methods = 'read';
-    }
-  } else {
-    editFormData.allowed_methods = '';
-  }
-};
-
-const columns = [
+const ioColumns = [
   {
     title: '动作名称',
     dataIndex: 'name',
@@ -353,56 +248,45 @@ const columns = [
     key: 'description',
   },
   {
-    title: 'Values',
-    dataIndex: 'values',
-    key: 'values',
+    title: '动作参数',
+    dataIndex: 'acton_parameter',
+    key: 'acton_parameter',
   },
   {
-    title: '执行路径',
+    title: '动作执行路径',
     dataIndex: 'exec_path',
     key: 'exec_path',
   },
   {
-    title: '路径参数',
+    title: '通道参数',
     dataIndex: 'path_parameter',
     key: 'path_parameter',
   },
   {
-    title: '动作类型',
-    dataIndex: 'action_type',
-    key: 'action_type',
-  },
-  {
-    title: '所属对象',
-    dataIndex: 'belongs_to',
-    key: 'belongs_to',
-  },
-  {
-    title: '关系',
+    title: '通道类型',
     dataIndex: 'relation',
     key: 'relation',
   },
   {
+    title: '所属项目',
+    dataIndex: 'projectName',
+    key: 'projectName',
+  },
+
+  {
     title: '操作',
     key: 'action',
     fixed: 'right',
-    width: 100,
+    width: 180,
   },
 ];
 
+const editData = ref({})
+const editStatus = ref("new")
 const showEditDrawer = (record) => {
-  editFormData._id = record._id;
-  editFormData.name = record.name;
-  editFormData.description = record.description;
-  editFormData.exec_path = record.exec_path;
-  editFormData.path_parameter = record.path_parameter;
-  editFormData.action_type = record.action_type;
-  editFormData.belongs_to = record.belongs_to;
-  editFormData.allowed_methods = record.allowed_methods;
-  editFormData.values = JSON.parse(JSON.stringify(record.values)) || [{ name: '', description: '' }]; // 确保有默认值
-  editFormData.relation = record.relation || 'greater_than'; // 新增字段
-  editFormData.vt_signal = record.vt_signal || '';
-  editVisible.value = true;
+  editStatus.value = 'edit'
+  editData.value = cloneDeep(record)
+  visible.value = true;
 };
 
 const resetFormData = () => {

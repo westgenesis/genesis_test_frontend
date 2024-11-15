@@ -3,15 +3,13 @@
   "references": [
     {
       "path": "./tsconfig.app.json"
-    },
-    {
-      "path": "./tsconfig.node.json"
     }
   ],
   "compilerOptions": {
     "baseUrl": ".", // 设定根目录
     "paths": {
-      "@stores/*": ["/src/stores/*"] // 映射路径
+      "@stores/*": ["/src/stores/*"], // 映射路径
+      "@/*": ["/src/*"] // 映射路径
     },
     "target": "ESNext", // 设置编译目标为最新的 ECMAScript 标准
     "module": "ESNext", // 使用 ES 模块系统

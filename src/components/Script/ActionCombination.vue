@@ -5,7 +5,7 @@
         <home-outlined />
       </a-breadcrumb-item>
       <a-breadcrumb-item href="">
-        <span>脚本管理</span>
+        <span>动作库</span>
       </a-breadcrumb-item>
       <a-breadcrumb-item>动作组合库</a-breadcrumb-item>
     </a-breadcrumb>

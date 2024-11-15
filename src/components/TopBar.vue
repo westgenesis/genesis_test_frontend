@@ -79,7 +79,7 @@ const topBarItems = [
         to: '/requirement/requirementMain'
     },
     {
-        name: '脚本管理',
+        name: '动作库',
         to: '/script/metaAction',
         children: [
             { name: '元动作库', to: '/script/metaAction' },
@@ -125,7 +125,7 @@ onMounted(() => {
     } else if (hash.startsWith('/usecase')) {
         selectedItem.value = '用例管理';
     } else if (hash.startsWith('/script')) {
-        selectedItem.value = '脚本管理'
+        selectedItem.value = '动作库'
     }
 })
 

@@ -6,6 +6,8 @@ import { onMounted } from 'vue'
 import { http } from './http';
 import { useProjectStore } from './stores/project';
 import 'quill/dist/quill.snow.css'
+// import Project from './components/common/projectSelect.vue'
+// import {ref} from 'vue'
 
 
 const projectStore = useProjectStore();
@@ -25,9 +27,13 @@ onMounted(() => {
             }
         });
 })
+
+// const abc = ref("Robot")
 </script>
 
 <template>
+  <!-- <Project style="width: 100px;" v-model="abc" ></Project>
+  abc{{ abc }} -->
   <div class="main">
     <TopBar></TopBar>
     <div class="flex flex-1" style="overflow: hidden;">

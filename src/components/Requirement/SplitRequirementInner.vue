@@ -1,8 +1,8 @@
 <template>
     <a-tabs v-model:activeKey="activeTab">
         <a-tab-pane key="detail" tab="功能模块详情"></a-tab-pane>
-        <a-tab-pane key="points" tab="功能点列表"></a-tab-pane>
-        <a-tab-pane key="testcase_table" tab="测试用例列表"></a-tab-pane>
+        <a-tab-pane key="points" tab="功能测试用例"></a-tab-pane>
+        <a-tab-pane key="testcase_table" tab="台架测试用例"></a-tab-pane>
     </a-tabs>
     <a-drawer title="新建功能点" :visible="visible" :width="720" @close="onDrawerClose">
         <a-form :model="newForm" layout="vertical">

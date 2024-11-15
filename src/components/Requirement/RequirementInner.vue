@@ -1,8 +1,8 @@
 <template>
     <a-tabs v-model:activeKey="activeTab">
         <a-tab-pane key="modules" tab="功能模块列表"></a-tab-pane>
-        <a-tab-pane key="points" tab="功能点列表"></a-tab-pane>
-        <a-tab-pane key="testcase_table" tab="测试用例列表"></a-tab-pane>
+        <a-tab-pane key="points" tab="功能测试用例"></a-tab-pane>
+        <a-tab-pane key="testcase_table" tab="台阶测试用例"></a-tab-pane>
     </a-tabs>
     <div v-if="activeTab === 'modules'">
         <div style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;">项目信息</div>
