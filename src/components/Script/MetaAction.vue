@@ -1,4 +1,5 @@
 <template>
+
   <div class="m-[20px] ml-[30px]">
     <a-breadcrumb>
       <a-breadcrumb-item href="">
@@ -11,7 +12,7 @@
     </a-breadcrumb>
   </div>
 
-  <a-tabs v-model:activeKey="activeTab" class="ml-[30px]">
+  <a-tabs v-model:activeKey="activeTab" @change="query" class="ml-[30px]">
     <a-tab-pane key="1" tab="IO信号"></a-tab-pane>
     <a-tab-pane key="2" tab="总线信号"></a-tab-pane>
   </a-tabs>
@@ -20,8 +21,8 @@
     <a-form :model="searchForm" layout="inline" style="width:100%">
       <a-row style="width:80%">
         <a-col :span="10" style="max-width: 300px">
-          <a-form-item label="关键字" name="key">
-            <a-input v-model:value="searchForm.name" placeholder="请输入关键字" :allowClear="true" />
+          <a-form-item label="关键字" name="keyword">
+            <a-input v-model:value="searchForm.keyword" placeholder="请输入关键字" :allowClear="true" />
           </a-form-item>
         </a-col>
 
@@ -34,30 +35,44 @@
     </a-form>
 
     <div class="flex justify-end">
-      <a-button type="primary" size="large" @click="query" class="custom-purple-button mr-[2rem]">查询</a-button>
+      <a-button type="primary" size="large" @click="query" class="custom-purple-button mr-[2rem] flex items-center">
+        <SearchOutlined /> 查询
+      </a-button>
       <a-button type="primary" v-if="activeTab === '1'" size="large" @click="showDrawer"
-        class="custom-purple-button mr-[2rem]">添加IO信号动作</a-button>
+        class="custom-purple-button mr-[2rem] flex items-center">
+        <PlusOutlined />新建IO信号动作
+      </a-button>
       <a-button type="primary" v-if="activeTab === '2'" size="large" @click="showDrawer"
-        class="custom-purple-button mr-[2rem]">添加总线信号动作</a-button>
-      <a-button type="primary" v-if="activeTab === '2'" size="large" @click="showDrawer"
-        class="custom-purple-button mr-[2rem]">上传DBC文件</a-button>
+        class="custom-purple-button mr-[2rem] flex items-center">
+        <PlusOutlined />新建总线信号动作
+      </a-button>
+      <a-button type="primary" v-if="activeTab === '2'" size="large" @click="dbcVisible = true"
+        class="custom-purple-button mr-[2rem] flex items-center">
+        <UploadOutlined />
+        上传DBC文件
+      </a-button>
       <a-button type="primary" size="large" @click="deleteSelectedActions"
-        class="custom-purple-button mr-[2rem]">删除</a-button>
+        class="custom-purple-button mr-[2rem] flex items-center">
+        <DeleteOutlined />
+        删除
+      </a-button>
     </div>
 
   </div>
 
   <div class="m-[32px]">
 
+    <!-- :scroll="{ y: table_height }" -->
     <a-table :columns="ioColumns" :row-key="record => record._id" bordered :data-source="pagedDataSource" size="middle"
-      :pagination="false" :scroll="{ y: table_height }" :row-selection="{
+      :pagination="false" :row-selection="{
         selectedRowKeys: selectedRowKeys, onChange: onSelectChange, getCheckboxProps: (record) => ({
           disabled: !Boolean(record.values)   // Column configuration not to be checked
           // name: record.name,
         }),
-      }" childrenColumnName="values">
-      <template #bodyCell="{ column, record }">
+      }" childrenColumnName="values" v-if="activeTab === '1'"
+      :row-class-name="(_record, index) => (index % 2 === 1 ? 'table-striped' : null)">
 
+      <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'name'">
           <span>{{ record.name || record.status }}</span>
         </template>
@@ -68,12 +83,29 @@
         </template>
 
         <template v-if="column.key === 'acton_parameter'">
-          <span v-if="record.values">{{ record.values[0].vt_signal }}</span>
-          <span v-else>{{ `${record.vt_signal}${record.relation}${record.value}` }}</span>
+          <span>{{ actionParmaDisplay(record) }}</span>
         </template>
 
         <template v-if="column.key === 'action'">
           <template v-if="record.values">
+            <a-button type="link" size="small" @click="showCopyDrawer(record)">复制</a-button>
+            <a-button type="link" size="small" @click="showEditDrawer(record)">编辑</a-button>
+            <a-button type="link" size="small" @click="deleteAction(record._id)">删除</a-button>
+          </template>
+        </template>
+      </template>
+    </a-table>
+
+
+    <a-table :columns="canColumns" :row-key="record => record._id" bordered :data-source="pagedDataSource" size="middle"
+      :pagination="false" :row-selection="{
+        selectedRowKeys: selectedRowKeys, onChange: onSelectChange,
+      }" v-if="activeTab === '2'" :row-class-name="(_record, index) => (index % 2 === 1 ? 'table-striped' : null)">
+      <template #bodyCell="{ column, record }">
+
+        <template v-if="column.key === 'action'">
+          <template v-if="record.values">
+            <!-- <a-button type="link" size="small" @click="showCopyDrawer(record)">复制</a-button> -->
             <a-button type="link" size="small" @click="showEditDrawer(record)">编辑</a-button>
             <a-button type="link" size="small" @click="deleteAction(record._id)">删除</a-button>
           </template>
@@ -86,9 +118,21 @@
         @change="handlePageChange" />
     </div>
 
-    <a-drawer v-model:visible="visible" title="添加元动作 I/O信号" placement="right" width="50%" @close="handleClose">
-      <IOEdit :data="editData" :status="editStatus" @close="visible = false" @success="query"></IOEdit>
+    <!-- IO编辑 -->
+    <a-drawer v-model:open="visible" :title="dict[editStatus] + '元动作-I/O信号'" placement="right" width="50%"
+      @close="visible = false">
+      <IOEdit v-if="visible" :data="editData" :status="editStatus" @close="visible = false" @success="query"></IOEdit>
     </a-drawer>
+
+    <!-- 总线编辑 -->
+    <a-drawer v-model:open="canVisible" :title="dict[editStatus] + '元动作-总线信号'" placement="right" width="50%"
+      @close="canVisible = false">
+      <CANEdit v-if="canVisible" :data="editData" :status="editStatus" @close="visible = false" @success="query">
+      </CANEdit>
+    </a-drawer>
+
+    <!-- DBC文件上传 -->
+    <DBCUploader v-model:visible="dbcVisible"></DBCUploader>
 
   </div>
 </template>
@@ -100,15 +144,31 @@ import { ElMessage, ElMessageBox } from 'element-plus';
 import { HomeOutlined, UserOutlined } from '@ant-design/icons-vue';
 import ProjectSelect from '@common/projectSelect.vue'
 import IOEdit from './MetaIOEdit.vue'
+import CANEdit from './MetaCANEdit.vue'
+import DBCUploader from './DBCUploader.vue';
+import CANSelector from './CANSelector.vue';
 import { cloneDeep } from 'lodash-es'
+import { SearchOutlined, DeleteOutlined, UploadOutlined, PlusOutlined } from '@ant-design/icons-vue'
+
 
 const dataSource = ref([]);
 const currentPage = ref(1);
 const pageSize = 10;
 const visible = ref(false);
+const canVisible = ref(false);
 const editVisible = ref(false);
+const canSelVisible = ref(true)
+
+const dbcVisible = ref(false)
+
 const submitting = ref(false);
 const selectedRowKeys = ref([]);
+
+const dict = {
+  'new': '新建',
+  'edit': '编辑',
+  'copy': '复制',
+}
 
 const formData = reactive({
   name: '',
@@ -147,36 +207,35 @@ const onSelectChange = (selectedKeys) => {
   selectedRowKeys.value = selectedKeys;
 }
 
-const rules = {
-  name: [{ required: true, message: '请输入动作名称' }],
-  description: [{ required: true, message: '请输入动作描述' }],
-  exec_path: [{ required: false, message: '请输入动作执行路径' }],
-  path_parameter: [{ required: false, message: '请输入路径参数' }],
-  values: {
-    name: [{ required: true, message: '请输入值名称' }],
-    description: [{ required: true, message: '请输入值描述' }]
-  }
-};
-
 onMounted(() => {
   fetchActions();
 });
 
-const fetchActions = () => {
-  // console.log(searchForm.value)
-  const params = Object.assign({}, searchForm.value)
 
-  params.belongs_to === activeTab.value === '1' ? 'Vector_IO' : 'Vector_CAN'
+//动作参数显式逻辑
+function actionParmaDisplay(record) {
+
+  // 只有一条显示第一条的 所有条件
+  if (record.values && record.values.length === 1) {
+    const opRecord = record.values[0]
+    return opRecord.vt_signal + opRecord.relation + opRecord.value;
+  }
+
+  // 否则显示第一条的vt
+  if (record.values) {
+    return record.values[0].vt_signal;
+  }
+
+  return record.vt_signal + record.relation + record.value;
+}
+const fetchActions = () => {
+  const params = Object.assign({}, searchForm.value)
+  params.belongs_to = activeTab.value === '1' ? 'Vector_IO' : 'Vector_CAN'
 
   http({
     url: '/api/get_actions',
-    params: searchForm.value,
+    params: params,
   }).then(response => {
-    console.log(response);
-
-    // response.forEach((row) => {
-    //   row.children = 
-    // })
 
     dataSource.value = response.actions;
   }).catch(error => {
@@ -201,40 +260,18 @@ const table_height = window.innerHeight * 0.6
 const showDrawer = () => {
   editStatus.value = 'new'
   editData.value = {}
-  visible.value = true;
+
+  if (activeTab.value === '1') {
+    visible.value = true;
+  } else {
+    canVisible.value = true;
+  }
 };
 
 function query() {
   fetchActions()
 }
 
-const handleOk = async () => {
-  if (!formData.name) {
-    ElMessage.error('名称不能为空');
-    return;
-  }
-  if (!formData.description) {
-    ElMessage.error('描述不能为空');
-    return;
-  }
-  for (const v of formData.values) {
-    if (!v.name) {
-      v.name = '';
-    }
-  }
-
-
-  try {
-    const resp = await http.post('/api/create_new_action', formData);
-    console.log(resp);
-    visible.value = false;
-    fetchActions();
-  } catch (e) {
-    if (e?.response?.data?.message) {
-      ElMessage.error(e.response.data.message);
-    }
-  }
-};
 
 const ioColumns = [
   {
@@ -243,7 +280,7 @@ const ioColumns = [
     key: 'name',
   },
   {
-    title: '描述',
+    title: '动作描述',
     dataIndex: 'description',
     key: 'description',
   },
@@ -281,11 +318,62 @@ const ioColumns = [
   },
 ];
 
+const canColumns = [
+  {
+    title: '动作名称',
+    dataIndex: 'name',
+    key: 'name',
+  },
+  {
+    title: '动作描述',
+    dataIndex: 'description',
+    key: 'description',
+  },
+  {
+    title: '状态',
+    dataIndex: 'status',
+    key: 'status',
+  },
+  {
+    title: '动作执行路径',
+    dataIndex: 'exec_path',
+    key: 'exec_path',
+  },
+  {
+    title: '路径参数',
+    dataIndex: 'path_parameter',
+    key: 'path_parameter',
+  },
+  {
+    title: '路径类型',
+    dataIndex: 'relation',
+    key: 'relation',
+  },
+  {
+    title: '所属项目',
+    dataIndex: 'projectName',
+    key: 'projectName',
+  },
+
+  {
+    title: '操作',
+    key: 'action',
+    fixed: 'right',
+    width: 180,
+  },
+];
+
 const editData = ref({})
 const editStatus = ref("new")
 const showEditDrawer = (record) => {
   editStatus.value = 'edit'
   editData.value = cloneDeep(record)
+  visible.value = true;
+};
+const showCopyDrawer = (record) => {
+  editStatus.value = 'copy'
+  editData.value = cloneDeep(record)
+  Reflect.deleteProperty(editData.value, '_id')
   visible.value = true;
 };
 
@@ -322,30 +410,6 @@ const handleClose = () => {
 const handleEditClose = () => {
   editVisible.value = false;
   resetEditFormData(); // 重置表单数据
-};
-
-const handleEditOk = async () => {
-  if (!editFormData.name) {
-    ElMessage.error('名称不能为空');
-    return;
-  }
-  if (!editFormData.description) {
-    ElMessage.error('描述不能为空');
-    return;
-  }
-  for (const v of editFormData.values) {
-    if (!v.name) {
-      v.name = '';
-    }
-  }
-  try {
-    const resp = await http.put(`/api/update_action/${editFormData._id}`, editFormData);
-    console.log(resp);
-    editVisible.value = false;
-    fetchActions();
-  } catch (errInfo) {
-    console.error(errInfo);
-  }
 };
 
 const deleteSelectedActions = async () => {
@@ -386,26 +450,6 @@ const deleteAction = async (id) => {
       console.error(errInfo);
     }
   });
-};
-
-// 添加值
-const addValue = () => {
-  formData.values.push({ name: '', description: '' });
-};
-
-// 删除值
-const removeValue = (index) => {
-  formData.values.splice(index, 1);
-};
-
-// 添加编辑值
-const addEditValue = () => {
-  editFormData.values.push({ name: '', description: '' });
-};
-
-// 删除编辑值
-const removeEditValue = (index) => {
-  editFormData.values.splice(index, 1);
 };
 </script>
 

@@ -57,7 +57,10 @@ http.interceptors.response.use(
     if (error?.response?.status === 401) {
       ElMessage.error('未授权，请重新登录')
       window.location.href = '#/login'
+    } else {
+      ElMessage.error(error)
     }
+
     // 处理响应错误
     return Promise.reject(error)
   }

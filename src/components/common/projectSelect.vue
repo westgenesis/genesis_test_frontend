@@ -21,7 +21,7 @@ const projects = ref([])
 onMounted(() => {
     http.get('/api/display_user_projects', {}).then(response => {
         projects.value = response.data;
-        console.log(projects.value)
+        // console.log(projects.value)
     });
 })
 
@@ -31,7 +31,7 @@ function change(key, value) {
     const result = projects.value.find(p => p._id.$oid === key)
     
     emit('selectedObject', result)
-    console.log(key, result)
+    // console.log(key, result)
 }
 
 

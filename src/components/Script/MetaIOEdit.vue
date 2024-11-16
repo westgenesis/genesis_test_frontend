@@ -9,6 +9,10 @@
             <a-input v-model:value="formData.description" placeholder="请输入内容" />
         </a-form-item>
 
+        <a-form-item label="所属项目" name="projectId">
+            <Project v-model="formData.projectId" @selectedObject="formData.projectName = $event.name"></Project>
+        </a-form-item>
+
         <div v-for="(value, index) in formData.values" :key="index">
             <a-card class="mb-[20px]" style="background-color: rgb(236 236 236 / 34%)">
                 <a-row :gutter="[16, 16]">
@@ -39,7 +43,8 @@
                             message: 'VT信号不可为空',
                             trigger: 'change',
                         }">
-                            <a-select v-model:value="value.vt_signal" style="width: 100%" placeholder="请选择VT信号">
+                            <a-select :value="value.vt_signal" style="width: 100%" @change="vtChanged"
+                                placeholder="请选择VT信号">
                                 <a-select-option value="Current">Current</a-select-option>
                                 <a-select-option value="Frequency">Frequency</a-select-option>
                                 <a-select-option value="DigitalOutput">DigitalOutput</a-select-option>
@@ -89,7 +94,10 @@
             <a-input v-model:value="formData.exec_path" placeholder="请输入内容" />
         </a-form-item>
 
-        <a-form-item label="路径参数 (仅dspace环境填写)" name="path_parameter">
+        <a-form-item name="path_parameter">
+            <template v-slot:label>
+                路径参数<span style="color:brown;margin-left: 10px;">(仅dspace环境填写) </span>
+            </template>
             <a-input v-model:value="formData.path_parameter" placeholder="请输入内容" />
         </a-form-item>
 
@@ -100,9 +108,7 @@
             </a-select>
         </a-form-item>
 
-        <a-form-item label="所属项目" name="projectId">
-            <Project v-model="formData.projectId" @selectedObject="formData.projectName = $event.name"></Project>
-        </a-form-item>
+
 
     </a-form>
     <div slot="footer" class="flex justify-end">
@@ -143,12 +149,12 @@ const props = defineProps({
     }
 });
 
-const emit = defineEmits(['close','success'])
+const emit = defineEmits(['close', 'success'])
 
 const formData = ref<typeof defaultData>(cloneDeep(defaultData));
 
 onMounted(() => {
-    if (props.status === 'edit') {
+    if (props.status === 'edit' || props.status === 'copy') {
         formData.value = (cloneDeep(props.data)) as typeof defaultData
     }
 })
@@ -162,7 +168,8 @@ const rules = {
 };
 
 const addValue = () => {
-    formData.value.values.push({ status: null, description: null, vt_signal: '', relation: null, value: null });
+    const defaultVt = formData.value.values[0].vt_signal
+    formData.value.values.push({ status: null, description: null, vt_signal: defaultVt, relation: null, value: null });
 };
 
 const formRef = ref();
@@ -172,7 +179,7 @@ const handleEditOk = async () => {
         console.log(formData.value)
 
         let res = null;
-        if (props.status === 'new') {
+        if (props.status === 'new' || props.status === 'copy') {
             res = http.post('/api/create_new_action', formData.value);
         } else {
             res = http.put(`/api/update_action/${formData.value._id}`, formData.value);
@@ -182,11 +189,13 @@ const handleEditOk = async () => {
             ElMessage.success('操作成功');
             emit('close')
             emit('success')
-        }, (err) => {
-            ElMessage.error(err)
         })
     })
 };
+
+const vtChanged = (value) => {
+    formData.value.values.forEach(action => action.vt_signal = value)
+}
 
 </script>
 
