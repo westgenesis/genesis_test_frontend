@@ -1,6 +1,31 @@
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
 import NProgress from 'nprogress'; // 引入 nprogress
+import { ElLoading } from 'element-plus';
+
+
+let loadingInstance:any = null;
+// 显示加载动画
+const showLoading = (options = {}) => {
+  if (!loadingInstance) {
+    loadingInstance = ElLoading.service({
+      lock: true, // 锁定屏幕，防止用户在加载过程中进行其他操作
+      text: options.text || '加载中...', // 自定义加载提示文本
+      background: options.background || 'rgba(0, 0, 0, 0.7)', // 自定义背景颜色
+      spinner: options.spinner || null, // 自定义加载动画（可选）
+      fullscreen: true, // 全屏模式
+    });
+  }
+};
+
+// 隐藏加载动画
+const hideLoading = () => {
+  if (loadingInstance) {
+    loadingInstance.close(); // 关闭加载动画
+    loadingInstance = null; // 重置实例
+  }
+}
+ 
 
 const baseURL = import.meta.env.VITE_API_BASE_URL || '';
 
@@ -32,6 +57,8 @@ http.interceptors.request.use(
       NProgress.start(); // 开始进度条
     }
 
+    showLoading()
+
     return config
   },
   (error) => {
@@ -44,6 +71,7 @@ http.interceptors.request.use(
 // 响应拦截器
 http.interceptors.response.use(
   (response) => {
+    hideLoading()
     // 对响应数据进行处理，例如解析数据、错误处理等
     NProgress.done(); // 结束进度条
     if (response.status === 500) {
@@ -54,6 +82,7 @@ http.interceptors.response.use(
   },
   (error) => {
     NProgress.done(); // 结束进度条
+    hideLoading()
     if (error?.response?.status === 401) {
       ElMessage.error('未授权，请重新登录')
       window.location.href = '#/login'

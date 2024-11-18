@@ -19,7 +19,7 @@
 
   <div class="flex-row flex mt-[20px] mb-[20px] pl-[30px]">
     <a-form :model="searchForm" layout="inline" style="width:100%">
-      <a-row style="width:80%">
+      <a-row style="width:100%">
         <a-col :span="10" style="max-width: 300px">
           <a-form-item label="关键字" name="keyword">
             <a-input v-model:value="searchForm.keyword" placeholder="请输入关键字" :allowClear="true" />
@@ -126,12 +126,12 @@
     <!-- 总线编辑 -->
     <a-drawer v-model:open="canVisible" :title="dict[editStatus] + '元动作-总线信号'" placement="right" width="50%"
       @close="canVisible = false">
-      <CANEdit v-if="canVisible" :data="editData" :status="editStatus" @close="visible = false" @success="query">
+      <CANEdit v-if="canVisible" :data="editData" :status="editStatus" @close="canVisible = false" @success="query">
       </CANEdit>
     </a-drawer>
 
     <!-- DBC文件上传 -->
-    <DBCUploader v-model:visible="dbcVisible"></DBCUploader>
+    <DBCUploader v-model:visible="dbcVisible" @success="query"></DBCUploader>
 
   </div>
 </template>
@@ -145,7 +145,6 @@ import ProjectSelect from '@common/projectSelect.vue'
 import IOEdit from './MetaIOEdit.vue'
 import CANEdit from './MetaCANEdit.vue'
 import DBCUploader from './DBCUploader.vue';
-import CANSelector from './CANSelector.vue';
 import { cloneDeep } from 'lodash-es'
 import { SearchOutlined, DeleteOutlined, UploadOutlined, PlusOutlined } from '@ant-design/icons-vue'
 
@@ -242,7 +241,7 @@ const fetchActions = () => {
     params: params,
   }).then(response => {
     // dataSource.value = response.actions;
-    pagedDataSource.value = response.actions.splice(0,100);
+    pagedDataSource.value = response.actions.splice(0, 100);
   }).catch(error => {
     console.error(error);
     ElMessage.error('获取数据失败');

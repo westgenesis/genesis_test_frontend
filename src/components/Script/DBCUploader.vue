@@ -3,7 +3,7 @@
         <a-form :model="submitData" :rules="rules" layout="vertical" ref="formRef">
 
             <a-form-item label="所属项目" name="projectId">
-                <ProjectSelect v-model="submitData.projectId" @selectedObject="submitData.projectName = $event.name">
+                <ProjectSelect v-model="submitData.projectId" @selectedObject="submitData.projectName = $event.name" auto-focus>
                 </ProjectSelect>
             </a-form-item>
 
@@ -50,12 +50,14 @@ const props = defineProps({
 onUpdated(() => {
 
     // 关闭窗口时恢复默认值
-    if (props.visible === false) {
+    if (props.visible === true) {
         submitData.value = ref(cloneDeep(defaultData));
+        submitData.filename = ''
+        fileList.value = []
     }
 })
 
-const emit = defineEmits(['close', 'update:visible'])
+const emit = defineEmits(['close', 'update:visible','success'])
 
 const defaultData = {
     projectId: null,
@@ -121,6 +123,8 @@ function submit() {
 
         http.post('/api/parsedbc', submitData.value).then(() => {
             ElMessage.success('DBC文件解析已提交,请耐心等待后刷新页面！');
+            emit('success')
+            emit('update:visible', false)
         });
 
     })
@@ -134,7 +138,6 @@ function copyConfirm(filename) {
     }
 
     fileList.value[0].name = filename
-
 }
 
 

@@ -1,7 +1,7 @@
 <template>
     <a-modal :open="props.visible" title="动作选择" @cancel="emit('update:visible', false)" width="80%" :footer="null">
 
-        <div class="h-[50vh]">
+        <div class="max-h-[80vh] min-h[50vh]">
 
             <div class="flex-row flex mt-[20px] mb-[20px] pl-[30px]">
                 <a-form :model="searchForm" layout="inline" style="width:100%">
@@ -27,7 +27,7 @@
 
             </div>
 
-            <a-table :columns="canColumns" :dataSource="dataSource"
+            <a-table :columns="canColumns" :dataSource="pagedDataSource"
                 :row-class-name="(_record, index) => (index % 2 === 1 ? 'table-striped' : null)">
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.key === 'action'">
@@ -35,6 +35,10 @@
                     </template>
                 </template>
             </a-table>
+            <div class="mt-[20px] flex justify-end">
+                <a-pagination v-model:current="currentPage" :total="dataSource.length" :page-size="pageSize"
+                    show-less-items @change="handlePageChange" />
+            </div>
         </div>
     </a-modal>
 
@@ -43,7 +47,7 @@
 <script setup>
 import { cloneDeep } from 'lodash-es'
 import { http } from "@/http"
-import { ref, onUpdated } from 'vue'
+import { ref, onUpdated, computed } from 'vue'
 
 const props = defineProps({
     visible: {
@@ -57,6 +61,20 @@ const searchForm = ref({
     projectId: null,
 })
 
+const currentPage = ref(1);
+const pageSize = 7;
+const dataSource = ref([]);
+const pagedDataSource = computed(() => {
+    const start = (currentPage.value - 1) * pageSize;
+    const end = start + pageSize;
+    return dataSource.value.slice(start, end);
+});
+const handlePageChange = (page) => {
+    currentPage.value = page;
+    // fetchActions();
+};
+
+
 const emit = defineEmits(['update:visible', 'confirm'])
 
 onUpdated(() => {
@@ -66,7 +84,7 @@ onUpdated(() => {
         query();
     }
 })
-const dataSource = ref([]);
+
 const query = () => {
     const params = Object.assign({ belongs_to: 'Vector_CAN' }, searchForm.value)
 

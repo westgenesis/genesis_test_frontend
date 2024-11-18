@@ -2,7 +2,7 @@
     <a-form :model="formData" :rules="rules" layout="vertical" ref="formRef">
 
         <a-form-item label="动作名称" name="name">
-            <a-input v-model:value="formData.name" placeholder="请输入内容" />
+            <a-input v-model:value="formData.name" placeholder="请输入内容" auto-focus/>
         </a-form-item>
 
         <a-form-item label="动作描述" name="description">
@@ -130,7 +130,7 @@ const defaultData = {
     description: '',
     exec_path: '',
     path_parameter: '',
-    belongs_to: 'tector_IO',
+    belongs_to: 'Vector_IO',
     projectId: null,
     relation: '', // 新增字段
     projectName: '',

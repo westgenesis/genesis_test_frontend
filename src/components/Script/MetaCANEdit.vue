@@ -5,7 +5,7 @@
         <a-form-item label="动作名称" name="name">
             <a-row :gutter="[16, 16]">
                 <a-col :span="16">
-                    <a-input disabled v-model:value="formData.name" placeholder="请输入内容" />
+                    <a-input disabled v-model:value="formData.name" placeholder="请输入内容" auto-focus/>
                 </a-col>
                 <a-col>
                     <a-button type="primary" @click="canSelVisible = true">选择</a-button>
@@ -48,7 +48,7 @@
         </a-form-item>
     </a-form>
     <div slot="footer" class="flex justify-end">
-        <a-button class="custom-purple-button mr-[2rem]" type="primary" @click="emit('close')"
+        <a-button class="custom-purple-button mr-[2rem]" type="primary" @click="emit('close', false)"
             size="large">关闭</a-button>
         <a-button class="custom-purple-button mr-[2rem]" type="primary" @click="handleEditOk" size="large">提交</a-button>
     </div>
@@ -73,7 +73,7 @@ const defaultData = {
     description: '',
     exec_path: '',
     path_parameter: '',
-    belongs_to: 'tector_IO',
+    belongs_to: 'Vector_CAN',
     projectId: null,
     relation: '', // 新增字段
     projectName: '',

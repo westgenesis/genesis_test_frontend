@@ -2,7 +2,7 @@
 <template>
     <a-form :model="formData" :rules="rules" layout="vertical" ref="formRef">
         <a-form-item label="动作组合名称" name="name">
-            <a-input v-model:value="formData.name" placeholder="请输入内容" />
+            <a-input v-model:value="formData.name" placeholder="请输入内容" auto-focus />
         </a-form-item>
 
         <a-form-item label="动作组合描述" name="description">
@@ -39,7 +39,8 @@
 
     <a-modal v-model:open="transVisible" title="请选择元动作" okText="确定" @ok="transVisible = false" cancelText="取消">
         <a-transfer v-model:target-keys="targetKeys" :render="item => item.name" :data-source="transferData"
-            :one-way="true" :titles="['  未选择', '  已选择']" :rowKey="(obj) => obj._id" @change="change" />
+            :one-way="true" :titles="['  未选择', '  已选择']" :rowKey="(obj) => obj._id" @change="change"
+            :filter-option="filterOption" pagination show-search />
     </a-modal>
 
     <div slot="footer" class="flex justify-end">
@@ -61,14 +62,12 @@ const transVisible = ref(false)
 
 const defaultData = {
     name: '',
-    status: '',
+ 
     description: '',
     expression: '',
-    exec_path: '',
-    path_parameter: '',
-    belongs_to: 'tector_IO',
+ 
     projectId: null,
-    relation: '', // 新增字段
+  
     projectName: '',
     values: [{ status: null, description: null, vt_signal: null, relation: null, value: null }], // 默认有一个值
 }
@@ -173,13 +172,10 @@ const fetchActions = () => {
 };
 
 const rules = {
-    name: [{ required: true, message: '请输入动作名称' }],
-    description: [{ required: true, message: '请输入动作描述' }],
+    name: [{ required: true, message: '请输入动作组合名称' }],
+    description: [{ required: true, message: '请输入动作组合描述' }],
     expression: [{ required: true, message: '请编辑动作组合' }],
-};
-
-const addValue = () => {
-    formData.value.values.push({ status: null, description: null, vt_signal: '', relation: null, value: null });
+    projectId: [{ required: true, message: '请选择项目' }],
 };
 
 const formRef = ref();
@@ -204,6 +200,11 @@ const handleEditOk = async () => {
         })
     })
 };
+
+const filterOption = (inputValue, option) => {
+    return option.name.indexOf(inputValue) > -1;
+};
+
 
 </script>
 

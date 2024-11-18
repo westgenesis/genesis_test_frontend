@@ -50,7 +50,6 @@
 
     </div>
 
-
     <a-table :columns="columns" bordered :data-source="pagedDataSource" size="middle" :pagination="false">
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
@@ -65,7 +64,7 @@
         @change="handlePageChange" />
     </div>
 
-    <a-drawer v-model:open="visible" title="添加动作组合" placement="right" width="40%" @close="handleClose">
+    <a-drawer v-model:open="visible" title="添加动作组合" placement="right" width="50%" @close="handleClose">
       <ACEdit></ACEdit>
     </a-drawer>
 
