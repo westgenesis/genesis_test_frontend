@@ -12,12 +12,46 @@
   </div>
 
   <div class="m-[32px]">
-    <div class="mt-[20px] mb-[20px] flex justify-end">
-      <a-button type="primary" size="large" @click="showDrawer" class="custom-purple-button mr-[2rem]">添加动作组合</a-button>
+
+    <div class="flex-row flex mt-[20px] mb-[20px] pl-[30px]">
+      <a-form :model="searchForm" layout="inline" style="width:100%">
+        <a-row style="width:80%">
+          <a-col :span="10" style="max-width: 300px">
+            <a-form-item label="关键字" name="keyword">
+              <a-input v-model:value="searchForm.keyword" placeholder="请输入关键字" :allowClear="true" />
+            </a-form-item>
+          </a-col>
+
+          <a-col :span="10" style="max-width: 300px">
+            <a-form-item label="所属项目" name="projectid">
+              <ProjectSelect v-model="searchForm.projectId" placeholder="请选择所属项目" :allowClear="true"></ProjectSelect>
+            </a-form-item>
+          </a-col>
+        </a-row>
+      </a-form>
+
+      <div class="flex justify-end">
+        <a-button type="primary" size="large" @click="fetchActionCombinations"
+          class="custom-purple-button mr-[2rem] flex items-center">
+          <SearchOutlined /> 查询
+        </a-button>
+
+        <a-button type="primary" size="large" @click="showDrawer"
+          class="custom-purple-button mr-[2rem] flex items-center">
+          <PlusOutlined />添加动作组合
+        </a-button>
+
+        <!-- <a-button type="primary" size="large" @click="deleteSelectedActions"
+          class="custom-purple-button mr-[2rem] flex items-center">
+          <DeleteOutlined />
+          删除
+        </a-button> -->
+      </div>
+
     </div>
 
-    <a-table :columns="columns" bordered :data-source="pagedDataSource" size="middle" :pagination="false"
-      :scroll="{ y: table_height }">
+
+    <a-table :columns="columns" bordered :data-source="pagedDataSource" size="middle" :pagination="false">
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
           <a-button type="link" size="small" @click="showEditDrawer(record)">编辑</a-button>
@@ -31,7 +65,11 @@
         @change="handlePageChange" />
     </div>
 
-    <a-drawer v-model:visible="visible" title="添加动作组合" placement="right" width="40%" @close="handleClose">
+    <a-drawer v-model:open="visible" title="添加动作组合" placement="right" width="40%" @close="handleClose">
+      <ACEdit></ACEdit>
+    </a-drawer>
+
+    <a-drawer v-model:open="editVisible" title="添加动作组合" placement="right" width="40%" @close="handleClose">
       <a-form :model="formData" :rules="rules" layout="vertical">
         <a-form-item label="动作组合名称" name="name">
           <a-input v-model:value="formData.name" placeholder="请输入内容" />
@@ -78,7 +116,7 @@
       </div>
     </a-drawer>
 
-    <a-drawer v-model:visible="editVisible" title="编辑动作组合" placement="right" width="40%" @close="handleEditClose">
+    <a-drawer v-model:open="editVisible" title="编辑动作组合" placement="right" width="40%" @close="handleEditClose">
       <a-form :model="editFormData" :rules="rules" layout="vertical">
         <a-form-item label="动作组合名称" name="name">
           <a-input v-model:value="editFormData.name" placeholder="请输入内容" />
@@ -134,7 +172,9 @@ import { ElMessageBox } from 'element-plus';
 import { http } from '../../http';
 import { ElMessage } from 'element-plus';
 import { HomeOutlined } from '@ant-design/icons-vue';
-import { DownloadOutlined, DeleteOutlined} from '@ant-design/icons-vue';
+import ACEdit from './ACEdit.vue';
+
+import { SearchOutlined, DeleteOutlined, UploadOutlined, PlusOutlined } from '@ant-design/icons-vue'
 const dataSource = ref([]);
 const currentPage = ref(1);
 const pageSize = 10;
@@ -142,6 +182,13 @@ const visible = ref(false);
 const editVisible = ref(false);
 const submitting = ref(false);
 const availableActions = ref([]);
+
+const searchForm = ref({
+  keyword: null,
+  projectId: null,
+})
+
+
 const formData = reactive({
   name: '',
   description: '',
@@ -304,7 +351,7 @@ const columns = [
     key: 'description',
   },
   {
-    title: '动作组合文件',
+    title: '所属项目',
     dataIndex: 'file_name',
     key: 'file_nam',
   },

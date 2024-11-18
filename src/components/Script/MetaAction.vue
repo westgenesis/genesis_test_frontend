@@ -57,14 +57,13 @@
         删除
       </a-button>
     </div>
-
   </div>
 
   <div class="m-[32px]">
 
-    <!-- :scroll="{ y: table_height }" -->
-    <a-table :columns="ioColumns" :row-key="record => record._id" bordered :data-source="pagedDataSource" size="middle"
-      :pagination="false" :row-selection="{
+    <!--  -->
+    <a-table :columns="ioColumns" :row-key="record => record._id" bordered :data-source="pagedDataSource"
+      :scroll="{ y: table_height }" size="middle" :pagination="false" :row-selection="{
         selectedRowKeys: selectedRowKeys, onChange: onSelectChange, getCheckboxProps: (record) => ({
           disabled: !Boolean(record.values)   // Column configuration not to be checked
           // name: record.name,
@@ -222,7 +221,8 @@ function actionParmaDisplay(record) {
   }
 
   // 否则显示第一条的vt
-  if (record.values) {
+  if (record.values && record.values.length > 0) {
+    // console.log(record)
     return record.values[0].vt_signal;
   }
 
@@ -236,7 +236,6 @@ const fetchActions = () => {
     url: '/api/get_actions',
     params: params,
   }).then(response => {
-
     dataSource.value = response.actions;
   }).catch(error => {
     console.error(error);
@@ -246,6 +245,8 @@ const fetchActions = () => {
 };
 
 const pagedDataSource = computed(() => {
+  // console.log(dataSource.value)
+  // console.log(dataSource.value, 123, result)
   const start = (currentPage.value - 1) * pageSize;
   const end = start + pageSize;
   return dataSource.value.slice(start, end);

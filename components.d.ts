@@ -7,12 +7,13 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    ACEdit: typeof import('./src/components/Script/ACEdit.vue')['default']
     ActionCombination: typeof import('./src/components/Script/ActionCombination.vue')['default']
     AddModuleDrawer: typeof import('./src/components/Requirement/AddModuleDrawer.vue')['default']
     AddProject: typeof import('./src/components/Project/AddProject.vue')['default']
     AddRequirementDocx: typeof import('./src/components/Requirement/AddRequirementDocx.vue')['default']
     CANSelector: typeof import('./src/components/Script/CANSelector.vue')['default']
-    copy: typeof import('./src/components/Script/DBCSelector copy.vue')['default']
+    copy: typeof import('./src/components/Script/MetaCANEdit copy.vue')['default']
     DBCSelector: typeof import('./src/components/Script/DBCSelector.vue')['default']
     DBCUploader: typeof import('./src/components/Script/DBCUploader.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
