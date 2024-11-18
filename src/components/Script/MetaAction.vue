@@ -113,7 +113,7 @@
     </a-table>
 
     <div class="mt-[20px] flex justify-end">
-      <a-pagination v-model:current="currentPage" :total="dataSource.length" :page-size="pageSize" show-less-items
+      <a-pagination v-model:current="currentPage" :total="100" :page-size="pageSize" show-less-items
         @change="handlePageChange" />
     </div>
 
@@ -151,6 +151,7 @@ import { SearchOutlined, DeleteOutlined, UploadOutlined, PlusOutlined } from '@a
 
 
 const dataSource = ref([]);
+const pagedDataSource = ref([]);
 const currentPage = ref(1);
 const pageSize = 10;
 const visible = ref(false);
@@ -229,14 +230,19 @@ function actionParmaDisplay(record) {
   return record.vt_signal + record.relation + record.value;
 }
 const fetchActions = () => {
-  const params = Object.assign({}, searchForm.value)
+
+  const start = (currentPage.value - 1) * pageSize;
+
+
+  const params = Object.assign({ start, pagesize: pageSize }, searchForm.value)
   params.belongs_to = activeTab.value === '1' ? 'Vector_IO' : 'Vector_CAN'
 
   http({
     url: '/api/get_actions',
     params: params,
   }).then(response => {
-    dataSource.value = response.actions;
+    // dataSource.value = response.actions;
+    pagedDataSource.value = response.actions.splice(0,100);
   }).catch(error => {
     console.error(error);
     ElMessage.error('获取数据失败');
@@ -244,16 +250,17 @@ const fetchActions = () => {
 
 };
 
-const pagedDataSource = computed(() => {
-  // console.log(dataSource.value)
-  // console.log(dataSource.value, 123, result)
-  const start = (currentPage.value - 1) * pageSize;
-  const end = start + pageSize;
-  return dataSource.value.slice(start, end);
-});
+// const pagedDataSource = computed(() => {
+//   // console.log(dataSource.value)
+//   // console.log(dataSource.value, 123, result)
+//   const start = (currentPage.value - 1) * pageSize;
+//   const end = start + pageSize;
+//   return dataSource.value.slice(start, end);
+// });
 
 const handlePageChange = (page) => {
   currentPage.value = page;
+  fetchActions();
 };
 
 const table_height = window.innerHeight * 0.6
