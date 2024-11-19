@@ -236,7 +236,11 @@ onMounted(() => {
 });
 
 const fetchActionCombinations = () => {
-  http.get('/api/action_combinations').then(response => {
+
+  // start, pagesize: pageSize
+  const params = Object.assign({}, searchForm.value)
+
+  http('/api/action_combinations', { params }).then(response => {
     dataSource.value = response.action_combinations;
   }).catch(error => {
     ElMessage.error('获取数据失败');
@@ -359,8 +363,8 @@ const columns = [
   },
   {
     title: '所属项目',
-    dataIndex: 'file_name',
-    key: 'file_nam',
+    dataIndex: 'projectName',
+    key: 'projectName',
   },
   {
     title: '操作',

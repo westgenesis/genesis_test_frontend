@@ -5,12 +5,11 @@
         <a-form-item label="动作名称" name="name">
             <a-row :gutter="[16, 16]">
                 <a-col :span="16">
-                    <a-input disabled v-model:value="formData.name" placeholder="请输入内容" auto-focus/>
+                    <a-input disabled v-model:value="formData.name" placeholder="请输入内容" auto-focus />
                 </a-col>
                 <a-col>
                     <a-button type="primary" @click="canSelVisible = true">选择</a-button>
                 </a-col>
-
             </a-row>
         </a-form-item>
 
@@ -30,7 +29,12 @@
             <template v-slot:label>
                 动作执行路径<span style="color:brown;margin-left: 10px;">(选接口卡通道) </span>
             </template>
-            <a-input v-model:value="formData.exec_path" placeholder="请输入内容" />
+            <!-- <a-input v-model:value="formData.exec_path" placeholder="请输入内容" /> -->
+
+            <a-select v-model:value="formData.exec_path" style="width: 100%" placeholder="请选择内容" :allowClear="true">
+                <a-select-option value="Channel1">Channel1</a-select-option>
+                <a-select-option value="Channel2">Channel2</a-select-option>
+            </a-select>
         </a-form-item>
 
         <a-form-item name="path_parameter">
@@ -66,16 +70,15 @@ import CANSelector from './CANSelector.vue';
 
 const canSelVisible = ref(false)
 
-
 const defaultData = {
     name: '',
     status: '',
     description: '',
-    exec_path: '',
+    exec_path: null,
     path_parameter: '',
     belongs_to: 'Vector_CAN',
     projectId: null,
-    relation: '', // 新增字段
+    relation: null, // 新增字段
     projectName: '',
     values: [{ status: null, description: null, vt_signal: null, relation: null, value: null }], // 默认有一个值
 }
