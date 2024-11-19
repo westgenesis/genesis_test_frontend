@@ -86,7 +86,7 @@ onUpdated(() => {
 })
 
 const query = () => {
-    const params = Object.assign({ belongs_to: 'Vector_CAN' }, searchForm.value)
+    const params = Object.assign({ start: 0, pagesize: 1000, belongs_to: 'Vector_CAN' }, searchForm.value)
 
     http({
         url: '/api/get_actions',

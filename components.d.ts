@@ -51,6 +51,7 @@ declare module 'vue' {
     SplitCaseInner: typeof import('./src/components/Requirement/SplitCaseInner.vue')['default']
     SplitRequirementInner: typeof import('./src/components/Requirement/SplitRequirementInner.vue')['default']
     TestCaseInner: typeof import('./src/components/Requirement/TestCaseInner.vue')['default']
+    TestTree: typeof import('./src/components/Script/TestTree.vue')['default']
     TopBar: typeof import('./src/components/TopBar.vue')['default']
     UseCase: typeof import('./src/components/UseCase/UseCase.vue')['default']
   }

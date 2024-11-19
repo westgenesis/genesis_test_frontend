@@ -20,7 +20,7 @@
                     :readonly="true" />
                 <a-button type="primary" class="ml-[15px]" :disabled="history.length === 0"
                     @click="historyBack()">回退</a-button>
-                <a-button type="primary" class="ml-[15px]" @click="formData.expression = ''">清除</a-button>
+                <a-button type="primary" class="ml-[15px]" @click="clearAll">清除</a-button>
             </div>
         </a-form-item>
     </a-form>
@@ -43,6 +43,12 @@
             :filter-option="filterOption" pagination show-search />
     </a-modal>
 
+    <!-- <a-modal v-model:open="transVisible" title="请选择元动作" okText="确定" @ok="transVisible = false" cancelText="取消">
+        <a-transfer v-model:target-keys="targetKeys" :render="item => item.name" :data-source="transferData"
+            :one-way="true" :titles="['  未选择', '  已选择']" :rowKey="(obj) => obj._id" @change="change"
+            :filter-option="filterOption" pagination show-search />
+    </a-modal> -->
+
     <div slot="footer" class="flex justify-end">
         <a-button class="custom-purple-button mr-[2rem]" type="primary" @click="emit('close')"
             size="large">关闭</a-button>
@@ -55,7 +61,7 @@
 import { onMounted, ref, computed } from 'vue';
 import Project from '@common/projectSelect.vue'
 import { http } from "@/http"
-import { cloneDeep } from 'lodash-es'
+import { cloneDeep, isEmpty, last } from 'lodash-es'
 import { ElMessage } from 'element-plus';
 
 const transVisible = ref(false)
@@ -86,9 +92,102 @@ function change(e, f) {
 }
 
 const history = ref([]);
+const OpHistory = ref([])
 
 function historyBack() {
     formData.value.expression = history.value.pop();
+}
+
+function isValid(modi) {
+    console.log(modi)
+    if (modi.type === 'action') {
+        const lastEle = last(OpHistory.value)
+
+        //空的时候OK
+        if (lastEle == undefined) {
+            return true
+        }
+
+        // name失败
+        if (lastEle.type === 'action') {
+            return false;
+        }
+
+        //左括号OK
+        //操作符后OK
+        return ![')', '()'].includes(lastEle.name)
+    }
+
+    // 逻辑表达式
+    if (['&', '||'].includes(modi.name)) {
+        // ),(),操作数 后面可以跟逻辑表达式合法
+
+        const lastEle = last(OpHistory.value)
+        if (!lastEle) {
+            return false;
+        }
+
+        if ([')', '()'].includes(modi.name)) {
+            return true;
+        }
+
+        return lastEle.type === 'action'
+    }
+
+    if (modi.name === '()') {
+        // 操作数, ) 后面可以跟
+
+        const lastEle = last(OpHistory.value)
+        if (!lastEle) {
+            return false;
+        }
+        return lastEle.type === 'action' || lastEle.name === ')'
+    }
+
+    // 左括号
+    if (modi.name === '(') {
+        // 空,操作符后面可以跟
+        const lastEle = last(OpHistory.value)
+        if (!lastEle) {
+            return true;
+        }
+
+        return ['&', '||'].includes(modi.name);
+    }
+
+    // 右括号
+    // 1前面右数量括号，少于左括号时
+    // 操作数,或右括号
+    if (modi.name === ')') {
+        // 空,操作符后面可以跟
+        const lastEle = last(OpHistory.value)
+        if (!lastEle) {
+            return false;
+        }
+
+        if (['&', '||', '('].includes(lastEle.name)) {
+            return false;
+        }
+
+        let leftCount = 0, rightCount = 0
+        OpHistory.value.forEach((op) => {
+            if (op.type === 'operation' && op.name === '(') {
+                leftCount++
+            }
+
+            if (op.type === 'operation' && op.name === ')') {
+                rightCount++
+            }
+        })
+
+        return rightCount < leftCount;
+    }
+}
+
+function clearAll() {
+    history.value = [];
+    OpHistory.value = [];
+    formData.value.expression = ''
 }
 
 const orperations = [
@@ -118,7 +217,6 @@ const orperations = [
 const names = computed(() => {
     return targetKeys.value.map(key => {
         let obj = transferData.value.find(it => it._id === key)
-
         obj.type = 'action'
 
         return obj
@@ -128,6 +226,9 @@ const names = computed(() => {
 const emit = defineEmits(['close', 'success'])
 
 const actionClick = function (oper) {
+    console.log('isValid', isValid(oper))
+
+    OpHistory.value.push(oper)
     history.value.push(formData.value.expression)
 
     if (oper.name === '()') {
@@ -136,24 +237,16 @@ const actionClick = function (oper) {
     }
 
     formData.value.expression += oper.name;
-
-    // if (['&', '||', '(', ')'].includes(oper.name)) {
-    //     formData.value.expression += oper.name;
-    //     return;
-    // }
 }
 
 const targetKeys = ref([]);
 const transferData = ref([]);
 
-function select(action) {
-    formData.value.name = action.name;
-    formData.value.status = action.status || '状态1';
-}
-
 onMounted(() => {
     if (props.status === 'edit' || props.status === 'copy') {
         formData.value = (cloneDeep(props.data))
+        console.log(props.data.history)
+        OpHistory.value = props.data.history
     }
 
     fetchActions();
@@ -162,13 +255,29 @@ onMounted(() => {
 const fetchActions = () => {
     http({
         url: '/api/get_actions',
-        params:{
-            start:0,
-            pagesize:2000,
-            // belongs_to: 'Vector_CAN'
+        params: {
+            start: 0,
+            pagesize: 20000,
         }
     }).then(response => {
-        transferData.value = response.actions;
+        let result = []
+
+        response.actions.forEach((action) => {
+            if (isEmpty(action.values)) {
+                return;
+            }
+
+            action.values.forEach((it, index) => {
+                result.push({
+                    name: action.name + '=' + it.value,
+                    actionName: action.name,
+                    value: it.value,
+                    _id: action._id + '_' + index,
+                })
+            })
+        })
+
+        transferData.value = result;
     })
 };
 
@@ -183,13 +292,23 @@ const formRef = ref();
 const handleEditOk = async () => {
     console.log(formData.value)
     formRef.value.validate().then(() => {
-        console.log(formData.value)
+
+        console.log(OpHistory.value)
+
+        // console.log(formData.value)
+
+        formData.value.history = OpHistory.value;
+        formData.value.actions = OpHistory.value.filter(it => it.type === 'action').map(it => {
+            return { key: it.actionName, value: it.value }
+        })
+        console.log(OpHistory.value)
+        // return;
 
         let res = null;
         if (props.status === 'new' || props.status === 'copy') {
-            res = http.post('/api/create_new_action', formData.value);
+            res = http.post('/api/action_combinations', formData.value);
         } else {
-            res = http.put(`/api/update_action/${formData.value._id}`, formData.value);
+            res = http.put(`/api/action_combinations/${formData.value._id}`, formData.value)
         }
 
         res.then(() => {

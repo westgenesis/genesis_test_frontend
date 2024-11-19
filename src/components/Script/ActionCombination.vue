@@ -11,6 +11,8 @@
     </a-breadcrumb>
   </div>
 
+  <!-- <TestTree></TestTree> -->
+
   <div class="m-[32px]">
 
     <div class="flex-row flex mt-[20px] mb-[20px] pl-[30px]">
@@ -65,7 +67,9 @@
     </div>
 
     <a-drawer v-model:open="visible" title="添加动作组合" placement="right" width="50%" @close="handleClose">
-      <ACEdit v-if="visible"></ACEdit>
+      <ACEdit v-if="visible" @success="fetchActionCombinations" @close="visible = false" :status="status"
+        :data="editData">
+      </ACEdit>
     </a-drawer>
 
     <a-drawer v-model:open="editVisible" title="添加动作组合" placement="right" width="40%" @close="handleClose">
@@ -172,6 +176,7 @@ import { http } from '../../http';
 import { ElMessage } from 'element-plus';
 import { HomeOutlined } from '@ant-design/icons-vue';
 import ACEdit from './ACEdit.vue';
+import TestTree from './TestTree.vue';
 
 import { SearchOutlined, DeleteOutlined, UploadOutlined, PlusOutlined } from '@ant-design/icons-vue'
 const dataSource = ref([]);
@@ -361,35 +366,39 @@ const columns = [
     title: '操作',
     key: 'action',
     fixed: 'right',
-    width: 100,
+    width: 200,
   },
 ];
 
 const showEditDrawer = (record) => {
-  // 重置 editFormData
-  editFormData._id = '';
-  editFormData.name = '';
-  editFormData.description = '';
-  editFormData.steps = [{ action: '' }];
-  editFormData.file_name = '';
-  editFormData.is_file = '元动作'; // 默认值为元动作
-  editFormData._id = record._id;
-  editFormData.name = record.name;
-  editFormData.description = record.description;
-  const steps = JSON.parse(JSON.stringify(record.steps)).map(s => {
-    if (s.action) {
-      return s.action
-    }
-    return s;
-  });
-  editFormData.steps = steps;
-  console.log(steps)
-  editFormData.is_file = record.is_file; // 设置 is_file 的值
-  editFormData.file_name = record.file_name;
 
-  nextTick(() => {
-    editVisible.value = true;
-  });
+  editData.value = record;
+  status.value = 'edit'
+  visible.value = true;
+  // // 重置 editFormData
+  // editFormData._id = '';
+  // editFormData.name = '';
+  // editFormData.description = '';
+  // editFormData.steps = [{ action: '' }];
+  // editFormData.file_name = '';
+  // editFormData.is_file = '元动作'; // 默认值为元动作
+  // editFormData._id = record._id;
+  // editFormData.name = record.name;
+  // editFormData.description = record.description;
+  // const steps = JSON.parse(JSON.stringify(record.steps)).map(s => {
+  //   if (s.action) {
+  //     return s.action
+  //   }
+  //   return s;
+  // });
+  // editFormData.steps = steps;
+  // console.log(steps)
+  // editFormData.is_file = record.is_file; // 设置 is_file 的值
+  // editFormData.file_name = record.file_name;
+
+  // nextTick(() => {
+  //   editVisible.value = true;
+  // });
 };
 
 const handleEditClose = () => {
