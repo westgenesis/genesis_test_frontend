@@ -375,7 +375,12 @@ const editStatus = ref("new")
 const showEditDrawer = (record) => {
   editStatus.value = 'edit'
   editData.value = cloneDeep(record)
-  visible.value = true;
+
+  if (activeTab.value === '1') {
+    visible.value = true;
+  } else {
+    canVisible.value = true;
+  }
 };
 const showCopyDrawer = (record) => {
   editStatus.value = 'copy'

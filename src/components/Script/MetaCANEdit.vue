@@ -23,7 +23,7 @@
         </a-form-item>
 
         <a-form-item label="状态" name="status">
-            <a-input :disabled="true" v-model:value="formData.status" placeholder="请输入内容" />
+            <a-input v-model:value="formData.status" placeholder="请输入内容" />
         </a-form-item>
 
         <a-form-item name="exec_path" class="mt-[20px]">
@@ -109,6 +109,7 @@ onMounted(() => {
 
 const rules = {
     name: [{ required: true, message: '请输入动作名称' }],
+    status: [{ required: true, message: '请输选择或输入状态' }],
     description: [{ required: true, message: '请输入动作描述' }],
     exec_path: [{ required: false, message: '请输入动作执行路径' }],
     path_parameter: [{ required: false, message: '请输入路径参数' }],

@@ -51,7 +51,7 @@
     </div>
 
     <a-table :columns="columns" bordered :data-source="pagedDataSource" size="middle" :pagination="false">
-      <template #bodyCell="{ column, record }">
+      <template #bodyCell="{ column, record }" :scroll="{ y: table_height }">
         <template v-if="column.key === 'action'">
           <a-button type="link" size="small" @click="showEditDrawer(record)">编辑</a-button>
           <a-button type="link" size="small" @click="deleteAction(record._id)">删除</a-button>
