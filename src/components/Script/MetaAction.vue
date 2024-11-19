@@ -232,7 +232,7 @@ function actionParmaDisplay(record) {
 }
 const fetchActions = () => {
 
-  const start = currentPage.value;
+  const start = currentPage.value -1;
 
   const params = Object.assign({ start, pagesize: pageSize }, searchForm.value)
   params.belongs_to = activeTab.value === '1' ? 'Vector_IO' : 'Vector_CAN'

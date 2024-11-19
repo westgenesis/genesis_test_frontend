@@ -20,10 +20,45 @@
         <a-form-item label="所属项目" name="projectId">
             <Project v-model="formData.projectId" @selectedObject="formData.projectName = $event.name"></Project>
         </a-form-item>
-
+        <!-- 
         <a-form-item label="状态" name="status">
             <a-input v-model:value="formData.status" placeholder="请输入内容" />
+        </a-form-item> -->
+
+        <a-form-item label="状态" name="values">
+            <div v-for="(value, index) in formData.values" :key="index" class="mb-[20px] pt-[20px] pl-[20px]"
+                style="background-color: rgb(236 236 236 / 34%)">
+
+                <a-row :gutter="[16, 16]">
+                    <a-col :span="8">
+
+                        <a-form-item label="状态名称" :name="['values', index, 'vt_signal']" :rules="{
+                            required: true,
+                            message: '状态名称',
+                            trigger: 'change',
+                        }">
+                            <a-input v-model:value="value.vt_signal" placeholder="请输入状态名称" />
+                        </a-form-item>
+                    </a-col>
+
+                    <a-col :span="8">
+                        <a-form-item label="状态值" :name="['values', index, 'value']" :rules="{
+                            required: true,
+                            message: '状态值不可为空',
+                            trigger: 'change',
+                        }">
+                            <a-input v-model:value="value.value" placeholder="请输入状态值" />
+                        </a-form-item>
+                    </a-col>
+
+                    <a-col class="flex items-center">
+                        <a-button type="link" :disabled="formData.values.length < 2"
+                            @click="formData.values.splice(index, 1);">删除</a-button>
+                    </a-col>
+                </a-row>
+            </div>
         </a-form-item>
+        <a-button style="margin-top: 0" type="primary" @click="addValue">添加状态</a-button>
 
         <a-form-item name="exec_path" class="mt-[20px]">
             <template v-slot:label>
@@ -80,7 +115,7 @@ const defaultData = {
     projectId: null,
     relation: null, // 新增字段
     projectName: '',
-    values: [{ status: null, description: null, vt_signal: null, relation: null, value: null }], // 默认有一个值
+    values: [{ vt_signal: null, value: null }], // 默认有一个值
 }
 
 const props = defineProps({
@@ -101,7 +136,8 @@ const formData = ref<typeof defaultData>(cloneDeep(defaultData));
 
 function select(action) {
     formData.value.name = action.name;
-    formData.value.status = action.status || '状态1';
+    // formData.value.status = action.status || '状态1';
+    formData.value.values = action.values;
 }
 
 onMounted(() => {
@@ -112,15 +148,16 @@ onMounted(() => {
 
 const rules = {
     name: [{ required: true, message: '请输入动作名称' }],
-    status: [{ required: true, message: '请输选择或输入状态' }],
+    // status: [{ required: true, message: '请输选择或输入状态' }],
     description: [{ required: true, message: '请输入动作描述' }],
     exec_path: [{ required: false, message: '请输入动作执行路径' }],
     path_parameter: [{ required: false, message: '请输入路径参数' }],
     projectId: [{ required: true, message: '请选择所属项目' }],
 };
 
+
 const addValue = () => {
-    formData.value.values.push({ status: null, description: null, vt_signal: '', relation: null, value: null });
+    formData.value.values.push({ vt_signal: null, value: null });
 };
 
 const formRef = ref();
@@ -128,6 +165,10 @@ const handleEditOk = async () => {
     console.log(formData.value)
     formRef.value.validate().then(() => {
         console.log(formData.value)
+
+        // 重新生成状态字段
+        const status = formData.value.values.map(it => `${it.value}:${it.vt_signal}`).join(' ')
+        formData.value.status = status;
 
         let res = null;
         if (props.status === 'new' || props.status === 'copy') {

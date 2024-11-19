@@ -37,6 +37,8 @@
                     class="custom-purple-button mr-[2rem] mb-[1rem]">批量生成用例</a-button>
                 <a-button type="primary" size="large" @click="showDrawer"
                     class="custom-purple-button mr-[2rem] mb-[1rem]">新建功能点</a-button>
+                <a-button type="primary" size="large" @click="handleBatchDeleteTestcase"
+                    class="custom-purple-button mr-[2rem] mb-[1rem]">删除</a-button>
             </div>
             <el-table :data="pointsTableData" style="width: 100%" id="function_point_table"
                 @selection-change="onPointsSelectionChange">
@@ -455,7 +457,25 @@ const handleBatchDelete = () => {
         }
     });
 };
+const handleBatchDeleteTestcase = () => {
+    if (selectedRowsPoints.value.length === 0) {
+        ElMessage.warning('请选择要删除的测试用例');
+        return;
+    }
 
+    const params = selectedRowsPoints.value.map(row => row.testcase_id);
+
+    console.log(params)
+
+    http.post('/api/batch_delete_testcases', params).then(response => {
+        if (response.status === 'OK') {
+            ElMessage.success('批量删除成功');
+            fetchData();
+        } else {
+            ElMessage.error('批量删除失败');
+        }
+    });
+};
 </script>
 
 

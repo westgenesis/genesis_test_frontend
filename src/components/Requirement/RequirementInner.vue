@@ -2,7 +2,7 @@
     <a-tabs v-model:activeKey="activeTab">
         <a-tab-pane key="modules" tab="功能模块列表"></a-tab-pane>
         <a-tab-pane key="points" tab="功能测试用例"></a-tab-pane>
-        <a-tab-pane key="testcase_table" tab="台阶测试用例"></a-tab-pane>
+        <a-tab-pane key="testcase_table" tab="台架测试用例"></a-tab-pane>
     </a-tabs>
     <div v-if="activeTab === 'modules'">
         <div style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;">项目信息</div>
@@ -91,6 +91,8 @@
                     class="custom-purple-button mr-[2rem] mb-[1rem]">刷新</a-button>
                 <a-button type="primary" size="large" @click="handleBatchGenerate"
                     class="custom-purple-button mr-[2rem] mb-[1rem]">批量生成用例</a-button>
+                <a-button type="primary" size="large" @click="handleBatchDeleteTestcase"
+                    class="custom-purple-button mr-[2rem] mb-[1rem]">删除</a-button>
             </div>
             <el-table :data="pagedDataPoints" style="width: 100%" id="function_point_table"
                 @selection-change="onPointsSelectionChange">
@@ -125,7 +127,7 @@
                         <el-tooltip class="box-item" effect="dark" :content="scope.row.testcase_name"
                             placement="top-start"> <el-button type="primary" text @click="clickTitle(scope.row)">{{
                                 scope.row.testcase_name
-                                }}</el-button></el-tooltip>
+                            }}</el-button></el-tooltip>
 
                     </template>
                 </el-table-column>
@@ -435,6 +437,7 @@ const handleBatchSplit = () => {
 
 const selectedRowsPoints = ref([]);
 const onPointsSelectionChange = (rows) => {
+    console.log(1)
     selectedRowsPoints.value = rows;
 };
 
@@ -598,6 +601,25 @@ const handleBatchDelete = () => {
     }));
 
     http.post('/api/delete_testcases', params).then(response => {
+        if (response.status === 'OK') {
+            ElMessage.success('批量删除成功');
+            fetchData();
+        } else {
+            ElMessage.error('批量删除失败');
+        }
+    });
+};
+const handleBatchDeleteTestcase = () => {
+    if (selectedRowsPoints.value.length === 0) {
+        ElMessage.warning('请选择要删除的测试用例');
+        return;
+    }
+
+    const params = selectedRowsPoints.value.map(row => row.testcase_id);
+
+    console.log(params)
+
+    http.post('/api/batch_delete_testcases', params).then(response => {
         if (response.status === 'OK') {
             ElMessage.success('批量删除成功');
             fetchData();

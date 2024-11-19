@@ -65,7 +65,7 @@ const currentPage = ref(1);
 const pageSize = 7;
 const dataSource = ref([]);
 const pagedDataSource = computed(() => {
-    const start = (currentPage.value - 1) * pageSize;
+    const start = currentPage.value - 1;
     const end = start + pageSize;
     return dataSource.value.slice(start, end);
 });

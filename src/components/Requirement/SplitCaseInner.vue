@@ -4,11 +4,12 @@
         <a-tab-pane key="testcase_table" tab="测试用例"></a-tab-pane>
     </a-tabs>
     <div v-if="activeTab === 'detail'">
-        <div style="border-left: 2px solid purple; margin-left: 0.25rem; padding-left: 1rem; margin-bottom: 1rem; display:flex; justify-content: space-between;">
+        <div
+            style="border-left: 2px solid purple; margin-left: 0.25rem; padding-left: 1rem; margin-bottom: 1rem; display:flex; justify-content: space-between;">
             功能点
             <div class="flex justify-center items-center" style="gap: 2rem; margin-right: 2rem;">
                 <a-button type="primary" @click="handleSave" class="custom-purple-button">保存</a-button>
-                <a-button type="primary" @click="handleGenerate"  class="custom-purple-button">保存并生成用例</a-button>
+                <a-button type="primary" @click="handleGenerate" class="custom-purple-button">保存并生成用例</a-button>
             </div>
         </div>
         <a-form :model="form" layout="vertical">
@@ -31,6 +32,7 @@
             <a-button type="primary" class="custom-purple-button" size="large" style="margin-right: 1rem;"
                 @click="showDrawer">新建测试用例</a-button>
             <a-button type="primary" class="custom-purple-button" size="large" @click="handleExport">导出全部</a-button>
+            <a-button type="primary" class="custom-purple-button ml-[20px]" size="large" @click="handleBatchDeleteTestcase">删除</a-button>
         </div>
 
         <el-table :data="pagedTableData" style="width: 100%" id="function_point_table" :height="table_height1"
@@ -149,7 +151,7 @@
                 <div class="flex justify-center items-center" style="flex-direction: column;">
                     <a-button type="primary" @click="handleNewSave" class="custom-purple-button">保存</a-button>
                 </div>
-                
+
             </a-form-item>
         </a-form>
     </a-drawer>
@@ -454,7 +456,7 @@ const handleSelectBelongsToOk = () => {
 
     selectBelongsToModalVisible.value = false;
 
-    http.post('/api/generate_script_file', { ...currentRow.value, ...selectForm.value}).then(response => {
+    http.post('/api/generate_script_file', { ...currentRow.value, ...selectForm.value }).then(response => {
         if (response.status === 'need_fill') {
             const need_fill_result = {
                 pre_condition_signal: response?.unmatched?.pre_condition_signal,
@@ -473,19 +475,19 @@ const handleSelectBelongsToOk = () => {
 };
 
 const handleRemoveSignal = ({ type, signal }) => {
-  if (type === 'preCondition') {
-    need_fill_result.value.pre_condition_signal = need_fill_result.value.pre_condition_signal.filter(s => s.name + s.value !== signal);
-  } else if (type === 'action') {
-    need_fill_result.value.action_signal = need_fill_result.value.action_signal.filter(s => s.name + s.value !== signal);
-  } else if (type === 'result') {
-    need_fill_result.value.result_signal = need_fill_result.value.result_signal.filter(s => s.name + s.value !== signal);
-  }
-  need_fill_result.value = { ...need_fill_result.value };
+    if (type === 'preCondition') {
+        need_fill_result.value.pre_condition_signal = need_fill_result.value.pre_condition_signal.filter(s => s.name + s.value !== signal);
+    } else if (type === 'action') {
+        need_fill_result.value.action_signal = need_fill_result.value.action_signal.filter(s => s.name + s.value !== signal);
+    } else if (type === 'result') {
+        need_fill_result.value.result_signal = need_fill_result.value.result_signal.filter(s => s.name + s.value !== signal);
+    }
+    need_fill_result.value = { ...need_fill_result.value };
 };
 
 const handleFillModalOk = (formData) => {
 
-  fillModalVisible.value = false;
+    fillModalVisible.value = false;
 };
 
 const handleGenerate = async () => {
@@ -510,6 +512,26 @@ const handleGenerate = async () => {
         }
     });
 }
+
+const handleBatchDeleteTestcase = () => {
+    if (selectedRowsPoints.value.length === 0) {
+        ElMessage.warning('请选择要删除的测试用例');
+        return;
+    }
+
+    const params = selectedRowsPoints.value.map(row => row.testcase_id);
+
+    console.log(params)
+
+    http.post('/api/batch_delete_testcases', params).then(response => {
+        if (response.status === 'OK') {
+            ElMessage.success('批量删除成功');
+            fetchData();
+        } else {
+            ElMessage.error('批量删除失败');
+        }
+    });
+};
 </script>
 
 <style scoped lang="less">
