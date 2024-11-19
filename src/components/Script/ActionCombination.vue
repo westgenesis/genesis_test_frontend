@@ -65,7 +65,7 @@
     </div>
 
     <a-drawer v-model:open="visible" title="添加动作组合" placement="right" width="50%" @close="handleClose">
-      <ACEdit></ACEdit>
+      <ACEdit v-if="visible"></ACEdit>
     </a-drawer>
 
     <a-drawer v-model:open="editVisible" title="添加动作组合" placement="right" width="40%" @close="handleClose">
@@ -182,6 +182,9 @@ const editVisible = ref(false);
 const submitting = ref(false);
 const availableActions = ref([]);
 
+const status = ref('new')
+const editData = ref({})
+
 const searchForm = ref({
   keyword: null,
   projectId: null,
@@ -224,7 +227,7 @@ const handleEditChange = (v, index) => {
 
 onMounted(() => {
   fetchActionCombinations();
-  fetchAvailableActions();
+  // fetchAvailableActions();
 });
 
 const fetchActionCombinations = () => {

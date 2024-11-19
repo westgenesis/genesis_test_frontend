@@ -113,7 +113,7 @@
     </a-table>
 
     <div class="mt-[20px] flex justify-end">
-      <a-pagination v-model:current="currentPage" :total="100" :page-size="pageSize" show-less-items
+      <a-pagination v-model:current="currentPage" :total="total" :page-size="pageSize" show-less-items
         @change="handlePageChange" />
     </div>
 
@@ -206,6 +206,8 @@ const onSelectChange = (selectedKeys) => {
   selectedRowKeys.value = selectedKeys;
 }
 
+const total = ref(0)
+
 onMounted(() => {
   fetchActions();
 });
@@ -232,7 +234,6 @@ const fetchActions = () => {
 
   const start = (currentPage.value - 1) * pageSize;
 
-
   const params = Object.assign({ start, pagesize: pageSize }, searchForm.value)
   params.belongs_to = activeTab.value === '1' ? 'Vector_IO' : 'Vector_CAN'
 
@@ -241,7 +242,9 @@ const fetchActions = () => {
     params: params,
   }).then(response => {
     // dataSource.value = response.actions;
-    pagedDataSource.value = response.actions.splice(0, 100);
+    // pagedDataSource.value = response.actions.splice(0, 100);
+    pagedDataSource.value = response.actions;
+    total.value = response.total
   }).catch(error => {
     console.error(error);
     ElMessage.error('获取数据失败');

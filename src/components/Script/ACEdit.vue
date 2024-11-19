@@ -62,14 +62,10 @@ const transVisible = ref(false)
 
 const defaultData = {
     name: '',
- 
     description: '',
     expression: '',
- 
     projectId: null,
-  
     projectName: '',
-    values: [{ status: null, description: null, vt_signal: null, relation: null, value: null }], // 默认有一个值
 }
 
 const props = defineProps({
@@ -166,6 +162,11 @@ onMounted(() => {
 const fetchActions = () => {
     http({
         url: '/api/get_actions',
+        params:{
+            start:0,
+            pagesize:2000,
+            // belongs_to: 'Vector_CAN'
+        }
     }).then(response => {
         transferData.value = response.actions;
     })

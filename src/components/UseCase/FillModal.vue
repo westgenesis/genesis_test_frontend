@@ -213,11 +213,11 @@ const addStep = () => {
 };
 
 const fetchAvailableActions = () => {
-  http.get('/api/get_actions').then(response => {
-    availableActions.value = response.actions;
-  }).catch(error => {
-    ElMessage.error('获取可用动作失败');
-  });
+  // http.get('/api/get_actions').then(response => {
+  //   availableActions.value = response.actions;
+  // }).catch(error => {
+  //   ElMessage.error('获取可用动作失败');
+  // });
 };
 
 
