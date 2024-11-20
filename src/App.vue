@@ -7,14 +7,21 @@ import { http } from './http';
 import { useProjectStore } from './stores/project';
 import 'quill/dist/quill.snow.css'
 import zhCN from 'ant-design-vue/es/locale/zh_CN';
-// import Project from './components/common/projectSelect.vue'
 import { ref } from 'vue'
+// import { theme } from 'ant-design-vue';
 import ActionSelect from '@/components/Script/actionSelect/ActionSelect.vue';
 import ActionCreate from '@/components/Script/actionSelect/ActionCreate.vue';
+// import Project from './components/common/projectSelect.vue'
 
 const locale = zhCN
 const projectStore = useProjectStore();
 const userStore = useUserStore();
+
+const theme = {
+  token: {
+    colorPrimary: '#1890ff',
+  },
+};
 
 onMounted(() => {
   if (localStorage.getItem('email')) {
@@ -38,7 +45,11 @@ const visible = ref(true);
 <template>
   <!-- <Project style="width: 100px;" v-model="abc" ></Project>
   abc{{ abc }} -->
-  <a-config-provider :locale="locale">
+  <a-config-provider :locale="locale" :theme="{
+    token: {
+      colorPrimary: 'purple',
+    },
+  }">
     <div class="main">
       <TopBar></TopBar>
       <!-- style="overflow: hidden;" -->

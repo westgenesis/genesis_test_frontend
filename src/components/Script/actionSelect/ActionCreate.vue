@@ -7,9 +7,14 @@
       <a-tab-pane key="3" tab="新建 动作组合"></a-tab-pane>
     </a-tabs>
 
-    <MetaIOEdit v-if="activeTab === '1'" :status="status" :data="editData"></MetaIOEdit>
-    <MetaCANEdit v-if="activeTab === '2'" :status="status" :data="editData"></MetaCANEdit>
-    <ACEdit v-if="activeTab === '3'" :status="status" :data="editData"></ACEdit>
+    <MetaIOEdit v-if="activeTab === '1'" :status="status" :data="editData" @close="emit('close')"
+      @success="emit('select', $event.name)">
+    </MetaIOEdit>
+    <MetaCANEdit v-if="activeTab === '2'" :status="status" :data="editData" @success="emit('select', $event.name)"
+      @close="emit('close')">
+    </MetaCANEdit>
+    <ACEdit v-if="activeTab === '3'" :status="status" :data="editData" @success="emit('select', $event.name)"
+      @close="emit('close')"></ACEdit>
 
   </div>
 </template>
@@ -20,6 +25,8 @@ import { ref } from 'vue';
 import MetaIOEdit from '@/components/Script/MetaIOEdit.vue'
 import MetaCANEdit from '@/components/Script/MetaCANEdit.vue'
 import ACEdit from '@/components/Script/ACEdit.vue';
+
+const emit = defineEmits(['select', 'close'])
 
 const activeTab = ref('1')
 const status = ref('new')

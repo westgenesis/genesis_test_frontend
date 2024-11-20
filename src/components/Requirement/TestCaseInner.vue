@@ -2,6 +2,7 @@
     <a-tabs v-model:activeKey="activeTab">
         <a-tab-pane key="detail" tab="测试用例详情"></a-tab-pane>
     </a-tabs>
+
     <a-form :model="form" layout="vertical">
         <div
             style="border-left: 2px solid purple; margin-left: 0.25rem; padding-left: 1rem; margin-bottom: 1rem; display:flex; justify-content: space-between; align-items: center;">
@@ -52,9 +53,10 @@
                     <a-col :span="10">
                         <a-input v-model:value="item.signal" placeholder="请输入触发条件信号" />
                     </a-col>
-                    <a-col :span="4" style="display: flex; justify-content: space-between;">
-                        <a-button type="dashed" @click="addActionItem(index)" style="margin-right: 0.5rem;">+</a-button>
-                        <a-button type="dashed" @click="removeActionItem(index)">-</a-button>
+                    <a-col :span="4">
+                        <a-button type="dashed" @click="addActionItem(index)">+</a-button>
+                        <a-button type="dashed" @click="removeActionItem(index)" class="ml-[10px]">-</a-button>
+                        <a-button danger @click="fill(index, 'action_items')" class="ml-[10px]">补齐</a-button>
                     </a-col>
                 </a-row>
             </div>
@@ -70,9 +72,10 @@
                     <a-col :span="10">
                         <a-input v-model:value="item.signal" placeholder="请输入预期结果信号" />
                     </a-col>
-                    <a-col :span="4" style="display: flex; justify-content: space-between;">
-                        <a-button type="dashed" @click="addResultItem(index)" style="margin-right: 0.5rem;">+</a-button>
-                        <a-button type="dashed" @click="removeResultItem(index)">-</a-button>
+                    <a-col :span="4">
+                        <a-button type="dashed" @click="addResultItem(index)">+</a-button>
+                        <a-button type="dashed" @click="removeResultItem(index)" class="ml-[10px]">-</a-button>
+                        <a-button danger @click="fill(index, 'result_items')" class="ml-[10px]">补齐</a-button>
                     </a-col>
                 </a-row>
             </div>
@@ -95,13 +98,22 @@
             <a-input v-model:value="selectForm.minRequiredCANoeVersion" placeholder="请输入最小要求CANoe版本号" />
         </a-form-item>
     </a-modal>
-    <FillModal :visible="fillModalVisible" :preConditionSignals="need_fill_result.pre_condition_signal"
+    <FillModal v-model:visible="fillModalVisible" :preConditionSignals="need_fill_result.pre_condition_signal"
         :actionSignals="need_fill_result.action_signal" :resultSignals="need_fill_result.result_signal"
         @removeSignal="handleRemoveSignal" @update:visible="fillModalVisible = $event" @ok="handleFillModalOk" />
+
+    <FillTypeSelect v-model:visible="fillTypeSelectVisible" 
+        @ok="handleFillTypeSelectOk"></FillTypeSelect>
 
     <a-modal v-model:open="actionSelectVisible" title="信号补齐" width="80%">
         <ActionSelect v-if="actionSelectVisible" @select="fillConfirm"></ActionSelect>
     </a-modal>
+
+    <a-modal v-model:open="actionCreateVisible" title="信号补齐" width="50%" :footer="null">
+        <ActionCreate v-if="actionCreateVisible" @select="fillConfirm" @close="actionCreateVisible = false;">
+        </ActionCreate>
+    </a-modal>
+
 </template>
 
 <script setup lang="ts">
@@ -113,6 +125,7 @@ import FillModal from '../UseCase/FillModal.vue';
 
 import ActionSelect from '@/components/Script/actionSelect/ActionSelect.vue';
 import ActionCreate from '@/components/Script/actionSelect/ActionCreate.vue';
+import FillTypeSelect from '@/components/Script/actionSelect/FillTypeSelect.vue';
 
 const { refreshAllProjects } = useProjectStore();
 const activeTab = ref('detail');
@@ -120,9 +133,22 @@ const activeTab = ref('detail');
 let fillRow = 0;
 let fillType = ''
 const actionSelectVisible = ref(false)
+const actionCreateVisible = ref(false)
+const fillTypeSelectVisible = ref(false);
 
+
+function handleFillTypeSelectOk(type) {
+
+    if (type === '1') {
+        actionSelectVisible.value = true
+    } else {
+        actionCreateVisible.value = true;
+    }
+}
 function fill(row, type) {
-    actionSelectVisible.value = true;
+    // actionSelectVisible.value = true;
+
+    fillTypeSelectVisible.value = true;
     fillRow = row;
     fillType = type;
 }

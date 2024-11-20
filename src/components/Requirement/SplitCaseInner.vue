@@ -525,7 +525,9 @@ const handleBatchDeleteTestcase = () => {
         project_id: project_id.value,
         testcase_ids: selectedRowsPoints.value.map(row => row.testcase_id),
         req_id: req_id.value,
-        split_file_ids: selectedRowsPoints.value.map(row => row.split_file_id),
+        // split_file_ids: selectedRowsPoints.value.map(row => row.split_file_id),
+        type:'script'
+        
     }
 
     console.log(params)

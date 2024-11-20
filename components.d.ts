@@ -30,6 +30,7 @@ declare module 'vue' {
     ElUpload: typeof import('element-plus/es')['ElUpload']
     Empty: typeof import('./src/components/Empty.vue')['default']
     FillModal: typeof import('./src/components/UseCase/FillModal.vue')['default']
+    FillTypeSelect: typeof import('./src/components/Script/actionSelect/FillTypeSelect.vue')['default']
     FunctionModule: typeof import('./src/components/Requirement/FunctionModule.vue')['default']
     FunctionPoint: typeof import('./src/components/Requirement/FunctionPoint.vue')['default']
     HistoryVersionModal: typeof import('./src/components/Requirement/HistoryVersionModal.vue')['default']
