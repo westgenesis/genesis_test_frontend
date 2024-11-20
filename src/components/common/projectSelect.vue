@@ -27,9 +27,9 @@ onMounted(() => {
 
 function change(key, value) {
     model.value = key
-    
+
     const result = projects.value.find(p => p._id.$oid === key)
-    
+
     emit('selectedObject', result)
     // console.log(key, result)
 }

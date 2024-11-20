@@ -282,7 +282,6 @@ function query() {
   fetchActions()
 }
 
-
 const ioColumns = [
   {
     title: '动作名称',

@@ -127,7 +127,7 @@
                         <el-tooltip class="box-item" effect="dark" :content="scope.row.testcase_name"
                             placement="top-start"> <el-button type="primary" text @click="clickTitle(scope.row)">{{
                                 scope.row.testcase_name
-                            }}</el-button></el-tooltip>
+                                }}</el-button></el-tooltip>
 
                     </template>
                 </el-table-column>
@@ -600,6 +600,7 @@ const handleBatchDelete = () => {
         testcase_id: row.testcase_id,
     }));
 
+
     http.post('/api/delete_testcases', params).then(response => {
         if (response.status === 'OK') {
             ElMessage.success('批量删除成功');
@@ -617,10 +618,10 @@ const handleBatchDeleteTestcase = () => {
 
     const params = {
         project_id: project_id.value,
-        testcase_ids: selectedRowsPoints.value.map(row => row.testcase_id)
+        req_id: req_id.value,
+        testcase_ids: selectedRowsPoints.value.map(row => row.testcase_id),
+        split_file_ids: selectedRowsPoints.value.map(row => row.split_file_id),
     }
-
-    console.log(params)
 
     http.post('/api/batch_delete_testcases', params).then(response => {
         if (response.status === 'OK') {

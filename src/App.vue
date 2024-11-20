@@ -8,7 +8,9 @@ import { useProjectStore } from './stores/project';
 import 'quill/dist/quill.snow.css'
 import zhCN from 'ant-design-vue/es/locale/zh_CN';
 // import Project from './components/common/projectSelect.vue'
-// import {ref} from 'vue'
+import { ref } from 'vue'
+import ActionSelect from '@/components/Script/actionSelect/ActionSelect.vue';
+import ActionCreate from '@/components/Script/actionSelect/ActionCreate.vue';
 
 const locale = zhCN
 const projectStore = useProjectStore();
@@ -30,6 +32,7 @@ onMounted(() => {
 })
 
 // const abc = ref("Robot")
+const visible = ref(true);
 </script>
 
 <template>
@@ -39,12 +42,20 @@ onMounted(() => {
     <div class="main">
       <TopBar></TopBar>
       <!-- style="overflow: hidden;" -->
-      <div class="flex flex-1" >
+      <div class="flex flex-1">
         <div class="flex-1" style="background-color: #fff; overflow: hidden;">
           <router-view></router-view>
         </div>
       </div>
     </div>
+
+    <!-- <a-modal v-model:open="visible" title="脚本信息" width="90%">
+      <ActionSelect v-if="visible"></ActionSelect>
+    </a-modal> -->
+
+    <!-- <a-modal v-model:open="visible" title="脚本信息" width="50%" :footer="null">
+      <ActionCreate v-if="visible"></ActionCreate>
+    </a-modal> -->
   </a-config-provider>
 </template>
 

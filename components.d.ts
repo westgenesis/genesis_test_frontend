@@ -9,6 +9,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     ACEdit: typeof import('./src/components/Script/ACEdit.vue')['default']
     ActionCombination: typeof import('./src/components/Script/ActionCombination.vue')['default']
+    ActionCreate: typeof import('./src/components/Script/actionSelect/ActionCreate.vue')['default']
     ActionSelect: typeof import('./src/components/Script/actionSelect/ActionSelect.vue')['default']
     AddModuleDrawer: typeof import('./src/components/Requirement/AddModuleDrawer.vue')['default']
     AddProject: typeof import('./src/components/Project/AddProject.vue')['default']

@@ -3,12 +3,14 @@
         <a-tab-pane key="detail" tab="测试用例详情"></a-tab-pane>
     </a-tabs>
     <a-form :model="form" layout="vertical">
-        <div style="border-left: 2px solid purple; margin-left: 0.25rem; padding-left: 1rem; margin-bottom: 1rem; display:flex; justify-content: space-between; align-items: center;">
+        <div
+            style="border-left: 2px solid purple; margin-left: 0.25rem; padding-left: 1rem; margin-bottom: 1rem; display:flex; justify-content: space-between; align-items: center;">
             测试用例
             <div class="flex justify-center items-center" style="gap: 2rem; margin-right: 2rem;">
                 <a-button type="primary" @click="handleSave" class="custom-purple-button">保存</a-button>
-                <a-button type="primary" @click="handleGenerateFile"  class="custom-purple-button">生成脚本</a-button>
-                <a-button type="primary" @click="downloadFile" class="custom-purple-button" v-if="form.script_status === 'generated'">下载脚本</a-button>
+                <a-button type="primary" @click="handleGenerateFile" class="custom-purple-button">生成脚本</a-button>
+                <a-button type="primary" @click="downloadFile" class="custom-purple-button"
+                    v-if="form.script_status === 'generated'">下载脚本</a-button>
             </div>
         </div>
         <a-form-item label="测试用例类型">
@@ -25,15 +27,16 @@
         <a-card title="初始条件描述/信号" style="margin-bottom: 1rem;">
             <div v-for="(item, index) in form.pre_condition_items" :key="index" class="condition-row">
                 <a-row :gutter="16">
-                    <a-col :span="10">
+                    <a-col :span="6">
                         <a-input v-model:value="item.description" placeholder="请输入初始条件描述" />
                     </a-col>
-                    <a-col :span="10">
+                    <a-col :span="6">
                         <a-input v-model:value="item.signal" placeholder="请输入初始条件信号" />
                     </a-col>
-                    <a-col :span="4" style="display: flex; justify-content: space-between;">
-                        <a-button type="dashed" @click="addPreConditionItem(index)" style="margin-right: 0.5rem;">+</a-button>
-                        <a-button type="dashed" @click="removePreConditionItem(index)">-</a-button>
+                    <a-col :span="4">
+                        <a-button type="dashed" @click="addPreConditionItem(index)">+</a-button>
+                        <a-button type="dashed" @click="removePreConditionItem(index)" class="ml-[10px]">-</a-button>
+                        <a-button danger @click="fill(index, 'pre_condition_items')" class="ml-[10px]">补齐</a-button>
                     </a-col>
                 </a-row>
             </div>
@@ -95,6 +98,10 @@
     <FillModal :visible="fillModalVisible" :preConditionSignals="need_fill_result.pre_condition_signal"
         :actionSignals="need_fill_result.action_signal" :resultSignals="need_fill_result.result_signal"
         @removeSignal="handleRemoveSignal" @update:visible="fillModalVisible = $event" @ok="handleFillModalOk" />
+
+    <a-modal v-model:open="actionSelectVisible" title="信号补齐" width="80%">
+        <ActionSelect v-if="actionSelectVisible" @select="fillConfirm"></ActionSelect>
+    </a-modal>
 </template>
 
 <script setup lang="ts">
@@ -103,8 +110,29 @@ import { http } from '../../http';
 import { ElMessage } from 'element-plus';
 import { useProjectStore } from '../../stores/project';
 import FillModal from '../UseCase/FillModal.vue';
+
+import ActionSelect from '@/components/Script/actionSelect/ActionSelect.vue';
+import ActionCreate from '@/components/Script/actionSelect/ActionCreate.vue';
+
 const { refreshAllProjects } = useProjectStore();
 const activeTab = ref('detail');
+
+let fillRow = 0;
+let fillType = ''
+const actionSelectVisible = ref(false)
+
+function fill(row, type) {
+    actionSelectVisible.value = true;
+    fillRow = row;
+    fillType = type;
+}
+
+function fillConfirm(record) {
+    console.log(record)
+    actionSelectVisible.value = false;
+
+    form.value[fillType][fillRow].signal = record
+}
 
 const props = defineProps({
     currentRequirement: {
@@ -306,10 +334,10 @@ const handleSelectBelongsToOk = () => {
 
     selectBelongsToModalVisible.value = false;
 
-    http.post('/api/generate_script_file', { 
+    http.post('/api/generate_script_file', {
         ...currentRow.value,
         ...selectForm.value,
-        project_id: project_id.value, 
+        project_id: project_id.value,
         req_id: req_id.value,
         split_file_id: split_file_id.value,
         split_case_id: split_case_id.value,
@@ -332,19 +360,19 @@ const handleSelectBelongsToOk = () => {
 };
 
 const handleRemoveSignal = ({ type, signal }) => {
-  if (type === 'preCondition') {
-    need_fill_result.value.pre_condition_signal = need_fill_result.value.pre_condition_signal.filter(s => s.name + s.value !== signal);
-  } else if (type === 'action') {
-    need_fill_result.value.action_signal = need_fill_result.value.action_signal.filter(s => s.name + s.value !== signal);
-  } else if (type === 'result') {
-    need_fill_result.value.result_signal = need_fill_result.value.result_signal.filter(s => s.name + s.value !== signal);
-  }
-  need_fill_result.value = { ...need_fill_result.value };
+    if (type === 'preCondition') {
+        need_fill_result.value.pre_condition_signal = need_fill_result.value.pre_condition_signal.filter(s => s.name + s.value !== signal);
+    } else if (type === 'action') {
+        need_fill_result.value.action_signal = need_fill_result.value.action_signal.filter(s => s.name + s.value !== signal);
+    } else if (type === 'result') {
+        need_fill_result.value.result_signal = need_fill_result.value.result_signal.filter(s => s.name + s.value !== signal);
+    }
+    need_fill_result.value = { ...need_fill_result.value };
 };
 
 const handleFillModalOk = (formData) => {
 
-  fillModalVisible.value = false;
+    fillModalVisible.value = false;
 };
 
 const handleGenerate = async () => {

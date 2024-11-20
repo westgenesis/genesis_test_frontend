@@ -1,116 +1,108 @@
 <template>
+  <div class="max-h-[70vh] min-h-[50vh] overflow-hidden overflow-y-auto pr-[30px]">
+    <a-tabs v-model:activeKey="activeTab" @change="query" class="ml-[30px]">
+      <a-tab-pane key="1" tab="元动作-IO信号"></a-tab-pane>
+      <a-tab-pane key="2" tab="元动作-总线信号"></a-tab-pane>
+      <a-tab-pane key="3" tab="动作组合"></a-tab-pane>
+    </a-tabs>
 
-  <div class="m-[20px] ml-[30px]">
-    <a-breadcrumb>
-      <a-breadcrumb-item href="">
-        <home-outlined />
-      </a-breadcrumb-item>
-      <a-breadcrumb-item href="">
-        <span>动作库</span>
-      </a-breadcrumb-item>
-      <a-breadcrumb-item>元动作库</a-breadcrumb-item>
-    </a-breadcrumb>
-  </div>
+    <div class="flex-row flex mt-[20px] mb-[20px] pl-[30px]">
+      <a-form :model="searchForm" layout="inline" style="width:100%">
+        <a-row style="width:100%">
+          <a-col :span="10" style="max-width: 300px">
+            <a-form-item label="关键字" name="keyword">
+              <a-input v-model:value="searchForm.keyword" placeholder="请输入关键字" :allowClear="true" auto-focus />
+            </a-form-item>
+          </a-col>
 
-  <a-tabs v-model:activeKey="activeTab" @change="query" class="ml-[30px]">
-    <a-tab-pane key="1" tab="IO信号"></a-tab-pane>
-    <a-tab-pane key="2" tab="总线信号"></a-tab-pane>
-  </a-tabs>
+          <a-col :span="10" style="max-width: 300px">
+            <a-form-item label="所属项目" name="projectid">
+              <ProjectSelect v-model="searchForm.projectId" placeholder="请选择所属项目" :allowClear="true"></ProjectSelect>
+            </a-form-item>
+          </a-col>
+        </a-row>
+      </a-form>
 
-  <div class="flex-row flex mt-[20px] mb-[20px] pl-[30px]">
-    <a-form :model="searchForm" layout="inline" style="width:100%">
-      <a-row style="width:100%">
-        <a-col :span="10" style="max-width: 300px">
-          <a-form-item label="关键字" name="keyword">
-            <a-input v-model:value="searchForm.keyword" placeholder="请输入关键字" :allowClear="true" />
-          </a-form-item>
-        </a-col>
-
-        <a-col :span="10" style="max-width: 300px">
-          <a-form-item label="所属项目" name="projectid">
-            <ProjectSelect v-model="searchForm.projectId" placeholder="请选择所属项目" :allowClear="true"></ProjectSelect>
-          </a-form-item>
-        </a-col>
-      </a-row>
-    </a-form>
-
-    <div class="flex justify-end">
-      <a-button type="primary" size="large" @click="query" class="custom-purple-button mr-[2rem] flex items-center">
-        <SearchOutlined /> 查询
-      </a-button>
-    </div>
-  </div>
-
-  <div class="m-[32px]">
-
-    <!--  -->
-    <a-table :columns="ioColumns" :row-key="record => record._id" bordered :data-source="pagedDataSource"
-      :scroll="{ y: table_height }" size="middle" :pagination="false" :row-selection="{
-        selectedRowKeys: selectedRowKeys, onChange: onSelectChange, getCheckboxProps: (record) => ({
-          disabled: !Boolean(record.values)   // Column configuration not to be checked
-          // name: record.name,
-        }),
-      }" childrenColumnName="values" v-if="activeTab === '1'"
-      :row-class-name="(_record, index) => (index % 2 === 1 ? 'table-striped' : null)">
-
-      <template #bodyCell="{ column, record }">
-        <template v-if="column.key === 'name'">
-          <span>{{ record.name || record.status }}</span>
-        </template>
-
-        <template v-if="column.key === 'relation'">
-          <span v-if="record.values">{{ record.relation }}</span>
-          <span v-else></span>
-        </template>
-
-        <template v-if="column.key === 'acton_parameter'">
-          <span>{{ actionParmaDisplay(record) }}</span>
-        </template>
-
-        <template v-if="column.key === 'action'">
-          <template v-if="record.values">
-            <a-button type="link" size="small" @click="showCopyDrawer(record)">选择</a-button>
-          </template>
-        </template>
-      </template>
-    </a-table>
-
-
-    <a-table :columns="canColumns" :row-key="record => record._id" bordered :data-source="pagedDataSource" size="middle"
-      :pagination="false" :row-selection="{
-        selectedRowKeys: selectedRowKeys, onChange: onSelectChange,
-      }" v-if="activeTab === '2'" :row-class-name="(_record, index) => (index % 2 === 1 ? 'table-striped' : null)">
-      <template #bodyCell="{ column, record }">
-
-        <template v-if="column.key === 'action'">
-          <template v-if="record.values">
-            <!-- <a-button type="link" size="small" @click="showCopyDrawer(record)">复制</a-button> -->
-            <a-button type="link" size="small" @click="showEditDrawer(record)">编辑</a-button>
-            <a-button type="link" size="small" @click="deleteAction(record._id)">删除</a-button>
-          </template>
-        </template>
-      </template>
-    </a-table>
-
-    <div class="mt-[20px] flex justify-end">
-      <a-pagination v-model:current="currentPage" :total="total" :page-size="pageSize" show-less-items
-        @change="handlePageChange" />
+      <div class="flex justify-end">
+        <a-button type="primary" size="large" @click="query" class="custom-purple-button mr-[2rem] flex items-center">
+          <SearchOutlined /> 查询
+        </a-button>
+      </div>
     </div>
 
+    <div class="m-[32px]">
 
+      <!-- IO信号 -->
+      <a-table :columns="ioColumns" :row-key="record => record._id" bordered :data-source="pagedDataSource"
+        :scroll="{ y: table_height }" size="middle" :pagination="false" childrenColumnName="values"
+        v-if="activeTab === '1'" :row-class-name="(_record, index) => (index % 2 === 1 ? 'table-striped' : null)">
 
+        <template #bodyCell="{ column, record }">
+          <template v-if="column.key === 'name'">
+            <span>{{ record.name || record.status }}</span>
+          </template>
+
+          <template v-if="column.key === 'relation'">
+            <span v-if="record.values">{{ record.relation }}</span>
+            <span v-else></span>
+          </template>
+
+          <template v-if="column.key === 'acton_parameter'">
+            <span>{{ actionParmaDisplay(record) }}</span>
+          </template>
+
+          <template v-if="column.key === 'action'">
+            <template v-if="record.values">
+              <a-button type="link" size="small" @click="select(record)">选择</a-button>
+            </template>
+          </template>
+        </template>
+      </a-table>
+
+      <!-- 总线信号 -->
+      <a-table :columns="canColumns" :row-key="record => record._id" bordered :data-source="pagedDataSource"
+        size="middle" :pagination="false" v-if="activeTab === '2'"
+        :row-class-name="(_record, index) => (index % 2 === 1 ? 'table-striped' : null)">
+        <template #bodyCell="{ column, record }">
+
+          <template v-if="column.key === 'action'">
+            <template v-if="record.values">
+              <a-button type="link" size="small" @click="select(record)">选择</a-button>
+            </template>
+          </template>
+        </template>
+      </a-table>
+
+      <div class="mt-[20px] flex justify-end" v-if="activeTab !== '3'">
+        <a-pagination v-model:current="currentPage" :total="total" :page-size="pageSize" show-less-items
+          @change="handlePageChange" />
+      </div>
+
+      <!-- 元动作组合 -->
+      <a-table :columns="combinationColumns" bordered :data-source="combinationPagedDataSource" size="middle"
+        :pagination="false" v-if="activeTab === '3'">
+        <template #bodyCell="{ column, record }">
+          <template v-if="column.key === 'action'">
+            <a-button type="link" size="small" @click="select(record)">选择</a-button>
+          </template>
+        </template>
+      </a-table>
+
+      <div class="mt-[20px] flex justify-end" v-if="activeTab === '3'">
+        <a-pagination v-model:current="currentPage" :total="dataSource.length" :page-size="pageSize" show-less-items
+          @change="combinationHandlePageChange" />
+      </div>
+
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref, reactive, onMounted, computed } from 'vue';
-import { http } from '../../http';
+import { http } from '@/http';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { HomeOutlined, UserOutlined } from '@ant-design/icons-vue';
 import ProjectSelect from '@common/projectSelect.vue'
-import IOEdit from './MetaIOEdit.vue'
-import CANEdit from './MetaCANEdit.vue'
-import DBCUploader from './DBCUploader.vue';
+
 import { cloneDeep } from 'lodash-es'
 import { SearchOutlined, DeleteOutlined, UploadOutlined, PlusOutlined } from '@ant-design/icons-vue'
 
@@ -118,55 +110,17 @@ import { SearchOutlined, DeleteOutlined, UploadOutlined, PlusOutlined } from '@a
 const dataSource = ref([]);
 const pagedDataSource = ref([]);
 const currentPage = ref(1);
-const pageSize = 10;
-const visible = ref(false);
-const canVisible = ref(false);
-const editVisible = ref(false);
-const canSelVisible = ref(true)
+const pageSize = 7;
 
-const dbcVisible = ref(false)
-
-const submitting = ref(false);
 const selectedRowKeys = ref([]);
 
-const dict = {
-  'new': '新建',
-  'edit': '编辑',
-  'copy': '复制',
-}
-
-const formData = reactive({
-  name: '',
-  description: '',
-  exec_path: '',
-  path_parameter: '',
-  action_type: 'In',
-  belongs_to: 'Vector_IO',
-  allowed_methods: 'set',
-  relation: 'greater_than', // 新增字段
-  values: [{ name: '', description: '' }], // 默认有一个值
-  vt_signal: ''
-});
-
+const emit = defineEmits(['select'])
 const searchForm = ref({
   keyword: null,
   projectId: null,
 })
 
 const activeTab = ref("1")
-
-const editFormData = reactive({
-  _id: '',
-  name: '',
-  description: '',
-  exec_path: '',
-  path_parameter: '',
-  action_type: 'In',
-  belongs_to: 'Vector_IO',
-  allowed_methods: 'set',
-  values: [{ name: '', description: '' }], // 默认有一个值
-  vt_signal: ''
-});
 
 const onSelectChange = (selectedKeys) => {
   selectedRowKeys.value = selectedKeys;
@@ -179,6 +133,9 @@ onMounted(() => {
 });
 
 
+function select(record) {
+  emit('select', record.name)
+}
 //动作参数显式逻辑
 function actionParmaDisplay(record) {
 
@@ -207,8 +164,6 @@ const fetchActions = () => {
     url: '/api/get_actions',
     params: params,
   }).then(response => {
-    // dataSource.value = response.actions;
-    // pagedDataSource.value = response.actions.splice(0, 100);
     pagedDataSource.value = response.actions;
     total.value = response.total
   }).catch(error => {
@@ -218,34 +173,45 @@ const fetchActions = () => {
 
 };
 
-// const pagedDataSource = computed(() => {
-//   // console.log(dataSource.value)
-//   // console.log(dataSource.value, 123, result)
-//   const start = (currentPage.value - 1) * pageSize;
-//   const end = start + pageSize;
-//   return dataSource.value.slice(start, end);
-// });
+const combinationPagedDataSource = computed(() => {
+  const start = (currentPage.value - 1) * pageSize;
+  const end = start + pageSize;
+  return dataSource.value.slice(start, end);
+});
+
+const fetchActionCombinations = () => {
+
+  // start, pagesize: pageSize
+  const params = Object.assign({}, searchForm.value)
+
+  http('/api/action_combinations', { params }).then(response => {
+    dataSource.value = response.action_combinations;
+  }).catch(error => {
+    ElMessage.error('获取数据失败');
+  });
+};
 
 const handlePageChange = (page) => {
   currentPage.value = page;
   fetchActions();
 };
 
-const table_height = window.innerHeight * 0.6
 
-const showDrawer = () => {
-  editStatus.value = 'new'
-  editData.value = {}
-
-  if (activeTab.value === '1') {
-    visible.value = true;
-  } else {
-    canVisible.value = true;
-  }
+const combinationHandlePageChange = (page) => {
+  currentPage.value = page;
 };
 
+
+const table_height = window.innerHeight * 0.6
+
 function query() {
-  fetchActions()
+
+  currentPage.value = 1
+  if (activeTab.value === '3') {
+    fetchActionCombinations()
+  } else {
+    fetchActions()
+  }
 }
 
 
@@ -339,99 +305,31 @@ const canColumns = [
   },
 ];
 
-const editData = ref({})
-const editStatus = ref("new")
-const showEditDrawer = (record) => {
-  editStatus.value = 'edit'
-  editData.value = cloneDeep(record)
 
-  if (activeTab.value === '1') {
-    visible.value = true;
-  } else {
-    canVisible.value = true;
-  }
-};
-const showCopyDrawer = (record) => {
-  editStatus.value = 'copy'
-  editData.value = cloneDeep(record)
-  Reflect.deleteProperty(editData.value, '_id')
-  visible.value = true;
-};
+const combinationColumns = [
+  {
+    title: '动作组合名称',
+    dataIndex: 'name',
+    key: 'name',
+  },
+  {
+    title: '动作组合描述',
+    dataIndex: 'description',
+    key: 'description',
+  },
+  {
+    title: '所属项目',
+    dataIndex: 'projectName',
+    key: 'projectName',
+  },
+  {
+    title: '操作',
+    key: 'action',
+    fixed: 'right',
+    width: 200,
+  },
+];
 
-const resetFormData = () => {
-  formData.name = '';
-  formData.description = '';
-  formData.exec_path = '';
-  formData.path_parameter = '';
-  formData.action_type = 'In';
-  formData.belongs_to = 'Vector_IO';
-  formData.allowed_methods = 'set';
-  formData.vt_signal = '';
-  formData.values = [{ name: '', description: '' }];
-};
-
-const resetEditFormData = () => {
-  editFormData._id = '';
-  editFormData.name = '';
-  editFormData.description = '';
-  editFormData.exec_path = '';
-  editFormData.path_parameter = '';
-  editFormData.action_type = 'In';
-  editFormData.belongs_to = 'Vector_IO';
-  editFormData.allowed_methods = 'set';
-  editFormData.vt_signal = '';
-  editFormData.values = [{ name: '', description: '' }];
-};
-
-const handleClose = () => {
-  visible.value = false;
-  resetFormData(); // 重置表单数据
-};
-
-const handleEditClose = () => {
-  editVisible.value = false;
-  resetEditFormData(); // 重置表单数据
-};
-
-const deleteSelectedActions = async () => {
-  if (selectedRowKeys.value.length === 0) {
-    ElMessage.warning('请选择要删除的项');
-    return;
-  }
-
-  ElMessageBox.confirm('确定要删除选中的功能模块吗？', '删除确认', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning'
-  }).then(async () => {
-    try {
-      const resp = await http.delete('/api/delete_actions', {
-        data: { ids: selectedRowKeys.value }
-      });
-      console.log(resp);
-      fetchActions();
-      selectedIds.value = [];
-    } catch (errInfo) {
-      console.error(errInfo);
-    }
-  });
-};
-
-const deleteAction = async (id) => {
-  ElMessageBox.confirm('确定要删除选中的功能模块吗？', '删除确认', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning'
-  }).then(async () => {
-    try {
-      const resp = await http.delete(`/api/delete_action/${id}`);
-      console.log(resp);
-      fetchActions();
-    } catch (errInfo) {
-      console.error(errInfo);
-    }
-  });
-};
 </script>
 
 <style scoped>
