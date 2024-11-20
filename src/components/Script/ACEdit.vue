@@ -39,8 +39,8 @@
 
     <a-modal v-model:open="transVisible" title="请选择元动作" okText="确定" @ok="transVisible = false" cancelText="取消">
         <a-transfer v-model:target-keys="targetKeys" :render="item => item.name" :data-source="transferData"
-            :one-way="true" :titles="['  未选择', '  已选择']" :rowKey="(obj) => obj._id" @change="change"
-            :filter-option="filterOption" pagination show-search />
+            :one-way="true" :titles="['  未选择', '  已选择']" :rowKey="(obj) => obj._id" :filter-option="filterOption"
+            pagination show-search />
     </a-modal>
 
     <!-- <a-modal v-model:open="transVisible" title="请选择元动作" okText="确定" @ok="transVisible = false" cancelText="取消">
@@ -86,22 +86,71 @@ const props = defineProps({
 });
 
 const formData = ref(cloneDeep(defaultData));
-
-function change(e, f) {
-    console.log(e, f);
-}
-
-const history = ref([]);
-const OpHistory = ref([])
+const history = ref([])
 
 function historyBack() {
-    formData.value.expression = history.value.pop();
+    history.value.pop();
+    formData.value.expression = genExpress();
+}
+
+// 生成表达式
+function genExpress() {
+    let strArr = []
+
+    history.value.forEach(op => {
+        if (op.type === 'action') {
+            strArr.push(op.name)
+            return;
+        }
+
+        if (op.name === '()') {
+            strArr.unshift('(')
+            strArr.push(')')
+            return;
+        }
+
+        strArr.push(op.name)
+    })
+
+    return strArr.join('');
+}
+
+function getBarretCount() {
+    let leftCount = 0, rightCount = 0;
+    history.value.forEach((op) => {
+        if (op.type === 'operation' && op.name === '(') {
+            leftCount++
+        }
+
+        if (op.type === 'operation' && op.name === ')') {
+            rightCount++
+        }
+    })
+
+    return [leftCount, rightCount]
+}
+
+function isExpressionValid() {
+
+    // 左右括号数量不匹配，不合法
+    const [left, right] = getBarretCount();
+    if (left != right) {
+        return false
+    }
+
+    const lastEle = last(history.value);
+    if (['&', '||'].includes(lastEle.name)) {
+        return false
+    }
+
+    return true;
 }
 
 function isValid(modi) {
     console.log(modi)
+
     if (modi.type === 'action') {
-        const lastEle = last(OpHistory.value)
+        const lastEle = last(history.value)
 
         //空的时候OK
         if (lastEle == undefined) {
@@ -122,12 +171,12 @@ function isValid(modi) {
     if (['&', '||'].includes(modi.name)) {
         // ),(),操作数 后面可以跟逻辑表达式合法
 
-        const lastEle = last(OpHistory.value)
+        const lastEle = last(history.value)
         if (!lastEle) {
             return false;
         }
 
-        if ([')', '()'].includes(modi.name)) {
+        if ([')', '()'].includes(lastEle.name)) {
             return true;
         }
 
@@ -137,7 +186,7 @@ function isValid(modi) {
     if (modi.name === '()') {
         // 操作数, ) 后面可以跟
 
-        const lastEle = last(OpHistory.value)
+        const lastEle = last(history.value)
         if (!lastEle) {
             return false;
         }
@@ -147,12 +196,12 @@ function isValid(modi) {
     // 左括号
     if (modi.name === '(') {
         // 空,操作符后面可以跟
-        const lastEle = last(OpHistory.value)
+        const lastEle = last(history.value)
         if (!lastEle) {
             return true;
         }
 
-        return ['&', '||'].includes(modi.name);
+        return ['&', '||'].includes(lastEle.name);
     }
 
     // 右括号
@@ -160,7 +209,7 @@ function isValid(modi) {
     // 操作数,或右括号
     if (modi.name === ')') {
         // 空,操作符后面可以跟
-        const lastEle = last(OpHistory.value)
+        const lastEle = last(history.value)
         if (!lastEle) {
             return false;
         }
@@ -170,7 +219,7 @@ function isValid(modi) {
         }
 
         let leftCount = 0, rightCount = 0
-        OpHistory.value.forEach((op) => {
+        history.value.forEach((op) => {
             if (op.type === 'operation' && op.name === '(') {
                 leftCount++
             }
@@ -186,7 +235,6 @@ function isValid(modi) {
 
 function clearAll() {
     history.value = [];
-    OpHistory.value = [];
     formData.value.expression = ''
 }
 
@@ -211,7 +259,6 @@ const orperations = [
         type: 'operation',
         name: ')',
     },
-
 ]
 
 const names = computed(() => {
@@ -226,17 +273,15 @@ const names = computed(() => {
 const emit = defineEmits(['close', 'success'])
 
 const actionClick = function (oper) {
-    console.log('isValid', isValid(oper))
 
-    OpHistory.value.push(oper)
-    history.value.push(formData.value.expression)
-
-    if (oper.name === '()') {
-        formData.value.expression = "(" + formData.value.expression + ")";
-        return;
+    if (!isValid(oper)) {
+        ElMessage.error('不可进行此项操作！');
+        return
     }
 
-    formData.value.expression += oper.name;
+    history.value.push(oper)
+
+    formData.value.expression = genExpress();
 }
 
 const targetKeys = ref([]);
@@ -246,7 +291,7 @@ onMounted(() => {
     if (props.status === 'edit' || props.status === 'copy') {
         formData.value = (cloneDeep(props.data))
         console.log(props.data.history)
-        OpHistory.value = props.data.history
+        history.value = props.data.history
     }
 
     fetchActions();
@@ -290,19 +335,21 @@ const rules = {
 
 const formRef = ref();
 const handleEditOk = async () => {
-    console.log(formData.value)
+    // console.log(formData.value)
     formRef.value.validate().then(() => {
-
-        console.log(OpHistory.value)
 
         // console.log(formData.value)
 
-        formData.value.history = OpHistory.value;
-        formData.value.actions = OpHistory.value.filter(it => it.type === 'action').map(it => {
+        if (!isExpressionValid()) {
+            ElMessage.error('表达式不完整，请检查！');
+            return
+        }
+        // return;
+        formData.value.history = history.value;
+        formData.value.actions = history.value.filter(it => it.type === 'action').map(it => {
             return { key: it.actionName, value: it.value }
         })
-        console.log(OpHistory.value)
-        // return;
+
 
         let res = null;
         if (props.status === 'new' || props.status === 'copy') {
@@ -314,7 +361,7 @@ const handleEditOk = async () => {
         res.then(() => {
             ElMessage.success('操作成功');
             emit('close')
-            emit('success')
+            emit('success', formData.value)
         }, (err) => {
             ElMessage.error(err)
         })
@@ -322,7 +369,7 @@ const handleEditOk = async () => {
 };
 
 const filterOption = (inputValue, option) => {
-    return option.name.indexOf(inputValue) > -1;
+    return option.name.toUpperCase().indexOf(String(inputValue).toUpperCase()) > -1;
 };
 
 

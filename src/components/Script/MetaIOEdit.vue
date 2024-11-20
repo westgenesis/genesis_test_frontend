@@ -2,7 +2,7 @@
     <a-form :model="formData" :rules="rules" layout="vertical" ref="formRef">
 
         <a-form-item label="动作名称" name="name">
-            <a-input v-model:value="formData.name" placeholder="请输入内容" auto-focus/>
+            <a-input v-model:value="formData.name" placeholder="请输入内容" auto-focus />
         </a-form-item>
 
         <a-form-item label="动作描述" name="description">
@@ -119,7 +119,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import Project from '@common/projectSelect.vue'
 import { http } from "@/http"
 import { cloneDeep } from 'lodash-es'
@@ -188,7 +188,7 @@ const handleEditOk = async () => {
         res.then(() => {
             ElMessage.success('操作成功');
             emit('close')
-            emit('success')
+            emit('success', formData.value)
         })
     })
 };
