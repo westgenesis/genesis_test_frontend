@@ -73,7 +73,7 @@
 
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'name'">
-          <span>{{ record.name || record.status }}</span>
+          <span>{{ record.displayName || record.name || record.status }}</span>
         </template>
 
         <template v-if="column.key === 'relation'">
@@ -101,6 +101,7 @@
         selectedRowKeys: selectedRowKeys, onChange: onSelectChange,
       }" v-if="activeTab === '2'" :row-class-name="(_record, index) => (index % 2 === 1 ? 'table-striped' : null)">
       <template #bodyCell="{ column, record }">
+
 
         <template v-if="column.key === 'action'">
           <template v-if="record.values">
@@ -246,7 +247,7 @@ const fetchActions = () => {
     response.actions.forEach((ac) => {
       if (ac.values) {
         ac.values.forEach((it, index) => {
-          ac.values[index].name = ac.name + '=' + it.status
+          ac.values[index].displayName = ac.name + '=' + it.status
         })
       }
     })

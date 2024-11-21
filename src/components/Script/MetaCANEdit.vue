@@ -115,7 +115,7 @@ const defaultData = {
     projectId: null,
     relation: null, // 新增字段
     projectName: '',
-    values: [{ vt_signal: null, value: null }], // 默认有一个值
+    values: [{ name: '', vt_signal: null, value: null }], // 默认有一个值
 }
 
 const props = defineProps({
@@ -140,7 +140,7 @@ const formData = ref<typeof defaultData>(cloneDeep(defaultData));
 
 function select(action) {
     formData.value.name = action.name;
-    
+
     // 防止抄写的没有值
     formData.value.values = action.values;
     if (!formData.value.values || formData.value.values.length == 0) {
@@ -177,6 +177,10 @@ const handleEditOk = async () => {
         // 重新生成状态字段
         const status = formData.value.values.map(it => `${it.value}:${it.vt_signal}`).join(' ')
         formData.value.status = status;
+
+        formData.value.values.forEach(it => {
+            it.name = it.vt_signal;
+        })
 
         let res = null;
         if (props.status === 'new' || props.status === 'copy') {

@@ -213,7 +213,8 @@
                             }}</el-button></el-tooltip>
                 </template>
             </el-table-column>
-            <el-table-column prop="version" label="版本" :width="table_width1 / 8 || 100" />
+            <el-table-column prop="version" label="版本" :width="table_width1 / 15 || 100" />
+            <el-table-column prop="integrity" label="完整性" :width="table_width1 / 15 || 100" />
             <el-table-column prop="type" label="用例类型" :width="table_width1 / 8 || 100">
                 <template #default="scope">
                     {{ scope.row.type === 'positive' ? '正例' : '反例' }}

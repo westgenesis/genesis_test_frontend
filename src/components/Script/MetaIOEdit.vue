@@ -131,7 +131,7 @@ const defaultData = {
     projectId: null,
     relation: '', // 新增字段
     projectName: '',
-    values: [{ status: null, description: null, vt_signal: null, relation: null, value: null }], // 默认有一个值
+    values: [{ name: '', status: null, description: null, vt_signal: null, relation: null, value: null }], // 默认有一个值
 }
 
 const props = defineProps({
@@ -175,9 +175,12 @@ const addValue = () => {
 
 const formRef = ref();
 const handleEditOk = async () => {
-    console.log(formData.value)
+    // console.log(formData.value)
     formRef.value.validate().then(() => {
-        console.log(formData.value)
+
+        formData.value.values.forEach(it=>{
+            it.name = it.status;
+        })
 
         let res = null;
         if (props.status === 'new' || props.status === 'copy') {

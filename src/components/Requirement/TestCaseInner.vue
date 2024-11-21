@@ -28,13 +28,13 @@
         <a-card title="初始条件描述/信号" style="margin-bottom: 1rem;">
             <div v-for="(item, index) in form.pre_condition_items" :key="index" class="condition-row">
                 <a-row :gutter="16">
-                    <a-col :span="6">
+                    <a-col :span="8">
                         <a-input v-model:value="item.description" placeholder="请输入初始条件描述" />
                     </a-col>
-                    <a-col :span="6">
+                    <a-col :span="8">
                         <a-input v-model:value="item.signal" placeholder="请输入初始条件信号" />
                     </a-col>
-                    <a-col :span="4">
+                    <a-col :span="8">
                         <a-button type="dashed" @click="addPreConditionItem(index)">+</a-button>
                         <a-button type="dashed" @click="removePreConditionItem(index)" class="ml-[10px]">-</a-button>
                         <a-button danger @click="fill(index, 'pre_condition_items')" class="ml-[10px]">补齐</a-button>
@@ -47,13 +47,13 @@
         <a-card title="触发条件描述/信号" style="margin-bottom: 1rem;">
             <div v-for="(item, index) in form.action_items" :key="index" class="condition-row">
                 <a-row :gutter="16">
-                    <a-col :span="10">
+                    <a-col :span="8">
                         <a-input v-model:value="item.description" placeholder="请输入触发条件描述" />
                     </a-col>
-                    <a-col :span="10">
+                    <a-col :span="8">
                         <a-input v-model:value="item.signal" placeholder="请输入触发条件信号" />
                     </a-col>
-                    <a-col :span="4">
+                    <a-col :span="8">
                         <a-button type="dashed" @click="addActionItem(index)">+</a-button>
                         <a-button type="dashed" @click="removeActionItem(index)" class="ml-[10px]">-</a-button>
                         <a-button danger @click="fill(index, 'action_items')" class="ml-[10px]">补齐</a-button>
@@ -66,13 +66,13 @@
         <a-card title="预期结果描述/信号" style="margin-bottom: 1rem;">
             <div v-for="(item, index) in form.result_items" :key="index" class="condition-row">
                 <a-row :gutter="16">
-                    <a-col :span="10">
+                    <a-col :span="8">
                         <a-input v-model:value="item.description" placeholder="请输入预期结果描述" />
                     </a-col>
-                    <a-col :span="10">
+                    <a-col :span="8">
                         <a-input v-model:value="item.signal" placeholder="请输入预期结果信号" />
                     </a-col>
-                    <a-col :span="4">
+                    <a-col :span="8">
                         <a-button type="dashed" @click="addResultItem(index)">+</a-button>
                         <a-button type="dashed" @click="removeResultItem(index)" class="ml-[10px]">-</a-button>
                         <a-button danger @click="fill(index, 'result_items')" class="ml-[10px]">补齐</a-button>

@@ -39,7 +39,7 @@
 
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'name'">
-            <span>{{ record.name || record.status }}</span>
+            <span>{{ record.displayName || record.name || record.status }}</span>
           </template>
 
           <template v-if="column.key === 'relation'">
@@ -64,6 +64,10 @@
         size="middle" :pagination="false" v-if="activeTab === '2'"
         :row-class-name="(_record, index) => (index % 2 === 1 ? 'table-striped' : null)" childrenColumnName="values">
         <template #bodyCell="{ column, record }">
+
+          <template v-if="column.key === 'name'">
+            <span>{{ record.displayName || record.name || record.status }}</span>
+          </template>
 
           <template v-if="column.key === 'action'">
             <template v-if="!record.values || record.values.length === 0 ">
@@ -134,7 +138,7 @@ onMounted(() => {
 
 
 function select(record) {
-  emit('select', record.name)
+  emit('select', record.displayName)
 }
 //动作参数显式逻辑
 function actionParmaDisplay(record) {
@@ -171,9 +175,9 @@ const fetchActions = () => {
         ac.values.forEach((it, index) => {
 
           if (ac.belongs_to === 'Vector_CAN') {
-            ac.values[index].name = ac.name + '=' + it.value
+            ac.values[index].displayName = ac.name + '=' + it.value
           } else {
-            ac.values[index].name = ac.name + '=' + it.status
+            ac.values[index].displayName = ac.name + '=' + it.status
           }
 
         })
