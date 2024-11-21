@@ -37,7 +37,8 @@
                     <a-col :span="8">
                         <a-button type="dashed" @click="addPreConditionItem(index)">+</a-button>
                         <a-button type="dashed" @click="removePreConditionItem(index)" class="ml-[10px]">-</a-button>
-                        <a-button danger @click="fill(index, 'pre_condition_items')" class="ml-[10px]">补齐</a-button>
+                        <a-button danger @click="fill(index, 'pre_condition_items')" class="ml-[10px]"  v-if="item.needFill == 1">补齐</a-button>
+                        <!-- {{ item.needFill }} -->
                     </a-col>
                 </a-row>
             </div>
@@ -56,7 +57,8 @@
                     <a-col :span="8">
                         <a-button type="dashed" @click="addActionItem(index)">+</a-button>
                         <a-button type="dashed" @click="removeActionItem(index)" class="ml-[10px]">-</a-button>
-                        <a-button danger @click="fill(index, 'action_items')" class="ml-[10px]">补齐</a-button>
+                        <a-button danger @click="fill(index, 'action_items')" class="ml-[10px]" v-if="item.needFill == 1">补齐</a-button>
+                        <!-- {{ item.needFill }} -->
                     </a-col>
                 </a-row>
             </div>
@@ -75,7 +77,8 @@
                     <a-col :span="8">
                         <a-button type="dashed" @click="addResultItem(index)">+</a-button>
                         <a-button type="dashed" @click="removeResultItem(index)" class="ml-[10px]">-</a-button>
-                        <a-button danger @click="fill(index, 'result_items')" class="ml-[10px]">补齐</a-button>
+                        <a-button danger @click="fill(index, 'result_items')" class="ml-[10px]"  v-if="item.needFill == 1">补齐</a-button>
+                        <!-- {{ item.needFill }} -->
                     </a-col>
                 </a-row>
             </div>
@@ -103,8 +106,7 @@
         :actionSignals="need_fill_result.action_signal" :resultSignals="need_fill_result.result_signal"
         @removeSignal="handleRemoveSignal" @update:visible="fillModalVisible = $event" @ok="handleFillModalOk" />
 
-    <FillTypeSelect v-model:visible="fillTypeSelectVisible" 
-        @ok="handleFillTypeSelectOk"></FillTypeSelect>
+    <FillTypeSelect v-model:visible="fillTypeSelectVisible" @ok="handleFillTypeSelectOk"></FillTypeSelect>
 
     <a-modal v-model:open="actionSelectVisible" title="信号补齐" width="80%">
         <ActionSelect v-if="actionSelectVisible" @select="fillConfirm"></ActionSelect>
@@ -252,6 +254,7 @@ const fetchData = () => {
         testcase_id: testcase_id.value
     }).then(resp => {
         if (resp.result) {
+
             form.value = {
                 ...resp,
                 pre_condition_items: resp.pre_condition.split('\n').map((description, index) => ({
@@ -265,8 +268,33 @@ const fetchData = () => {
                 result_items: resp.result.split('\n').map((description, index) => ({
                     description,
                     signal: resp.result_signal.split('\n')[index] || ''
-                })),
+                }))
             };
+
+            // console.log(resp.pre_condition_comple, resp.pre_condition_comple || []);
+
+            (resp.pre_condition_comple || []).forEach((needFill, index) => {
+                form.value.pre_condition_items[index].needFill = needFill;
+            });
+
+            (resp.action_condition_comple || []).forEach((needFill, index) => {
+                form.value.action_items[index].needFill = needFill;
+            });
+
+            (resp.result_comple || []).forEach((needFill, index) => {
+                form.value.result_items[index].needFill = needFill
+            })
+
+
+            // resp.result.pre_condition_items
+            // form.value.pre_condition_items
+
+
+            // pre_condition_comple:[0, 1, 0]
+            // action_condition_comple:[0, 1,0]
+            // result_comple:[0, 1, 1]    0不要补齐，1需要补齐
+
+
         }
     }).finally(() => {
         refreshAllProjects();
