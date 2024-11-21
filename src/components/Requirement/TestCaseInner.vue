@@ -115,6 +115,10 @@
         </ActionCreate>
     </a-modal>
 
+    <GenerateScript v-if="generateScriptVisible" @cancel="generateScriptVisible = false" :row-data="genScriptRow"
+        @ok="fetchData" @fill="fetchData">
+    </GenerateScript>
+
 </template>
 
 <script setup lang="ts">
@@ -127,6 +131,11 @@ import FillModal from '../UseCase/FillModal.vue';
 import ActionSelect from '@/components/Script/actionSelect/ActionSelect.vue';
 import ActionCreate from '@/components/Script/actionSelect/ActionCreate.vue';
 import FillTypeSelect from '@/components/Script/actionSelect/FillTypeSelect.vue';
+
+import GenerateScript from './GenerateScript.vue'
+
+const generateScriptVisible = ref(false);
+const genScriptRow = ref<any>({})
 
 const { refreshAllProjects } = useProjectStore();
 const activeTab = ref('detail');
@@ -332,13 +341,19 @@ const currentRow = ref({
 });
 
 const handleGenerateFile = () => {
-    selectBelongsToModalVisible.value = true;
-    currentRow.value = {
-        ...form.value,
-        version: form.value.version,
-        minRequiredVersion: form.value.minRequiredVersion,
-        minRequiredCANoeVersion: form.value.minRequiredCANoeVersion,
-    };
+    // selectBelongsToModalVisible.value = true;
+    // currentRow.value = {
+    //     ...form.value,
+    //     version: form.value.version,
+    //     minRequiredVersion: form.value.minRequiredVersion,
+    //     minRequiredCANoeVersion: form.value.minRequiredCANoeVersion,
+    // };
+
+    genScriptRow.value = currentRow.value;
+    genScriptRow.value.project_id = project_id.value;
+    genScriptRow.value.req_id = req_id.value;
+
+    generateScriptVisible.value = true;
 };
 
 const fillModalVisible = ref(false);

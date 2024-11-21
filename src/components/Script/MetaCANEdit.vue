@@ -170,7 +170,7 @@ const addValue = () => {
 
 const formRef = ref();
 const handleEditOk = async () => {
-    console.log(formData.value)
+    // console.log(formData.value)
     formRef.value.validate().then(() => {
         console.log(formData.value)
 
@@ -179,7 +179,7 @@ const handleEditOk = async () => {
         formData.value.status = status;
 
         formData.value.values.forEach(it => {
-            it.name = it.vt_signal;
+            it.name = it.value;
         })
 
         let res = null;

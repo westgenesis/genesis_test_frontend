@@ -183,8 +183,12 @@
         @removeSignal="handleRemoveSignal" @update:visible="fillModalVisible = $event" @ok="handleFillModalOk" />
 
         <BatchGenerateScript v-if="batchGenerateScriptVisible" @cancel="batchGenerateScriptVisible = false" :row-data="batchGenScriptRows"
-        @ok="fetchData">
+        @ok="fetchData" :type="batchType" @fill="fetchData">
     </BatchGenerateScript>
+
+    <GenerateScript v-if="generateScriptVisible" @cancel="generateScriptVisible = false" :row-data="genScriptRow"
+        @ok="fetchData" @fill="fetchData">
+    </GenerateScript>
 </template>
 
 <script setup lang="ts">
@@ -196,18 +200,22 @@ import FillModal from '../UseCase/FillModal.vue';
 import BatchGenerateScript from './BatchGenerateScript.vue'
 const { refreshAllProjects } = useProjectStore();
 
+import GenerateScript from './GenerateScript.vue'
+
+const generateScriptVisible = ref(false);
+const genScriptRow = ref<any>({})
+
 const batchGenerateScriptVisible = ref(false);
 const batchGenScriptRows = ref<any[]>([])
-
+const batchType = ref('gen')
 // 批量生成脚本
-const handleBatchGenerateScript = function () {
+const handleBatchGenerateScript = function (type='gen') {
     if (selectedRowsPoints.value.length === 0) {
         ElMessage.error('您没有选中数据');
         return
     }
 
-    selectedRowsPoints.value.map(row => row.testcase_id)
-
+    batchType.value = type
     // 修正值
     selectedRowsPoints.value.forEach((it) => {
         it.project_id = project_id.value;
@@ -224,18 +232,9 @@ const handleBatchMergeScript = function () {
         ElMessage.error('您需要选中至少2条数据');
         return
     }
-
-    // 修正值
-    selectedRowsPoints.value.forEach((it) => {
-        it.project_id = project_id.value;
-        it.req_id = req_id.value;
-    })
-
-    http.post('/api/merge_script_file', {
-        data: selectedRowsPoints.value
-    }).then(response => {
-        ElMessage.success("操作成功")
-    });
+    
+    batchType.value = 'merge'
+    handleBatchGenerateScript('merge')
 }
 
 const selectForm = ref({
@@ -485,8 +484,14 @@ const currentRow = ref({
 });
 
 const handleGenerateFile = (row) => {
-    selectBelongsToModalVisible.value = true;
-    currentRow.value = row;
+    // selectBelongsToModalVisible.value = true;
+    // currentRow.value = row;
+
+    genScriptRow.value = row;
+    genScriptRow.value.project_id = project_id.value;
+    genScriptRow.value.req_id = req_id.value;
+
+    generateScriptVisible.value = true;
 };
 
 const fillModalVisible = ref(false);

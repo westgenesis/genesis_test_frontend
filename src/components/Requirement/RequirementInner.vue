@@ -247,10 +247,10 @@
         :currentRequirement="currentRequirement" />
 
     <GenerateScript v-if="generateScriptVisible" @cancel="generateScriptVisible = false" :row-data="genScriptRow"
-        @ok="fetchData">
+        @ok="fetchData" @fill="fetchData">
     </GenerateScript>
     <BatchGenerateScript v-if="batchGenerateScriptVisible" @cancel="batchGenerateScriptVisible = false"
-        :row-data="batchGenScriptRows" @ok="fetchData">
+        :row-data="batchGenScriptRows" @ok="fetchData" :type="batchType" @fill="fetchData">
     </BatchGenerateScript>
 </template>
 
@@ -277,12 +277,14 @@ const handleGenerateScript = function (row) {
 
 const batchGenerateScriptVisible = ref(false);
 const batchGenScriptRows = ref<any[]>([])
+const batchType = ref('gen')
 // 批量生成脚本
-const handleBatchGenerateScript = function (row) {
+const handleBatchGenerateScript = function (type='gen') {
     if (selectedRows.value.length === 0) {
         message.error('您没有选中数据');
         return
     }
+    batchType.value = type
 
     // 修正值
     selectedRows.value.forEach((it) => {
@@ -296,21 +298,12 @@ const handleBatchGenerateScript = function (row) {
 
 const handleBatchMergeScript = function () {
     if (selectedRows.value.length < 2) {
-        message.error('您需要选中至少2条数据');
+        ElMessage.error('您需要选中至少2条数据');
         return
     }
-
-    // 修正值
-    selectedRows.value.forEach((it) => {
-        it.project_id = project_id.value;
-        it.req_id = req_id.value;
-    })
-
-    http.post('/api/merge_script_file', {
-        data: selectedRows.value
-    }).then(response => {
-        ElMessage.success("操作成功")
-    });
+    
+    batchType.value = 'merge'
+    handleBatchGenerateScript('merge')
 }
 
 

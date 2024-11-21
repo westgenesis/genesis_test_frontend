@@ -1,5 +1,6 @@
 <template>
-    <a-modal :visible="selectBelongsToModalVisible" title="脚本信息" @ok="handleSelectBelongsToOk">
+    <a-modal :visible="selectBelongsToModalVisible" title="脚本信息" @ok="verify"
+        @cancel="emit('cancel')">
         <a-form-item label="脚本环境">
             <a-radio-group v-model:value="selectForm.selectedBelongsTo">
                 <a-radio value="Vector">Vector</a-radio>
@@ -17,6 +18,26 @@
             <a-input v-model:value="selectForm.minRequiredCANoeVersion" placeholder="请输入最小要求CANoe版本号" />
         </a-form-item>
     </a-modal>
+
+    <a-modal :open="lackDataVisible" title="" @cancel="emit('cancel')" :footer="null" width="750px">
+
+        <a-result status="warning" title="警告提示" auto-focus>
+            <template #extra>
+                <div>所选的用例中，存在信号缺失的情况，合并生成的脚本文件不可用，您可以选择以下操作：</div>
+
+                <div class="mt-[20px]">
+                    <a-button type="primary" @click="emit('cancel'); emit('fill')">补充对应动作</a-button>
+                    <a-button type="primary" class="ml-[20px]"
+                        @click="handleSelectBelongsToOk('skip')">跳过缺失继续生成</a-button>
+                    <a-button type="primary" class="ml-[20px]" @click="go">跳转动作库</a-button>
+                    <a-button type="primary" class="ml-[20px]" @click="handleSelectBelongsToOk('')">继续生成</a-button>
+                </div>
+
+                <!-- <div class="mt-[20px]">提醒：跳转动作库补充信号动作后，需重新生成台架测试用例</div> -->
+            </template>
+        </a-result>
+
+    </a-modal>
 </template>
 
 <script setup>
@@ -24,7 +45,7 @@ import { ref } from 'vue'
 import { http } from "@/http"
 
 const props = defineProps(['rowData'])
-const emits = defineEmits(['ok'], 'cancel')
+const emit = defineEmits(['ok', 'cancel', 'fill'])
 
 const selectForm = ref({
     selectedBelongsTo: 'Vector',
@@ -32,35 +53,45 @@ const selectForm = ref({
     minRequiredVersion: '',
     minRequiredCANoeVersion: ''
 })
-
+const lackDataVisible = ref(false)
 const selectBelongsToModalVisible = ref(true)
 
-const handleSelectBelongsToOk = () => {
-    if (!selectForm.value.selectedBelongsTo) {
-        ElMessage.error('请选择所属对象');
-        return;
-    }
+const verify = () => {
+    http.post('/api/batch_verify_generate_script_file', {
+        data: [props.rowData],
+        ...selectForm.value,
+    }).then(response => {
+        if (response.status === 'success') {
+            handleSelectBelongsToOk();
+        } else {
+            lackDataVisible.value = true;
+        }
+    }, () => {
+        lackDataVisible.value = true;
+    }).finally(() => {
+        selectBelongsToModalVisible.value = false;
+    });
+}
 
-    // selectBelongsToModalVisible.value = false;
+function go() {
+    router.push('/script/metaAction')
+}
+
+const handleSelectBelongsToOk = (action = '') => {
 
     http.post('/api/generate_script_file', {
         ...props.rowData,
         ...selectForm.value,
+        type: action
     }).then(response => {
         if (response.status === 'need_fill') {
-            // const need_fill_result = {
-            //     pre_condition_signal: response?.unmatched?.pre_condition_signal,
-            //     action_signal: response?.unmatched?.action_signal,
-            //     result_signal: response?.unmatched?.result_signal,
-            // }
-            // showFillModal(need_fill_result);
             ElMessage.success('需要补齐元动作，请去列表补齐！');
-            emits('ok')
-            emits('cancel')
+            emit('ok')
+            emit('cancel')
         } else if (response.status === 'success') {
             ElMessage.success('生成成功, 现在可以下载文件');
-            emits('ok')
-            emits('cancel')
+            emit('ok')
+            emit('cancel')
             // fetchData();
         } else {
             emit('cancel')
