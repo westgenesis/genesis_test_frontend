@@ -8,7 +8,7 @@
                     <a-input v-model:value="formData.name" placeholder="请输入内容" auto-focus />
                 </a-col>
                 <a-col>
-                    <a-button type="primary" @click="canSelVisible = true">选择</a-button>
+                    <a-button type="primary" @click="canSelVisible = true" :disabled="onlyOneStatus">选择</a-button>
                 </a-col>
             </a-row>
         </a-form-item>
@@ -58,7 +58,7 @@
                 </a-row>
             </div>
         </a-form-item>
-        <a-button style="margin-top: 0" type="primary" @click="addValue">添加状态</a-button>
+        <a-button style="margin-top: 0" type="primary" @click="addValue" :disabled="props.onlyOneStatus">添加状态</a-button>
 
         <a-form-item name="exec_path" class="mt-[20px]">
             <template v-slot:label>
@@ -127,6 +127,10 @@ const props = defineProps({
         type: Object,
         default: {}
 
+    },
+    onlyOneStatus: {
+        type: Boolean,
+        default: false
     }
 });
 
@@ -136,8 +140,12 @@ const formData = ref<typeof defaultData>(cloneDeep(defaultData));
 
 function select(action) {
     formData.value.name = action.name;
-    // formData.value.status = action.status || '状态1';
+    
+    // 防止抄写的没有值
     formData.value.values = action.values;
+    if (!formData.value.values || formData.value.values.length == 0) {
+        formData.value.values = [{ vt_signal: null, value: null }];
+    }
 }
 
 onMounted(() => {
@@ -180,7 +188,7 @@ const handleEditOk = async () => {
         res.then(() => {
             ElMessage.success('操作成功');
             emit('close')
-            emit('success')
+            emit('success', formData.value)
         }, (err) => {
             ElMessage.error(err)
         })

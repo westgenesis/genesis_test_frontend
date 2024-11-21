@@ -7,13 +7,13 @@
       <a-tab-pane key="3" tab="新建 动作组合"></a-tab-pane>
     </a-tabs>
 
-    <MetaIOEdit v-if="activeTab === '1'" :status="status" :data="editData" @close="emit('close')"
-      @success="emit('select', $event.name)">
+    <MetaIOEdit v-if="activeTab === '1'" :status="status" :data="editData" @close="emit('close')" :onlyOneStatus="true"
+      @success="emit('select', $event.name + '=' + $event.values[0].status)">
     </MetaIOEdit>
-    <MetaCANEdit v-if="activeTab === '2'" :status="status" :data="editData" @success="emit('select', $event.name)"
-      @close="emit('close')">
+    <MetaCANEdit v-if="activeTab === '2'" :status="status" :data="editData"
+      @success="emit('select', $event.name + '=' + $event.values[0].value)" :onlyOneStatus="true" @close="emit('close')">
     </MetaCANEdit>
-    <ACEdit v-if="activeTab === '3'" :status="status" :data="editData" @success="emit('select', $event.name)"
+    <ACEdit v-if="activeTab === '3'" :status="status" :data="editData" @success="emit('select', +'=' + $event.name)"
       @close="emit('close')"></ACEdit>
 
   </div>

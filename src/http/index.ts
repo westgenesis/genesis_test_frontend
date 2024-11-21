@@ -4,7 +4,7 @@ import NProgress from 'nprogress'; // 引入 nprogress
 import { ElLoading } from 'element-plus';
 
 
-let loadingInstance:any = null;
+let loadingInstance: any = null;
 // 显示加载动画
 const showLoading = (options = {}) => {
   if (!loadingInstance) {
@@ -25,7 +25,7 @@ const hideLoading = () => {
     loadingInstance = null; // 重置实例
   }
 }
- 
+
 
 const baseURL = import.meta.env.VITE_API_BASE_URL || '';
 
@@ -57,7 +57,17 @@ http.interceptors.request.use(
       NProgress.start(); // 开始进度条
     }
 
-    showLoading()
+    config.showloading = false;
+    config.finished = false;
+
+    setTimeout(() => {
+      if (!config.finished) {
+        config.showloading = true;
+        showLoading()
+      }
+    }, 500)
+
+
 
     return config
   },
@@ -71,7 +81,14 @@ http.interceptors.request.use(
 // 响应拦截器
 http.interceptors.response.use(
   (response) => {
-    hideLoading()
+    // console.log(response)
+
+    response.config.finished = true;
+
+    if (response.config.showloading = true) {
+      hideLoading()
+    }
+
     // 对响应数据进行处理，例如解析数据、错误处理等
     NProgress.done(); // 结束进度条
     if (response.status === 500) {
@@ -82,7 +99,14 @@ http.interceptors.response.use(
   },
   (error) => {
     NProgress.done(); // 结束进度条
-    hideLoading()
+
+    error.config.finished = true;
+
+    if (error.config.showloading = true) {
+      hideLoading()
+    }
+
+ 
     if (error?.response?.status === 401) {
       ElMessage.error('未授权，请重新登录')
       window.location.href = '#/login'

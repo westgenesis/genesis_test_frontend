@@ -86,6 +86,7 @@
             <a-radio-group v-model:value="selectForm.selectedBelongsTo">
                 <a-radio value="Vector">Vector</a-radio>
                 <a-radio value="dSpace">dSpace</a-radio>
+                <a-radio value="NI">NI</a-radio>
             </a-radio-group>
         </a-form-item>
         <a-form-item label="Version">

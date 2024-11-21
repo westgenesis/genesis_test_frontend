@@ -232,7 +232,7 @@ function actionParmaDisplay(record) {
 }
 const fetchActions = () => {
 
-  const start = currentPage.value -1;
+  const start = currentPage.value - 1;
 
   const params = Object.assign({ start, pagesize: pageSize }, searchForm.value)
   params.belongs_to = activeTab.value === '1' ? 'Vector_IO' : 'Vector_CAN'
@@ -241,8 +241,16 @@ const fetchActions = () => {
     url: '/api/get_actions',
     params: params,
   }).then(response => {
-    // dataSource.value = response.actions;
-    // pagedDataSource.value = response.actions.splice(0, 100);
+
+    // 为values补齐显示字段
+    response.actions.forEach((ac) => {
+      if (ac.values) {
+        ac.values.forEach((it, index) => {
+          ac.values[index].name = ac.name + '=' + it.status
+        })
+      }
+    })
+
     pagedDataSource.value = response.actions;
     total.value = response.total
   }).catch(error => {

@@ -87,8 +87,7 @@
                 </a-row>
             </a-card>
         </div>
-        <a-button style="margin-top: 0" type="primary" @click="addValue">添加状态</a-button>
-
+        <a-button style="margin-top: 0" type="primary" @click="addValue" :disabled="props.onlyOneStatus">添加状态</a-button>
 
         <a-form-item label="动作执行路径" name="exec_path" class="mt-[20px]">
             <a-input v-model:value="formData.exec_path" placeholder="请输入内容" />
@@ -107,8 +106,6 @@
                 <a-select-option value="OUT">OUT</a-select-option>
             </a-select>
         </a-form-item>
-
-
 
     </a-form>
     <div slot="footer" class="flex justify-end">
@@ -146,6 +143,10 @@ const props = defineProps({
         type: Object,
         default: {}
 
+    },
+    onlyOneStatus: {
+        type: Boolean,
+        default: false
     }
 });
 

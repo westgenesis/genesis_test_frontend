@@ -52,7 +52,7 @@
           </template>
 
           <template v-if="column.key === 'action'">
-            <template v-if="record.values">
+            <template v-if="!record.values">
               <a-button type="link" size="small" @click="select(record)">选择</a-button>
             </template>
           </template>
@@ -62,11 +62,11 @@
       <!-- 总线信号 -->
       <a-table :columns="canColumns" :row-key="record => record._id" bordered :data-source="pagedDataSource"
         size="middle" :pagination="false" v-if="activeTab === '2'"
-        :row-class-name="(_record, index) => (index % 2 === 1 ? 'table-striped' : null)">
+        :row-class-name="(_record, index) => (index % 2 === 1 ? 'table-striped' : null)" childrenColumnName="values">
         <template #bodyCell="{ column, record }">
 
           <template v-if="column.key === 'action'">
-            <template v-if="record.values">
+            <template v-if="!record.values || record.values.length === 0 ">
               <a-button type="link" size="small" @click="select(record)">选择</a-button>
             </template>
           </template>
@@ -164,6 +164,22 @@ const fetchActions = () => {
     url: '/api/get_actions',
     params: params,
   }).then(response => {
+
+    // 为values补齐显示字段
+    response.actions.forEach((ac) => {
+      if (ac.values) {
+        ac.values.forEach((it, index) => {
+
+          if (ac.belongs_to === 'Vector_CAN') {
+            ac.values[index].name = ac.name + '=' + it.value
+          } else {
+            ac.values[index].name = ac.name + '=' + it.status
+          }
+
+        })
+      }
+    })
+
     pagedDataSource.value = response.actions;
     total.value = response.total
   }).catch(error => {

@@ -33,6 +33,10 @@
                 @click="showDrawer">新建测试用例</a-button>
             <a-button type="primary" class="custom-purple-button" size="large" @click="handleExport">导出全部</a-button>
             <a-button type="primary" class="custom-purple-button ml-[20px]" size="large" @click="handleBatchDeleteTestcase">删除</a-button>
+            <a-button type="primary" class="custom-purple-button ml-[10px]" size="large"
+                @click="handleBatchGenerateScript">生成脚本</a-button>
+            <a-button type="primary" class="custom-purple-button ml-[10px]" size="large"
+                @click="handleBatchMergeScript">合成脚本</a-button>
         </div>
 
         <el-table :data="pagedTableData" style="width: 100%" id="function_point_table" :height="table_height1"
@@ -160,6 +164,7 @@
             <a-radio-group v-model:value="selectForm.selectedBelongsTo">
                 <a-radio value="Vector">Vector</a-radio>
                 <a-radio value="dSpace">dSpace</a-radio>
+                <a-radio value="NI">NI</a-radio>
             </a-radio-group>
         </a-form-item>
         <a-form-item label="Version">
@@ -175,6 +180,10 @@
     <FillModal :visible="fillModalVisible" :preConditionSignals="need_fill_result.pre_condition_signal"
         :actionSignals="need_fill_result.action_signal" :resultSignals="need_fill_result.result_signal"
         @removeSignal="handleRemoveSignal" @update:visible="fillModalVisible = $event" @ok="handleFillModalOk" />
+
+        <BatchGenerateScript v-if="batchGenerateScriptVisible" @cancel="batchGenerateScriptVisible = false" :row-data="batchGenScriptRows"
+        @ok="fetchData">
+    </BatchGenerateScript>
 </template>
 
 <script setup lang="ts">
@@ -183,7 +192,50 @@ import { http } from '../../http';
 import { ElMessage } from 'element-plus';
 import { useProjectStore } from '../../stores/project';
 import FillModal from '../UseCase/FillModal.vue';
+import BatchGenerateScript from './BatchGenerateScript.vue'
 const { refreshAllProjects } = useProjectStore();
+
+const batchGenerateScriptVisible = ref(false);
+const batchGenScriptRows = ref<any[]>([])
+
+// 批量生成脚本
+const handleBatchGenerateScript = function () {
+    if (selectedRowsPoints.value.length === 0) {
+        ElMessage.error('您没有选中数据');
+        return
+    }
+
+    selectedRowsPoints.value.map(row => row.testcase_id)
+
+    // 修正值
+    selectedRowsPoints.value.forEach((it) => {
+        it.project_id = project_id.value;
+        it.req_id = req_id.value;
+    })
+
+    batchGenScriptRows.value = selectedRowsPoints.value;
+    batchGenerateScriptVisible.value = true;
+}
+
+// 批量合成脚本
+const handleBatchMergeScript = function () {
+    if (selectedRowsPoints.value.length < 2) {
+        ElMessage.error('您需要选中至少2条数据');
+        return
+    }
+
+    // 修正值
+    selectedRowsPoints.value.forEach((it) => {
+        it.project_id = project_id.value;
+        it.req_id = req_id.value;
+    })
+
+    http.post('/api/merge_script_file', {
+        data: selectedRowsPoints.value
+    }).then(response => {
+        ElMessage.success("操作成功")
+    });
+}
 
 const selectForm = ref({
     selectedBelongsTo: 'Vector',

@@ -73,7 +73,7 @@
                         <el-tooltip class="box-item" effect="dark" :content="scope.row.testcase_name"
                             placement="top-start"> <el-button type="primary" text @click="clickTitle(scope.row)">{{
                                 scope.row.testcase_name
-                                }}</el-button></el-tooltip>
+                            }}</el-button></el-tooltip>
 
                     </template>
                 </el-table-column>
@@ -96,6 +96,10 @@
     <div v-if="activeTab === 'testcase_table'">
         <div style="display: flex; justify-content: flex-end; margin: 1rem;">
             <a-button type="primary" class="custom-purple-button" size="large" @click="handleBatchDelete">删除</a-button>
+            <a-button type="primary" class="custom-purple-button ml-[10px]" size="large"
+                @click="handleBatchGenerateScript">生成脚本</a-button>
+            <a-button type="primary" class="custom-purple-button ml-[10px]" size="large"
+                @click="handleBatchMergeScript">合成脚本</a-button>
         </div>
         <el-table :data="pagedTableData" style="width: 100%" id="function_point_table" :height="table_height1"
             @selection-change="handleSelectionChange">
@@ -170,6 +174,7 @@
             <el-table-column label="操作" :width="150">
                 <template #default="scope">
                     <el-button type="text" @click="handleDelete(scope.row)">删除</el-button>
+                    <el-button type="text" @click="handleGenerateScript(scope.row)">生成脚本</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -179,6 +184,14 @@
             show-size-changer :page-size-options="['10', '20', '50']" @change="handlePageChange"
             @showSizeChange="handlePageSizeChange" style="margin-top: 1rem; text-align: center;" />
     </div>
+
+    <GenerateScript v-if="generateScriptVisible" @cancel="generateScriptVisible = false" :row-data="genScriptRow"
+        @ok="fetchData">
+    </GenerateScript>
+
+    <BatchGenerateScript v-if="batchGenerateScriptVisible" @cancel="batchGenerateScriptVisible = false"
+        :row-data="batchGenScriptRows" @ok="fetchData">
+    </BatchGenerateScript>
 </template>
 
 <script setup lang="ts">
@@ -188,6 +201,61 @@ import { ElMessage, ElMessageBox } from 'element-plus';
 import { useProjectStore } from '../../stores/project';
 import RequirementDocx from './RequirementDocx.vue';
 const { refreshAllProjects } = useProjectStore();
+import GenerateScript from './GenerateScript.vue'
+import BatchGenerateScript from './BatchGenerateScript.vue'
+
+const generateScriptVisible = ref(false);
+const genScriptRow = ref<any>({})
+
+const handleGenerateScript = function (row) {
+    genScriptRow.value = row;
+    genScriptRow.value.project_id = project_id.value;
+    genScriptRow.value.req_id = req_id.value;
+
+    generateScriptVisible.value = true;
+}
+
+const batchGenerateScriptVisible = ref(false);
+const batchGenScriptRows = ref<any[]>([])
+
+// 批量生成脚本
+const handleBatchGenerateScript = function () {
+    if (selectedRows.value.length === 0) {
+        ElMessage.error('您没有选中数据');
+        return
+    }
+
+    selectedRows.value.map(row => row.testcase_id)
+
+    // 修正值
+    selectedRows.value.forEach((it) => {
+        it.project_id = project_id.value;
+        it.req_id = req_id.value;
+    })
+
+    batchGenScriptRows.value = selectedRows.value;
+    batchGenerateScriptVisible.value = true;
+}
+
+// 批量合成脚本
+const handleBatchMergeScript = function () {
+    if (selectedRows.value.length < 2) {
+        ElMessage.error('您需要选中至少2条数据');
+        return
+    }
+
+    // 修正值
+    selectedRows.value.forEach((it) => {
+        it.project_id = project_id.value;
+        it.req_id = req_id.value;
+    })
+
+    http.post('/api/merge_script_file', {
+        data: selectedRows.value
+    }).then(response => {
+        ElMessage.success("操作成功")
+    });
+}
 
 const pointsTableData = ref([]);
 const testcaseTableData = ref([])
