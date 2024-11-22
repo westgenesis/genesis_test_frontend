@@ -29,7 +29,7 @@
                     <a-button type="primary" class="ml-[20px]" @click="handleSelectBelongsToOk('skip')"
                         v-if="props.type !== 'merge'">跳过缺失继续生成</a-button>
                     <a-button type="primary" class="ml-[20px]" @click="go">跳转动作库</a-button>
-                    <a-button type="primary" class="ml-[20px]" @click="handleSelectBelongsToOk('')">继续生成</a-button>
+                    <a-button type="primary" class="ml-[20px]" @click="handleSelectBelongsToOk('continue')">继续生成</a-button>
                 </div>
 
                 <div v-if="props.type === 'merge'" class="mt-[20px]">提醒：跳转动作库补充信号动作后，需重新生成台架测试用例</div>
