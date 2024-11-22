@@ -11,7 +11,7 @@
         <a-row style="width:100%">
           <a-col :span="10" style="max-width: 300px">
             <a-form-item label="关键字" name="keyword">
-              <a-input v-model:value="searchForm.keyword" placeholder="请输入关键字" :allowClear="true"  />
+              <a-input v-model:value="searchForm.keyword" placeholder="请输入关键字" :allowClear="true" />
             </a-form-item>
           </a-col>
 
@@ -35,7 +35,8 @@
       <!-- IO信号 -->
       <a-table :columns="ioColumns" :row-key="record => record._id" bordered :data-source="pagedDataSource"
         :scroll="{ y: table_height }" size="middle" :pagination="false" childrenColumnName="values"
-        v-if="activeTab === '1'" :row-class-name="(_record, index) => (index % 2 === 1 ? 'table-striped' : null)" :defaultExpandAllRows="true" :expandable="true" :key="pagedDataSource">
+        v-if="activeTab === '1'" :row-class-name="(_record, index) => (index % 2 === 1 ? 'table-striped' : null)"
+        :defaultExpandAllRows="true" :expandable="true" :key="pagedDataSource">
 
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'name'">
@@ -53,7 +54,7 @@
 
           <template v-if="column.key === 'action'">
             <template v-if="!record.values">
-              <a-button type="link" size="small" @click="select(record)">选择</a-button>
+              <a-button type="link" size="small" @click="select(record, 'IO')">选择</a-button>
             </template>
           </template>
         </template>
@@ -62,7 +63,8 @@
       <!-- 总线信号 -->
       <a-table :columns="canColumns" :row-key="record => record._id" bordered :data-source="pagedDataSource"
         size="middle" :pagination="false" v-if="activeTab === '2'"
-        :row-class-name="(_record, index) => (index % 2 === 1 ? 'table-striped' : null)" childrenColumnName="values" :defaultExpandAllRows="true" :expandable="true" :key="pagedDataSource">
+        :row-class-name="(_record, index) => (index % 2 === 1 ? 'table-striped' : null)" childrenColumnName="values"
+        :defaultExpandAllRows="true" :expandable="true" :key="pagedDataSource">
         <template #bodyCell="{ column, record }">
 
           <template v-if="column.key === 'name'">
@@ -70,8 +72,8 @@
           </template>
 
           <template v-if="column.key === 'action'">
-            <template v-if="!record.values || record.values.length === 0 ">
-              <a-button type="link" size="small" @click="select(record)">选择</a-button>
+            <template v-if="!record.values || record.values.length === 0">
+              <a-button type="link" size="small" @click="select(record, 'CAN')">选择</a-button>
             </template>
           </template>
         </template>
@@ -87,10 +89,12 @@
         :pagination="false" v-if="activeTab === '3'">
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'action'">
-            <a-button type="link" size="small" @click="emit('select', record.name)">选择</a-button>
+            <a-button type="link" size="small" @click="select(record, 'COM')">选择</a-button>
           </template>
         </template>
       </a-table>
+
+      <!-- emit('select', record.name) -->
 
       <div class="mt-[20px] flex justify-end" v-if="activeTab === '3'">
         <a-pagination v-model:current="currentPage" :total="dataSource.length" :page-size="pageSize" show-less-items
@@ -136,9 +140,16 @@ onMounted(() => {
   fetchActions();
 });
 
+// 选定
+function select(record, type) {
+  const param = { id: record._id || record.id, type, isChild: record.values == undefined }
 
-function select(record) {
-  emit('select', record.displayName)
+  param.name = record.displayName || record.name;
+  param.idx = record.idx
+
+  console.log(param)
+
+  emit('select',param)
 }
 
 //动作参数显式逻辑
@@ -174,6 +185,8 @@ const fetchActions = () => {
     response.actions.forEach((ac) => {
       if (ac.values) {
         ac.values.forEach((it, index) => {
+          it.id = ac._id
+          it.idx = index
 
           if (ac.belongs_to === 'Vector_CAN') {
             ac.values[index].displayName = ac.name + '=' + it.value
@@ -202,7 +215,6 @@ const combinationPagedDataSource = computed(() => {
 
 const fetchActionCombinations = () => {
 
-  // start, pagesize: pageSize
   const params = Object.assign({}, searchForm.value)
 
   http('/api/action_combinations', { params }).then(response => {
@@ -221,7 +233,6 @@ const handlePageChange = (page) => {
 const combinationHandlePageChange = (page) => {
   currentPage.value = page;
 };
-
 
 const table_height = window.innerHeight * 0.6
 

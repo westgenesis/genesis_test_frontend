@@ -37,7 +37,8 @@
                     <a-col :span="8">
                         <a-button type="dashed" @click="addPreConditionItem(index)">+</a-button>
                         <a-button type="dashed" @click="removePreConditionItem(index)" class="ml-[10px]">-</a-button>
-                        <a-button danger @click="fill(index, 'pre_condition_items')" class="ml-[10px]"  v-if="item.needFill == 1">补齐</a-button>
+                        <a-button danger @click="fill(index, 'pre_condition_items')" class="ml-[10px]"
+                            v-if="item.needFill == 1">补齐</a-button>
                         <!-- {{ item.needFill }} -->
                     </a-col>
                 </a-row>
@@ -57,7 +58,8 @@
                     <a-col :span="8">
                         <a-button type="dashed" @click="addActionItem(index)">+</a-button>
                         <a-button type="dashed" @click="removeActionItem(index)" class="ml-[10px]">-</a-button>
-                        <a-button danger @click="fill(index, 'action_items')" class="ml-[10px]" v-if="item.needFill == 1">补齐</a-button>
+                        <a-button danger @click="fill(index, 'action_items')" class="ml-[10px]"
+                            v-if="item.needFill == 1">补齐</a-button>
                         <!-- {{ item.needFill }} -->
                     </a-col>
                 </a-row>
@@ -77,7 +79,8 @@
                     <a-col :span="8">
                         <a-button type="dashed" @click="addResultItem(index)">+</a-button>
                         <a-button type="dashed" @click="removeResultItem(index)" class="ml-[10px]">-</a-button>
-                        <a-button danger @click="fill(index, 'result_items')" class="ml-[10px]"  v-if="item.needFill == 1">补齐</a-button>
+                        <a-button danger @click="fill(index, 'result_items')" class="ml-[10px]"
+                            v-if="item.needFill == 1">补齐</a-button>
                         <!-- {{ item.needFill }} -->
                     </a-col>
                 </a-row>
@@ -166,11 +169,36 @@ function fill(row, type) {
 }
 
 function fillConfirm(record) {
-    // console.log(record)
+ 
     actionSelectVisible.value = false;
 
-    form.value[fillType][fillRow].signal = record
+    form.value[fillType][fillRow].signal = record.name
     form.value[fillType][fillRow].needFill = false
+
+    const data:any = {}
+
+    data.id = record.id;
+    data.isChild = record.isChild
+    data.idx = record.idx
+    data.description = form.value[fillType][fillRow].description
+
+    let url = '/api/addActionDescription'
+
+    if(record.type=== 'IO'){
+        data.belongs_to = 'Vector_IO'
+    }
+
+    if(record.type=== 'CAN'){
+        data.belongs_to = 'Vector_CAN'
+    }
+
+    if(record.type=== 'COM'){
+        url = '/api/addActionCombinationDescription'
+        data.isChild = false
+    }
+
+    // 向回更新描述
+    http.post(url, data )
 }
 
 const props = defineProps({
@@ -370,15 +398,8 @@ const currentRow = ref({
 });
 
 const handleGenerateFile = () => {
-    // selectBelongsToModalVisible.value = true;
-    // currentRow.value = {
-    //     ...form.value,
-    //     version: form.value.version,
-    //     minRequiredVersion: form.value.minRequiredVersion,
-    //     minRequiredCANoeVersion: form.value.minRequiredCANoeVersion,
-    // };
 
-    genScriptRow.value = currentRow.value;
+    genScriptRow.value = form.value;
     genScriptRow.value.project_id = project_id.value;
     genScriptRow.value.req_id = req_id.value;
 
