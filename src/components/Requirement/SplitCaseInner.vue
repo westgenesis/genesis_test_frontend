@@ -1,5 +1,5 @@
 <template>
-    <a-tabs v-model:activeKey="activeTab">
+    <a-tabs v-model:activeKey="activeTab" @change="tabChange">
         <a-tab-pane key="detail" tab="功能点详情"></a-tab-pane>
         <a-tab-pane key="testcase_table" tab="测试用例"></a-tab-pane>
     </a-tabs>
@@ -40,7 +40,7 @@
         </div>
 
         <el-table :data="pagedTableData" style="width: 100%" id="function_point_table" :height="table_height1"
-            @selection-change="handleSelectionChange">
+            @selection-change="handleSelectionChange" ref="multipleTableRef">
             <el-table-column type="expand">
                 <template #default="scope">
                     <div style="padding: 10px;">
@@ -94,7 +94,12 @@
                 </template>
             </el-table-column>
             <el-table-column prop="version" label="版本" :width="table_width1 / 15 || 100" />
-            <el-table-column prop="integrity" label="完整性" :width="table_width1 / 15 || 100" />
+            <el-table-column prop="integrity" label="完整性" :width="table_width1 / 15 || 100" >
+                <template #default="scope">
+                    <span v-if="String(scope.row.integrity) === '1'" class="text-red-400">不完整</span>
+                    <span v-if="String(scope.row.integrity) === '0'">完整</span>
+                </template>
+            </el-table-column>
             <el-table-column prop="type" label="用例类型" :width="table_width1 / 8 || 100">
                 <template #default="scope">
                     {{ scope.row.type === 'positive' ? '正例' : '反例' }}
@@ -183,16 +188,16 @@
         @removeSignal="handleRemoveSignal" @update:visible="fillModalVisible = $event" @ok="handleFillModalOk" />
 
         <BatchGenerateScript v-if="batchGenerateScriptVisible" @cancel="batchGenerateScriptVisible = false" :row-data="batchGenScriptRows"
-        @ok="fetchData" :type="batchType" @fill="fetchData">
-    </BatchGenerateScript>
+        @ok="fetchData" :type="batchType" @fill="fetchData" category="splitcase"></BatchGenerateScript>
+ 
 
     <GenerateScript v-if="generateScriptVisible" @cancel="generateScriptVisible = false" :row-data="genScriptRow"
-        @ok="fetchData" @fill="fetchData">
+        @ok="fetchData" @fill="fetchData" >
     </GenerateScript>
 </template>
 
 <script setup lang="ts">
-import { onMounted, watch, defineProps, computed, ref, onUpdated } from 'vue';
+import { onMounted, watch, defineProps, computed, ref, onUpdated,nextTick } from 'vue';
 import { http } from '../../http';
 import { ElMessage } from 'element-plus';
 import { useProjectStore } from '../../stores/project';
@@ -200,10 +205,12 @@ import FillModal from '../UseCase/FillModal.vue';
 import BatchGenerateScript from './BatchGenerateScript.vue'
 const { refreshAllProjects } = useProjectStore();
 
+
 import GenerateScript from './GenerateScript.vue'
 
 const generateScriptVisible = ref(false);
 const genScriptRow = ref<any>({})
+    const multipleTableRef = ref<any>()
 
 const batchGenerateScriptVisible = ref(false);
 const batchGenScriptRows = ref<any[]>([])
@@ -300,8 +307,37 @@ const fetchData = () => {
         }
     }).then(() => {
         refreshAllProjects();
+
+        if(multipleTableRef.value){
+            tabChange('testcase_table')
+        }
     });
 };
+
+function tabChange(e) {
+    nextTick(() => {
+        if (e === 'testcase_table') {
+            // 恢复补齐的勾选 select_requirement
+
+            let fillSelectIds = localStorage.getItem('select_splitcase')
+
+            if (!fillSelectIds) {
+                return
+            }
+
+            fillSelectIds = JSON.parse(fillSelectIds);
+
+            const selectedDatas = pagedTableData.value.filter(it => fillSelectIds.includes(it.testcase_id))
+
+            selectedDatas.forEach(row => {
+                multipleTableRef.value.toggleRowSelection(
+                    row,
+                    true,
+                )
+            })
+        }
+    })
+}
 
 const newForm = ref({
     type: '',

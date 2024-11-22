@@ -1,5 +1,5 @@
 <template>
-    <a-tabs v-model:activeKey="activeTab">
+    <a-tabs v-model:activeKey="activeTab" @change="tabChange">
         <a-tab-pane key="detail" tab="功能模块详情"></a-tab-pane>
         <a-tab-pane key="points" tab="功能测试用例"></a-tab-pane>
         <a-tab-pane key="testcase_table" tab="台架测试用例"></a-tab-pane>
@@ -73,7 +73,7 @@
                         <el-tooltip class="box-item" effect="dark" :content="scope.row.testcase_name"
                             placement="top-start"> <el-button type="primary" text @click="clickTitle(scope.row)">{{
                                 scope.row.testcase_name
-                            }}</el-button></el-tooltip>
+                                }}</el-button></el-tooltip>
 
                     </template>
                 </el-table-column>
@@ -102,7 +102,7 @@
                 @click="handleBatchMergeScript">合成脚本</a-button>
         </div>
         <el-table :data="pagedTableData" style="width: 100%" id="function_point_table" :height="table_height1"
-            @selection-change="handleSelectionChange">
+            @selection-change="handleSelectionChange" ref="multipleTableRef">
             <el-table-column type="expand">
                 <template #default="scope">
                     <div style="padding: 10px;">
@@ -156,7 +156,13 @@
                 </template>
             </el-table-column>
             <el-table-column prop="version" label="版本" :width="table_width1 / 15 || 100" />
-            <el-table-column prop="integrity" label="完整性" :width="table_width1 / 15 || 100" />
+            <el-table-column prop="integrity" label="完整性" :width="table_width1 / 15 || 100">
+                <template #default="scope">
+                    <span v-if="String(scope.row.integrity) === '1'" class="text-red-400">不完整</span>
+                    <span v-if="String(scope.row.integrity) === '0'">完整</span>
+                </template>
+            </el-table-column>
+
             <el-table-column prop="type" label="用例类型" :width="table_width1 / 8 || 100">
                 <template #default="scope">
                     {{ scope.row.type === 'positive' ? '正例' : '反例' }}
@@ -191,7 +197,7 @@
     </GenerateScript>
 
     <BatchGenerateScript v-if="batchGenerateScriptVisible" @cancel="batchGenerateScriptVisible = false"
-        :row-data="batchGenScriptRows" @ok="fetchData" :type="batchType" @fill="fetchData">
+        :row-data="batchGenScriptRows" @ok="fetchData" :type="batchType" @fill="fetchData();tabChange('testcase_table')" category="split">
     </BatchGenerateScript>
 </template>
 
@@ -207,6 +213,7 @@ import BatchGenerateScript from './BatchGenerateScript.vue'
 
 const generateScriptVisible = ref(false);
 const genScriptRow = ref<any>({})
+const multipleTableRef = ref<any>()
 
 const handleGenerateScript = function (row) {
     genScriptRow.value = row;
@@ -221,7 +228,7 @@ const batchGenScriptRows = ref<any[]>([])
 const batchType = ref('gen')
 
 // 批量生成脚本
-const handleBatchGenerateScript = function (type='gen') {
+const handleBatchGenerateScript = function (type = 'gen') {
     if (selectedRows.value.length === 0) {
         ElMessage.error('您没有选中数据');
         return
@@ -245,7 +252,7 @@ const handleBatchMergeScript = function () {
         ElMessage.error('您需要选中至少2条数据');
         return
     }
-    
+
     batchType.value = 'merge'
     handleBatchGenerateScript('merge')
 }
@@ -302,8 +309,37 @@ const fetchData = () => {
         testcaseTableData.value = resp.testcases
     }).then(() => {
         refreshAllProjects()
+
+        if(multipleTableRef.value){
+            tabChange('testcase_table')
+        }
     })
 };
+
+function tabChange(e) {
+    nextTick(() => {
+        if (e === 'testcase_table') {
+            // 恢复补齐的勾选 select_requirement
+
+            let fillSelectIds = localStorage.getItem('select_split')
+
+            if (!fillSelectIds) {
+                return
+            }
+
+            fillSelectIds = JSON.parse(fillSelectIds);
+
+            const selectedDatas = pagedTableData.value.filter(it => fillSelectIds.includes(it.testcase_id))
+
+            selectedDatas.forEach(row => {
+                multipleTableRef.value.toggleRowSelection(
+                    row,
+                    true,
+                )
+            })
+        }
+    })
+}
 
 onMounted(() => {
     fetchData().then(() => {

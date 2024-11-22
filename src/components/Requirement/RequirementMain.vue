@@ -188,7 +188,7 @@ const treeData = computed(() => {
 });
 
 const onSelect: TreeProps['onSelect'] = (_, info) => {
-    console.log(info?.node)
+    // console.log(info?.node)
     if (info?.node?.type === 'requirement') {
         currentType.value = 'requirement';
         currentRequirement.value = info.node;

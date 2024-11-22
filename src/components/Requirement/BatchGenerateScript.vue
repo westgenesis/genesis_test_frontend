@@ -25,7 +25,7 @@
                 <div>所选的用例中，存在信号缺失的情况，合并生成的脚本文件不可用，您可以选择以下操作：</div>
 
                 <div class="mt-[20px]">
-                    <a-button type="primary" @click="emit('cancel'); emit('fill')">补充对应动作</a-button>
+                    <a-button type="primary" @click="fill">补充对应动作</a-button>
                     <a-button type="primary" class="ml-[20px]" @click="handleSelectBelongsToOk('skip')"
                         v-if="props.type !== 'merge'">跳过缺失继续生成</a-button>
                     <a-button type="primary" class="ml-[20px]" @click="go">跳转动作库</a-button>
@@ -45,7 +45,7 @@ import { http } from "@/http"
 import { useRouter } from 'vue-router'
 const router = useRouter()
 
-const props = defineProps(['rowData', 'type'])
+const props = defineProps(['rowData', 'type', 'category'])
 const emit = defineEmits(['ok', 'cancel', 'fill'])
 
 const selectForm = ref({
@@ -75,6 +75,17 @@ const verify = () => {
     });
 }
 
+const fill = () => {
+    // 记录下哪些需要补齐的台架测试用例，在页面勾选中预先选择出来
+    const dis = props.rowData.map(it => it.testcase_id)
+    const category = props.category || 'requirement'
+
+    localStorage.setItem('select_' + category, JSON.stringify(dis));
+
+    emit('cancel');
+    emit('fill')
+}
+
 function go() {
     router.push('/script/metaAction')
 }
@@ -84,8 +95,6 @@ const handleSelectBelongsToOk = (action = '') => {
         ElMessage.error('请选择所属对象');
         return;
     }
-
-    console.log(props.type)
 
     // selectBelongsToModalVisible.value = false;
     let url = '/api/batch_generate_script_file'
@@ -104,9 +113,12 @@ const handleSelectBelongsToOk = (action = '') => {
             emit('cancel')
         } else if (response.status === 'success') {
             ElMessage.success('生成成功, 现在可以下载文件');
+
+            const category = props.category || 'requirement'
+            localStorage.removeItem('select_' + category)
+      
             emit('ok')
             emit('cancel')
-            // fetchData();
         } else {
             emit('cancel')
             ElMessage.error('生成失败');

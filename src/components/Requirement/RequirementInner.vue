@@ -1,5 +1,5 @@
 <template>
-    <a-tabs v-model:activeKey="activeTab">
+    <a-tabs v-model:activeKey="activeTab" @change="tabChange">
         <a-tab-pane key="modules" tab="功能模块列表"></a-tab-pane>
         <a-tab-pane key="points" tab="功能测试用例"></a-tab-pane>
         <a-tab-pane key="testcase_table" tab="台架测试用例"></a-tab-pane>
@@ -160,7 +160,7 @@
             <a-button type="primary" class="custom-purple-button ml-[10px]" size="large"
                 @click="handleBatchMergeScript">合成脚本</a-button>
         </div>
-        <el-table :data="pagedTableData" style="width: 100%" id="function_point_table"
+        <el-table :data="pagedTableData" style="width: 100%" id="function_point_table" ref="multipleTableRef"
             @selection-change="handleSelectionChange">
             <el-table-column type="expand">
                 <template #default="scope">
@@ -214,7 +214,12 @@
                 </template>
             </el-table-column>
             <el-table-column prop="version" label="版本" :width="table_width1 / 15 || 100" />
-            <el-table-column prop="integrity" label="完整性" :width="table_width1 / 15 || 100" />
+            <el-table-column prop="integrity" label="完整性" :width="table_width1 / 15 || 100">
+                <template #default="scope">
+                    <span v-if="String(scope.row.integrity) === '1'" class="text-red-400">不完整</span>
+                    <span v-if="String(scope.row.integrity) === '0'">完整</span>
+                </template>
+            </el-table-column>
             <el-table-column prop="type" label="用例类型" :width="table_width1 / 8 || 100">
                 <template #default="scope">
                     {{ scope.row.type === 'positive' ? '正例' : '反例' }}
@@ -255,7 +260,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, watch, defineProps, computed, ref, onUpdated } from 'vue';
+import { onMounted, watch, defineProps, computed, ref, onUpdated,nextTick  } from 'vue';
 import { http } from '../../http';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { useProjectStore } from '../../stores/project';
@@ -263,6 +268,7 @@ import GenerateScript from './GenerateScript.vue'
 import BatchGenerateScript from './BatchGenerateScript.vue'
 import { message } from 'ant-design-vue';
 
+const multipleTableRef = ref<any>()
 const generateScriptVisible = ref(false);
 const genScriptRow = ref<any>({})
 
@@ -278,12 +284,15 @@ const handleGenerateScript = function (row) {
 const batchGenerateScriptVisible = ref(false);
 const batchGenScriptRows = ref<any[]>([])
 const batchType = ref('gen')
+
 // 批量生成脚本
-const handleBatchGenerateScript = function (type='gen') {
+const handleBatchGenerateScript = function (type = 'gen') {
     if (selectedRows.value.length === 0) {
         message.error('您没有选中数据');
         return
     }
+
+    console.log(selectedRows.value)
     batchType.value = type
 
     // 修正值
@@ -301,7 +310,7 @@ const handleBatchMergeScript = function () {
         ElMessage.error('您需要选中至少2条数据');
         return
     }
-    
+
     batchType.value = 'merge'
     handleBatchGenerateScript('merge')
 }
@@ -343,8 +352,37 @@ const fetchData = () => {
         currentPagePoints.value = 1;
     }).then(() => {
         refreshAllProjects()
+
+        if(multipleTableRef.value){
+            tabChange('testcase_table')
+        }
     });
 };
+
+function tabChange(e) {
+    nextTick(() => {
+        if (e === 'testcase_table') {
+            // 恢复补齐的勾选 select_requirement
+
+            let fillSelectIds = localStorage.getItem('select_requirement')
+
+            if (!fillSelectIds) {
+                return
+            }
+
+            fillSelectIds = JSON.parse(fillSelectIds);
+
+            const selectedDatas = pagedTableData.value.filter(it => fillSelectIds.includes(it.testcase_id))
+
+            selectedDatas.forEach(row => {
+                multipleTableRef.value.toggleRowSelection(
+                    row,
+                    true,
+                )
+            })
+        }
+    })
+}
 
 const selectedRowsModule = ref([]);
 
@@ -578,8 +616,6 @@ const handleGenerate = (row) => {
         }
     });
 }
-
-
 
 // 分页相关变量和方法
 const currentPagePoints = ref(1);
