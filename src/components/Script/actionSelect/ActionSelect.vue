@@ -87,7 +87,7 @@
         :pagination="false" v-if="activeTab === '3'">
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'action'">
-            <a-button type="link" size="small" @click="select(record)">选择</a-button>
+            <a-button type="link" size="small" @click="emit('select', record.name)">选择</a-button>
           </template>
         </template>
       </a-table>
@@ -140,6 +140,7 @@ onMounted(() => {
 function select(record) {
   emit('select', record.displayName)
 }
+
 //动作参数显式逻辑
 function actionParmaDisplay(record) {
 
