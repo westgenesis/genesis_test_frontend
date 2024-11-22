@@ -3,7 +3,7 @@
         <a-form :model="submitData" :rules="rules" layout="vertical" ref="formRef">
 
             <a-form-item label="所属项目" name="projectId">
-                <ProjectSelect v-model="submitData.projectId" @selectedObject="submitData.projectName = $event.name" auto-focus>
+                <ProjectSelect v-model="submitData.projectId" @selectedObject="submitData.projectName = $event.name" >
                 </ProjectSelect>
             </a-form-item>
 

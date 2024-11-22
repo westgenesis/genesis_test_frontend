@@ -11,7 +11,7 @@
         <a-row style="width:100%">
           <a-col :span="10" style="max-width: 300px">
             <a-form-item label="关键字" name="keyword">
-              <a-input v-model:value="searchForm.keyword" placeholder="请输入关键字" :allowClear="true" auto-focus />
+              <a-input v-model:value="searchForm.keyword" placeholder="请输入关键字" :allowClear="true"  />
             </a-form-item>
           </a-col>
 
@@ -35,7 +35,7 @@
       <!-- IO信号 -->
       <a-table :columns="ioColumns" :row-key="record => record._id" bordered :data-source="pagedDataSource"
         :scroll="{ y: table_height }" size="middle" :pagination="false" childrenColumnName="values"
-        v-if="activeTab === '1'" :row-class-name="(_record, index) => (index % 2 === 1 ? 'table-striped' : null)">
+        v-if="activeTab === '1'" :row-class-name="(_record, index) => (index % 2 === 1 ? 'table-striped' : null)" :defaultExpandAllRows="true" :expandable="true" :key="pagedDataSource">
 
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'name'">
@@ -62,7 +62,7 @@
       <!-- 总线信号 -->
       <a-table :columns="canColumns" :row-key="record => record._id" bordered :data-source="pagedDataSource"
         size="middle" :pagination="false" v-if="activeTab === '2'"
-        :row-class-name="(_record, index) => (index % 2 === 1 ? 'table-striped' : null)" childrenColumnName="values">
+        :row-class-name="(_record, index) => (index % 2 === 1 ? 'table-striped' : null)" childrenColumnName="values" :defaultExpandAllRows="true" :expandable="true" :key="pagedDataSource">
         <template #bodyCell="{ column, record }">
 
           <template v-if="column.key === 'name'">

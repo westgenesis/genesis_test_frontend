@@ -2,7 +2,7 @@
 <template>
     <a-form :model="formData" :rules="rules" layout="vertical" ref="formRef">
         <a-form-item label="动作组合名称" name="name">
-            <a-input v-model:value="formData.name" placeholder="请输入内容" auto-focus />
+            <a-input v-model:value="formData.name" placeholder="请输入内容"  />
         </a-form-item>
 
         <a-form-item label="动作组合描述" name="description">

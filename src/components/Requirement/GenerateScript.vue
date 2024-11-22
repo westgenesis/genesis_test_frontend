@@ -21,7 +21,7 @@
 
     <a-modal :open="lackDataVisible" title="" @cancel="emit('cancel')" :footer="null" width="750px">
 
-        <a-result status="warning" title="警告提示" auto-focus>
+        <a-result status="warning" title="警告提示" >
             <template #extra>
                 <div>所选的用例中，存在信号缺失的情况，合并生成的脚本文件不可用，您可以选择以下操作：</div>
 

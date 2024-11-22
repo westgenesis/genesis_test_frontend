@@ -5,7 +5,7 @@
         <a-form-item label="动作名称" name="name">
             <a-row :gutter="[16, 16]">
                 <a-col :span="16">
-                    <a-input v-model:value="formData.name" placeholder="请输入内容" auto-focus />
+                    <a-input v-model:value="formData.name" placeholder="请输入内容"  />
                 </a-col>
                 <a-col>
                     <a-button type="primary" @click="canSelVisible = true" :disabled="onlyOneStatus">选择</a-button>

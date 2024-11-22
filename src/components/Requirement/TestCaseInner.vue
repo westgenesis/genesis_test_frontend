@@ -166,10 +166,11 @@ function fill(row, type) {
 }
 
 function fillConfirm(record) {
-    console.log(record)
+    // console.log(record)
     actionSelectVisible.value = false;
 
     form.value[fillType][fillRow].signal = record
+    form.value[fillType][fillRow].needFill = false
 }
 
 const props = defineProps({
