@@ -53,6 +53,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     ScriptFile: typeof import('./src/components/Script/ScriptFile.vue')['default']
+    ScriptList: typeof import('./src/components/Requirement/ScriptList.vue')['default']
     SplitCaseInner: typeof import('./src/components/Requirement/SplitCaseInner.vue')['default']
     SplitRequirementInner: typeof import('./src/components/Requirement/SplitRequirementInner.vue')['default']
     TestCaseInner: typeof import('./src/components/Requirement/TestCaseInner.vue')['default']

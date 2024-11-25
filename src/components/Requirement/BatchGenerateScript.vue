@@ -20,7 +20,7 @@
 
     <a-modal :open="lackDataVisible" title="" @cancel="emit('cancel')" :footer="null" width="750px">
 
-        <a-result status="warning" title="警告提示" >
+        <a-result status="warning" title="警告提示">
             <template #extra>
                 <div>所选的用例中，存在信号缺失的情况，合并生成的脚本文件不可用，您可以选择以下操作：</div>
 
@@ -29,7 +29,7 @@
                     <a-button type="primary" class="ml-[20px]" @click="handleSelectBelongsToOk('skip')"
                         v-if="props.type !== 'merge'">跳过缺失继续生成</a-button>
                     <a-button type="primary" class="ml-[20px]" @click="go">跳转动作库</a-button>
-                    <a-button type="primary" class="ml-[20px]" @click="handleSelectBelongsToOk('continue')">继续生成</a-button>
+                    <!-- <a-button type="primary" class="ml-[20px]" @click="handleSelectBelongsToOk('continue')">继续生成</a-button> -->
                 </div>
 
                 <div v-if="props.type === 'merge'" class="mt-[20px]">提醒：跳转动作库补充信号动作后，需重新生成台架测试用例</div>
@@ -40,7 +40,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { http } from "@/http"
 import { useRouter } from 'vue-router'
 const router = useRouter()
@@ -58,7 +58,24 @@ const selectForm = ref({
 const selectBelongsToModalVisible = ref(true)
 const lackDataVisible = ref(false)
 
+onMounted(() => {
+    const _version = localStorage.getItem('_version') || '';
+    selectForm.value.version = _version;
+
+    // _minRequiredVersion
+    const _minRequiredVersion = localStorage.getItem('_minRequiredVersion') || '';
+    selectForm.value.minRequiredVersion = _minRequiredVersion;
+
+    const _minRequiredCANoeVersion = localStorage.getItem('_minRequiredCANoeVersion') || '';
+    selectForm.value.minRequiredCANoeVersion = _minRequiredCANoeVersion;
+})
 const verify = () => {
+
+    // 持久三个参数
+    localStorage.setItem('_version', selectForm.value.version);
+    localStorage.setItem('_minRequiredVersion', selectForm.value.minRequiredVersion);
+    localStorage.setItem('_minRequiredCANoeVersion', selectForm.value.minRequiredCANoeVersion);
+
     http.post('/api/batch_verify_generate_script_file', {
         data: props.rowData,
         ...selectForm.value,
@@ -116,7 +133,7 @@ const handleSelectBelongsToOk = (action = '') => {
 
             const category = props.category || 'requirement'
             localStorage.removeItem('select_' + category)
-      
+
             emit('ok')
             emit('cancel')
         } else {

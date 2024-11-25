@@ -30,7 +30,7 @@
                     <a-button type="primary" class="ml-[20px]"
                         @click="handleSelectBelongsToOk('skip')">跳过缺失继续生成</a-button>
                     <a-button type="primary" class="ml-[20px]" @click="go">跳转动作库</a-button>
-                    <a-button type="primary" class="ml-[20px]" @click="handleSelectBelongsToOk('')">继续生成</a-button>
+                    <!-- <a-button type="primary" class="ml-[20px]" @click="handleSelectBelongsToOk('continue')">继续生成</a-button> -->
                 </div>
 
                 <!-- <div class="mt-[20px]">提醒：跳转动作库补充信号动作后，需重新生成台架测试用例</div> -->
@@ -41,7 +41,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref,onMounted } from 'vue'
 import { http } from "@/http"
 
 const props = defineProps(['rowData'])
@@ -56,7 +56,24 @@ const selectForm = ref({
 const lackDataVisible = ref(false)
 const selectBelongsToModalVisible = ref(true)
 
+onMounted(() => {
+    const _version = localStorage.getItem('_version') || '';
+    selectForm.value.version = _version;
+
+    // _minRequiredVersion
+    const _minRequiredVersion = localStorage.getItem('_minRequiredVersion') || '';
+    selectForm.value.minRequiredVersion = _minRequiredVersion;
+
+    const _minRequiredCANoeVersion = localStorage.getItem('_minRequiredCANoeVersion') || '';
+    selectForm.value.minRequiredCANoeVersion = _minRequiredCANoeVersion;
+})
+
 const verify = () => {
+    // 持久三个参数
+    localStorage.setItem('_version', selectForm.value.version);
+    localStorage.setItem('_minRequiredVersion', selectForm.value.minRequiredVersion);
+    localStorage.setItem('_minRequiredCANoeVersion', selectForm.value.minRequiredCANoeVersion);
+
     http.post('/api/batch_verify_generate_script_file', {
         data: [props.rowData],
         ...selectForm.value,

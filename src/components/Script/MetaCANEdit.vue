@@ -72,12 +72,12 @@
             </a-select>
         </a-form-item>
 
-        <a-form-item name="path_parameter">
+        <!-- <a-form-item name="path_parameter">
             <template v-slot:label>
                 路径参数<span style="color:brown;margin-left: 10px;">(仅dspace环境填写) </span>
             </template>
             <a-input v-model:value="formData.path_parameter" placeholder="请输入内容" />
-        </a-form-item>
+        </a-form-item> -->
 
         <a-form-item label="通道类型" name="relation">
             <a-select v-model:value="formData.relation" style="width: 100%">
@@ -131,6 +131,10 @@ const props = defineProps({
     onlyOneStatus: {
         type: Boolean,
         default: false
+    },
+    description:{
+        type: String,
+        default: ''
     }
 });
 
@@ -144,7 +148,7 @@ function select(action) {
     // 防止抄写的没有值
     formData.value.values = action.values;
     if (!formData.value.values || formData.value.values.length == 0) {
-        formData.value.values = [{ vt_signal: null, value: null }];
+        formData.value.values = [{ name:null, vt_signal: null, value: null }];
     }
 }
 
@@ -152,15 +156,20 @@ onMounted(() => {
     if (props.status === 'edit' || props.status === 'copy') {
         formData.value = (cloneDeep(props.data)) as typeof defaultData
     }
+
+    if (props.status === 'new' && props.description){
+        formData.value.description = props.description
+    }
 })
 
 const rules = {
     name: [{ required: true, message: '请输入动作名称' }],
     // status: [{ required: true, message: '请输选择或输入状态' }],
     description: [{ required: true, message: '请输入动作描述' }],
-    exec_path: [{ required: false, message: '请输入动作执行路径' }],
+    exec_path: [{ required: true, message: '请输入动作执行路径' }],
     path_parameter: [{ required: false, message: '请输入路径参数' }],
     projectId: [{ required: true, message: '请选择所属项目' }],
+    relation: [{ required: true, message: '请选择通道类型' }],
 };
 
 

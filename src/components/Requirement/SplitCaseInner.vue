@@ -2,6 +2,7 @@
     <a-tabs v-model:activeKey="activeTab" @change="tabChange">
         <a-tab-pane key="detail" tab="功能点详情"></a-tab-pane>
         <a-tab-pane key="testcase_table" tab="测试用例"></a-tab-pane>
+        <a-tab-pane key="script_table" tab="台架测试脚本"></a-tab-pane>
     </a-tabs>
     <div v-if="activeTab === 'detail'">
         <div
@@ -183,6 +184,9 @@
             <a-input v-model:value="selectForm.minRequiredCANoeVersion" placeholder="请输入最小要求CANoe版本号" />
         </a-form-item>
     </a-modal>
+
+    <ScriptList v-if="activeTab === 'script_table'" type="splitcase" :id="split_case_id" ></ScriptList>
+
     <FillModal :visible="fillModalVisible" :preConditionSignals="need_fill_result.pre_condition_signal"
         :actionSignals="need_fill_result.action_signal" :resultSignals="need_fill_result.result_signal"
         @removeSignal="handleRemoveSignal" @update:visible="fillModalVisible = $event" @ok="handleFillModalOk" />
@@ -204,6 +208,7 @@ import { useProjectStore } from '../../stores/project';
 import FillModal from '../UseCase/FillModal.vue';
 import BatchGenerateScript from './BatchGenerateScript.vue'
 const { refreshAllProjects } = useProjectStore();
+import ScriptList from './ScriptList.vue'
 
 
 import GenerateScript from './GenerateScript.vue'

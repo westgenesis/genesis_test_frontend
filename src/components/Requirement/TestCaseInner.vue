@@ -1,6 +1,7 @@
 <template>
     <a-tabs v-model:activeKey="activeTab">
         <a-tab-pane key="detail" tab="测试用例详情"></a-tab-pane>
+        <a-tab-pane key="script_table" tab="台架测试脚本"></a-tab-pane>
     </a-tabs>
 
     <a-form :model="form" layout="vertical">
@@ -32,14 +33,13 @@
                         <a-input v-model:value="item.description" placeholder="请输入初始条件描述" />
                     </a-col>
                     <a-col :span="8">
-                        <a-input v-model:value="item.signal" placeholder="请输入初始条件信号" />
+                        <a-input v-model:value="item.signal" placeholder="请输入初始条件信号" :disabled="true"/>
                     </a-col>
                     <a-col :span="8">
                         <a-button type="dashed" @click="addPreConditionItem(index)">+</a-button>
                         <a-button type="dashed" @click="removePreConditionItem(index)" class="ml-[10px]">-</a-button>
-                        <a-button danger @click="fill(index, 'pre_condition_items')" class="ml-[10px]"
-                            v-if="item.needFill == 1">补齐</a-button>
-                        <!-- {{ item.needFill }} -->
+                        <a-button @click="fill(index, 'pre_condition_items')" class="ml-[10px]">修改</a-button>
+                        <sapn v-if="item.needFill == 1" class="font-bold ml-[20px] text-red-400"><ExclamationCircleOutlined /></sapn>
                     </a-col>
                 </a-row>
             </div>
@@ -53,14 +53,13 @@
                         <a-input v-model:value="item.description" placeholder="请输入触发条件描述" />
                     </a-col>
                     <a-col :span="8">
-                        <a-input v-model:value="item.signal" placeholder="请输入触发条件信号" />
+                        <a-input v-model:value="item.signal" placeholder="请输入触发条件信号" :disabled="true" />
                     </a-col>
                     <a-col :span="8">
                         <a-button type="dashed" @click="addActionItem(index)">+</a-button>
                         <a-button type="dashed" @click="removeActionItem(index)" class="ml-[10px]">-</a-button>
-                        <a-button danger @click="fill(index, 'action_items')" class="ml-[10px]"
-                            v-if="item.needFill == 1">补齐</a-button>
-                        <!-- {{ item.needFill }} -->
+                        <a-button @click="fill(index, 'action_items')" class="ml-[10px]">修改</a-button>
+                        <sapn v-if="item.needFill == 1" class="font-bold ml-[20px] text-red-400"><ExclamationCircleOutlined /></sapn>
                     </a-col>
                 </a-row>
             </div>
@@ -74,14 +73,13 @@
                         <a-input v-model:value="item.description" placeholder="请输入预期结果描述" />
                     </a-col>
                     <a-col :span="8">
-                        <a-input v-model:value="item.signal" placeholder="请输入预期结果信号" />
+                        <a-input v-model:value="item.signal" placeholder="请输入预期结果信号" :disabled="true" />
                     </a-col>
                     <a-col :span="8">
                         <a-button type="dashed" @click="addResultItem(index)">+</a-button>
                         <a-button type="dashed" @click="removeResultItem(index)" class="ml-[10px]">-</a-button>
-                        <a-button danger @click="fill(index, 'result_items')" class="ml-[10px]"
-                            v-if="item.needFill == 1">补齐</a-button>
-                        <!-- {{ item.needFill }} -->
+                        <a-button @click="fill(index, 'result_items')" class="ml-[10px]">修改</a-button>
+                        <sapn v-if="item.needFill == 1" class="font-bold ml-[20px] text-red-400"><ExclamationCircleOutlined /></sapn>
                     </a-col>
                 </a-row>
             </div>
@@ -115,14 +113,16 @@
         <ActionSelect v-if="actionSelectVisible" @select="fillConfirm"></ActionSelect>
     </a-modal>
 
-    <a-modal v-model:open="actionCreateVisible" title="信号补齐" width="50%" :footer="null">
-        <ActionCreate v-if="actionCreateVisible" @select="fillConfirm" @close="actionCreateVisible = false;">
+    <a-modal v-model:open="actionCreateVisible" title="信号补齐" width="50%" :footer="null" >
+        <ActionCreate v-if="actionCreateVisible" @select="fillConfirm" @close="actionCreateVisible = false;" :description="description">
         </ActionCreate>
     </a-modal>
 
     <GenerateScript v-if="generateScriptVisible" @cancel="generateScriptVisible = false" :row-data="genScriptRow"
         @ok="fetchData" @fill="fetchData">
     </GenerateScript>
+
+    <ScriptList v-if="activeTab === 'script_table'" type="testcase" :id="testcase_id" ></ScriptList>
 
 </template>
 
@@ -132,12 +132,16 @@ import { http } from '../../http';
 import { ElMessage } from 'element-plus';
 import { useProjectStore } from '../../stores/project';
 import FillModal from '../UseCase/FillModal.vue';
-
+import { ExclamationCircleOutlined } from '@ant-design/icons-vue'
+ 
 import ActionSelect from '@/components/Script/actionSelect/ActionSelect.vue';
 import ActionCreate from '@/components/Script/actionSelect/ActionCreate.vue';
 import FillTypeSelect from '@/components/Script/actionSelect/FillTypeSelect.vue';
 
 import GenerateScript from './GenerateScript.vue'
+import ScriptList from './ScriptList.vue'
+
+const description = ref('')
 
 const generateScriptVisible = ref(false);
 const genScriptRow = ref<any>({})
@@ -164,6 +168,8 @@ function handleFillTypeSelectOk(type) {
 // 向回更新描述
 function fill(row, type) {
     // actionSelectVisible.value = true;
+    
+    description.value = form.value[type][row].description
 
     fillTypeSelectVisible.value = true;
     fillRow = row;

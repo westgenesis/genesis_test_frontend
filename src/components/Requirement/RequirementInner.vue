@@ -3,6 +3,7 @@
         <a-tab-pane key="modules" tab="功能模块列表"></a-tab-pane>
         <a-tab-pane key="points" tab="功能测试用例"></a-tab-pane>
         <a-tab-pane key="testcase_table" tab="台架测试用例"></a-tab-pane>
+        <a-tab-pane key="script_table" tab="台架测试脚本"></a-tab-pane>
     </a-tabs>
     <div v-if="activeTab === 'modules'">
         <div style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;">项目信息</div>
@@ -127,7 +128,7 @@
                         <el-tooltip class="box-item" effect="dark" :content="scope.row.testcase_name"
                             placement="top-start"> <el-button type="primary" text @click="clickTitle(scope.row)">{{
                                 scope.row.testcase_name
-                            }}</el-button></el-tooltip>
+                                }}</el-button></el-tooltip>
 
                     </template>
                 </el-table-column>
@@ -248,6 +249,8 @@
             show-size-changer :page-size-options="['10', '20', '50']" @change="handlePageChange"
             @showSizeChange="handlePageSizeChange" style="margin-top: 1rem; text-align: center;" />
     </div>
+
+    <ScriptList v-if="activeTab === 'script_table'" type="requirement" :id="req_id" ></ScriptList>
     <AddModuleDrawer :visible="drawerVisible" @close="closeAddDrawer" @save="saveNewModule"
         :currentRequirement="currentRequirement" />
 
@@ -260,13 +263,14 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, watch, defineProps, computed, ref, onUpdated,nextTick  } from 'vue';
+import { onMounted, watch, defineProps, computed, ref, onUpdated, nextTick } from 'vue';
 import { http } from '../../http';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { useProjectStore } from '../../stores/project';
 import GenerateScript from './GenerateScript.vue'
 import BatchGenerateScript from './BatchGenerateScript.vue'
 import { message } from 'ant-design-vue';
+import ScriptList from './ScriptList.vue'
 
 const multipleTableRef = ref<any>()
 const generateScriptVisible = ref(false);
@@ -353,7 +357,7 @@ const fetchData = () => {
     }).then(() => {
         refreshAllProjects()
 
-        if(multipleTableRef.value){
+        if (multipleTableRef.value) {
             tabChange('testcase_table')
         }
     });

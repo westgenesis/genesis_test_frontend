@@ -65,8 +65,7 @@
     <a-table :columns="ioColumns" :row-key="record => record._id" bordered :data-source="pagedDataSource"
       :scroll="{ y: table_height }" size="middle" :pagination="false" :row-selection="{
         selectedRowKeys: selectedRowKeys, onChange: onSelectChange, getCheckboxProps: (record) => ({
-          disabled: !Boolean(record.values)   // Column configuration not to be checked
-          // name: record.name,
+          disabled: !Boolean(record.values)
         }),
       }" childrenColumnName="values" v-if="activeTab === '1'"
       :row-class-name="(_record, index) => (index % 2 === 1 ? 'table-striped' : null)">
@@ -99,9 +98,13 @@
     <a-table :columns="canColumns" :row-key="record => record._id" bordered :data-source="pagedDataSource" size="middle"
       :pagination="false" :row-selection="{
         selectedRowKeys: selectedRowKeys, onChange: onSelectChange,
-      }" v-if="activeTab === '2'" :row-class-name="(_record, index) => (index % 2 === 1 ? 'table-striped' : null)">
+      }" v-if="activeTab === '2'" :row-class-name="(_record, index) => (index % 2 === 1 ? 'table-striped' : null)"
+      childrenColumnName="values">
       <template #bodyCell="{ column, record }">
 
+        <template v-if="column.key === 'name'">
+          <span>{{ record.displayName || record.name || record.vt_signal }}</span>
+        </template>
 
         <template v-if="column.key === 'action'">
           <template v-if="record.values">
@@ -148,7 +151,6 @@ import CANEdit from './MetaCANEdit.vue'
 import DBCUploader from './DBCUploader.vue';
 import { cloneDeep } from 'lodash-es'
 import { SearchOutlined, DeleteOutlined, UploadOutlined, PlusOutlined } from '@ant-design/icons-vue'
-
 
 const dataSource = ref([]);
 const pagedDataSource = ref([]);
@@ -244,13 +246,27 @@ const fetchActions = () => {
   }).then(response => {
 
     // 为values补齐显示字段
-    response.actions.forEach((ac) => {
-      if (ac.values) {
-        ac.values.forEach((it, index) => {
-          ac.values[index].displayName = ac.name + '=' + it.status
-        })
-      }
-    })
+    if (params.belongs_to === 'Vector_IO') {
+      response.actions.forEach((ac) => {
+        if (ac.values) {
+          ac.values.forEach((it, index) => {
+            ac.values[index].displayName = ac.name + '=' + it.status
+          })
+        }
+      })
+    }
+
+    // 为values补齐显示字段
+    if (params.belongs_to === 'Vector_CAN') {
+      response.actions.forEach((ac) => {
+        if (ac.values) {
+          ac.values.forEach((it, index) => {
+            ac.values[index].displayName = ac.name + '=' + it.value
+          })
+        }
+      })
+    }
+
 
     pagedDataSource.value = response.actions;
     total.value = response.total
@@ -357,11 +373,11 @@ const canColumns = [
     dataIndex: 'exec_path',
     key: 'exec_path',
   },
-  {
-    title: '路径参数',
-    dataIndex: 'path_parameter',
-    key: 'path_parameter',
-  },
+  // {
+  //   title: '路径参数',
+  //   dataIndex: 'path_parameter',
+  //   key: 'path_parameter',
+  // },
   {
     title: '路径类型',
     dataIndex: 'relation',

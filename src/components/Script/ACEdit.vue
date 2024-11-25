@@ -82,6 +82,10 @@ const props = defineProps({
     data: {
         type: Object,
         default: {}
+    },
+    description:{
+        type: String,
+        default: ''
     }
 });
 
@@ -292,6 +296,11 @@ onMounted(() => {
         formData.value = (cloneDeep(props.data))
         console.log(props.data.history)
         history.value = props.data.history
+    }
+
+    // 从台架测试用例详情页抄过来
+    if (props.status === 'new' && props.description){
+        formData.value.description = props.description
     }
 
     fetchActions();

@@ -3,6 +3,7 @@
         <a-tab-pane key="detail" tab="功能模块详情"></a-tab-pane>
         <a-tab-pane key="points" tab="功能测试用例"></a-tab-pane>
         <a-tab-pane key="testcase_table" tab="台架测试用例"></a-tab-pane>
+        <a-tab-pane key="script_table" tab="台架测试脚本"></a-tab-pane>
     </a-tabs>
     <a-drawer title="新建功能点" :visible="visible" :width="720" @close="onDrawerClose">
         <a-form :model="newForm" layout="vertical">
@@ -192,6 +193,8 @@
             @showSizeChange="handlePageSizeChange" style="margin-top: 1rem; text-align: center;" />
     </div>
 
+    <ScriptList v-if="activeTab === 'script_table'" type="splitfile" :id="split_file_id" ></ScriptList>
+
     <GenerateScript v-if="generateScriptVisible" @cancel="generateScriptVisible = false" :row-data="genScriptRow"
         @ok="fetchData" @fill="fetchData">
     </GenerateScript>
@@ -210,6 +213,7 @@ import RequirementDocx from './RequirementDocx.vue';
 const { refreshAllProjects } = useProjectStore();
 import GenerateScript from './GenerateScript.vue'
 import BatchGenerateScript from './BatchGenerateScript.vue'
+import ScriptList from './ScriptList.vue'
 
 const generateScriptVisible = ref(false);
 const genScriptRow = ref<any>({})

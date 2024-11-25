@@ -8,14 +8,14 @@
     </a-tabs>
 
     <MetaIOEdit v-if="activeTab === '1'" :status="status" :data="editData" @close="emit('close')" :onlyOneStatus="true"
-      @success="emit('select', $event.name + '=' + $event.values[0].status)">
+      @success="emit('select', $event.name + '=' + $event.values[0].status)" :description="props.description">
     </MetaIOEdit>
-    <MetaCANEdit v-if="activeTab === '2'" :status="status" :data="editData"
-      @success="emit('select', $event.name + '=' + $event.values[0].value)" :onlyOneStatus="true" @close="emit('close')">
+    <MetaCANEdit v-if="activeTab === '2'" :status="status" :data="editData" :description="props.description"
+      @success="emit('select', $event.name + '=' + $event.values[0].value)" :onlyOneStatus="true"
+      @close="emit('close')">
     </MetaCANEdit>
     <ACEdit v-if="activeTab === '3'" :status="status" :data="editData" @success="emit('select', +'=' + $event.name)"
-      @close="emit('close')"></ACEdit>
-
+      @close="emit('close')" :description="props.description"></ACEdit>
   </div>
 </template>
 
@@ -27,6 +27,7 @@ import MetaCANEdit from '@/components/Script/MetaCANEdit.vue'
 import ACEdit from '@/components/Script/ACEdit.vue';
 
 const emit = defineEmits(['select', 'close'])
+const props = defineProps(['description'])
 
 const activeTab = ref('1')
 const status = ref('new')
