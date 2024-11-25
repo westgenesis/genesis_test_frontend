@@ -160,6 +160,8 @@ function handleFillTypeSelectOk(type) {
         actionCreateVisible.value = true;
     }
 }
+
+// 向回更新描述
 function fill(row, type) {
     // actionSelectVisible.value = true;
 
@@ -169,36 +171,37 @@ function fill(row, type) {
 }
 
 function fillConfirm(record) {
- 
+
     actionSelectVisible.value = false;
 
     form.value[fillType][fillRow].signal = record.name
     form.value[fillType][fillRow].needFill = false
 
-    const data:any = {}
+    const data: any = {}
 
     data.id = record.id;
     data.isChild = record.isChild
     data.idx = record.idx
     data.description = form.value[fillType][fillRow].description
+    data.testcase_id = testcase_id.value
 
     let url = '/api/addActionDescription'
 
-    if(record.type=== 'IO'){
+    if (record.type === 'IO') {
         data.belongs_to = 'Vector_IO'
     }
 
-    if(record.type=== 'CAN'){
+    if (record.type === 'CAN') {
         data.belongs_to = 'Vector_CAN'
     }
 
-    if(record.type=== 'COM'){
+    if (record.type === 'COM') {
         url = '/api/addActionCombinationDescription'
         data.isChild = false
     }
 
     // 向回更新描述
-    http.post(url, data )
+    http.post(url, data)
 }
 
 const props = defineProps({
@@ -341,6 +344,26 @@ watch([project_id, req_id, split_file_id, split_case_id, testcase_id], () => {
 
 
 const handleSave = async () => {
+
+    // 不允许空字符
+    form.value.pre_condition_items.forEach(it => {
+        if (!it.signal) {
+            it.signal = '未检索到信息'
+        }
+    })
+
+    form.value.action_items.forEach(it => {
+        if (!it.signal) {
+            it.signal = '未检索到信息'
+        }
+    })
+
+    form.value.result_items.forEach(it => {
+        if (!it.signal) {
+            it.signal = '未检索到信息'
+        }
+    })
+
     const params = {
         ...form.value,
         project_id: project_id.value,
@@ -355,6 +378,9 @@ const handleSave = async () => {
         result: form.value.result_items.map(item => item.description).join('\n'),
         result_signal: form.value.result_items.map(item => item.signal).join('\n'),
     }
+
+    // console.log(params);
+
     return http.post('/api/modify_testcase', params).then(async response => {
         if (response.status === 'OK') {
             ElMessage.success('保存成功');
