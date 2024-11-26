@@ -162,6 +162,7 @@ const fetchActions = () => {
                 script.script_name = script.info[0].script_name
                 script.testcase_id = script.info[0].testcase_id
                 script.version = script.info[0].version
+                script.type = script.info[0].type
             }
 
             // 如果大于2条，则展开
@@ -215,13 +216,13 @@ const columns = [
         title: '用例类型',
         dataIndex: 'type',
         key: 'type',
-        width:80
+        width: 80
     },
     {
         title: '更新时间',
         dataIndex: 'update_at',
         key: 'update_at',
-        width:230
+        width: 230
     },
     {
         title: '版本',
@@ -245,16 +246,8 @@ const download = function (record) {
     http.post(`/api/download_script/${record.id}`, {
         scriptId: record.id
     }, { responseType: 'blob' }).then(response => {
-        FileSaver.saveAs( new Blob([response], { type: 'application/octet-stream' }) ,record.id+'_vtt_export.vtt',)
+        FileSaver.saveAs(new Blob([response], { type: 'application/octet-stream' }), record.id + '_vtt_export.vtt',)
     })
-
-    // const blob = new Blob([response as any], { type: 'application/octet-stream' });
-    //         const url = window.URL.createObjectURL(blob);
-
-
-    // const url = "http://192.168.209.199:9000/projects/e451469b82db48858683a60af79cce63/vtt_export_compose/vtt_export_compose.vtt?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minioadmin%2F20241126%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20241126T030339Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=c30b5ecc620596f3abf26fe5b6d132a9de98f9e30aeb1c632e59dc17f83ad047"
-    // saveAs(record.url)
-
 }
 
 const deleteSelectedScript = async () => {
