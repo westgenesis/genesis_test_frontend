@@ -42,8 +42,7 @@
                 selectedRowKeys: selectedRowKeys, onChange: onSelectChange, getCheckboxProps: (record) => ({
                     disabled: !Boolean(record.info)
                 }),
-            }" childrenColumnName="children"
-            >
+            }" childrenColumnName="children">
             <!-- :row-class-name="(_record, index) => (index % 2 === 1 ? 'table-striped' : null)" -->
             <template #bodyCell="{ column, record }">
                 <!-- <template v-if="column.key === 'script_name'">
@@ -86,7 +85,7 @@ import { http } from '../../http';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { cloneDeep } from 'lodash-es'
 import { SearchOutlined, DeleteOutlined, UploadOutlined, PlusOutlined } from '@ant-design/icons-vue'
-import  FileSaver from 'file-saver';
+import FileSaver from 'file-saver';
 
 const dataSource = ref([]);
 const pagedDataSource = ref([]);
@@ -113,7 +112,7 @@ const props = defineProps({
     id: { //
         type: String,
         default: ''
-    },projectId:{
+    }, projectId: {
         type: String,
         default: ''
     }
@@ -239,11 +238,20 @@ const columns = [
     },
 ];
 
-const download = function(record){
+const download = function (record) {
+    http.post(`/api/download_script/${record.id}`, {
+        scriptId: record.id
+    }, { responseType: 'blob' }).then(response => {
+        FileSaver.saveAs( new Blob([response], { type: 'application/octet-stream' }) ,record.id+'_vtt_export.vtt',)
+    })
+
+    // const blob = new Blob([response as any], { type: 'application/octet-stream' });
+    //         const url = window.URL.createObjectURL(blob);
+
 
     // const url = "http://192.168.209.199:9000/projects/e451469b82db48858683a60af79cce63/vtt_export_compose/vtt_export_compose.vtt?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minioadmin%2F20241126%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20241126T030339Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=c30b5ecc620596f3abf26fe5b6d132a9de98f9e30aeb1c632e59dc17f83ad047"
     // saveAs(record.url)
-    FileSaver.saveAs(record.url)
+
 }
 
 const deleteSelectedScript = async () => {
@@ -277,7 +285,7 @@ const deleteAction = async (id) => {
         cancelButtonText: '取消',
         type: 'warning'
     }).then(() => {
-        http.delete('/api/delete_script/'+id, {
+        http.delete('/api/delete_script/' + id, {
             id: id
         }).then(res => {
             ElMessage.success('删除成功')
@@ -294,34 +302,34 @@ const deleteAction = async (id) => {
 }
 
 .custom-purple-button {
-  background-color: purple;
-  border-color: purple;
+    background-color: purple;
+    border-color: purple;
 }
 
 .custom-purple-button:hover,
 .custom-purple-button:focus {
-  background-color: purple !important;
-  border-color: purple !important;
-  filter: opacity(0.9);
+    background-color: purple !important;
+    border-color: purple !important;
+    filter: opacity(0.9);
 }
 
 /* 覆盖 el-radio-button 的默认样式 */
 :deep(.el-radio-button__orig-radio:checked + .el-radio-button__inner) {
-  background-color: purple;
-  border-color: purple;
+    background-color: purple;
+    border-color: purple;
 }
 
 :deep(.el-radio-button__inner) {
-  color: purple;
-  border-color: purple;
+    color: purple;
+    border-color: purple;
 }
 
 :deep(.el-radio-button__original-radio:checked+.el-radio-button__inner) {
-  background-color: purple;
-  border-color: purple !important;
+    background-color: purple;
+    border-color: purple !important;
 }
 
 :deep(.ant-tree-node-content-wrapper) {
-  display: flex !important;
+    display: flex !important;
 }
 </style>
