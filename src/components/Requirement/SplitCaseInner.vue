@@ -185,7 +185,7 @@
         </a-form-item>
     </a-modal>
 
-    <ScriptList v-if="activeTab === 'script_table'" type="splitcase" :id="split_case_id" ></ScriptList>
+    <ScriptList v-if="activeTab === 'script_table'" type="splitcase" :id="split_case_id" :projectId="project_id"></ScriptList>
 
     <FillModal :visible="fillModalVisible" :preConditionSignals="need_fill_result.pre_condition_signal"
         :actionSignals="need_fill_result.action_signal" :resultSignals="need_fill_result.result_signal"

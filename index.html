@@ -45,12 +45,19 @@
       background-color: #fcfcfc !important;
     }
 
+    /* 修正ant穿梭框按钮位置不正 */
     .ant-transfer-operation svg {
       margin-bottom: 5px;
     }
 
+    /* 隐藏 ant modal报错 的提示信息 */
     div[aria-hidden=true] {
       display: none !important;
+    }
+
+    /* ant 表格选中背景 */
+    .ant-table-wrapper .ant-table-tbody>tr.ant-table-row-selected>td {
+      background: rgba(245, 245, 245, 0.985) !important;
     }
   </style>
 </head>

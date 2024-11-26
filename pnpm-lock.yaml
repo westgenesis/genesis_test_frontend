@@ -23,6 +23,9 @@ importers:
       element-plus:
         specifier: ^2.6.3
         version: 2.7.6(vue@3.4.31(typescript@5.5.3))
+      file-saver:
+        specifier: ^2.0.5
+        version: 2.0.5
       html-to-docx:
         specifier: ^1.8.0
         version: 1.8.0
@@ -1192,6 +1195,9 @@ packages:
 
   fastq@1.17.1:
     resolution: {integrity: sha512-sRVD3lWVIXWg6By68ZN7vho9a1pQcN/WBFaAAsDDFzlJjvoGx0P8z7V1t72grFJfJhu3YPZBuu25f7Kaw2jN1w==}
+
+  file-saver@2.0.5:
+    resolution: {integrity: sha512-P9bmyZ3h/PRG+Nzga+rbdI4OEpNDzAVyy74uVO9ATgzLK6VtAsYybF/+TOCvrc0MO793d6+42lLyZTw7/ArVzA==}
 
   fill-range@7.1.1:
     resolution: {integrity: sha512-YsGpe3WHLK8ZYi4tWDg2Jy3ebRz2rXowDxnld4bkQB00cc/1Zw9AWnC0i9ztDJitivtQvaI9KaLyKrc+hBW0yg==}
@@ -3495,6 +3501,8 @@ snapshots:
   fastq@1.17.1:
     dependencies:
       reusify: 1.0.4
+
+  file-saver@2.0.5: {}
 
   fill-range@7.1.1:
     dependencies:

@@ -250,7 +250,7 @@
             @showSizeChange="handlePageSizeChange" style="margin-top: 1rem; text-align: center;" />
     </div>
 
-    <ScriptList v-if="activeTab === 'script_table'" type="requirement" :id="req_id" ></ScriptList>
+    <ScriptList v-if="activeTab === 'script_table'" type="requirement" :id="req_id" :projectId="project_id"></ScriptList>
     <AddModuleDrawer :visible="drawerVisible" @close="closeAddDrawer" @save="saveNewModule"
         :currentRequirement="currentRequirement" />
 

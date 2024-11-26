@@ -193,7 +193,7 @@
             @showSizeChange="handlePageSizeChange" style="margin-top: 1rem; text-align: center;" />
     </div>
 
-    <ScriptList v-if="activeTab === 'script_table'" type="splitfile" :id="split_file_id" ></ScriptList>
+    <ScriptList v-if="activeTab === 'script_table'" type="splitfile" :id="split_file_id" :projectId="project_id"></ScriptList>
 
     <GenerateScript v-if="generateScriptVisible" @cancel="generateScriptVisible = false" :row-data="genScriptRow"
         @ok="fetchData" @fill="fetchData">

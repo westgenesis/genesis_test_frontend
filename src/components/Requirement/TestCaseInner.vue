@@ -4,7 +4,7 @@
         <a-tab-pane key="script_table" tab="台架测试脚本"></a-tab-pane>
     </a-tabs>
 
-    <a-form :model="form" layout="vertical">
+    <a-form :model="form" layout="vertical" v-show="activeTab === 'detail'">
         <div
             style="border-left: 2px solid purple; margin-left: 0.25rem; padding-left: 1rem; margin-bottom: 1rem; display:flex; justify-content: space-between; align-items: center;">
             测试用例
@@ -122,7 +122,7 @@
         @ok="fetchData" @fill="fetchData">
     </GenerateScript>
 
-    <ScriptList v-if="activeTab === 'script_table'" type="testcase" :id="testcase_id" ></ScriptList>
+    <ScriptList v-if="activeTab === 'script_table'" type="testcase" :id="testcase_id" :projectId="project_id"></ScriptList>
 
 </template>
 
