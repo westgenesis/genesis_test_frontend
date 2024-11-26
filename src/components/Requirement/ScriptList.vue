@@ -50,8 +50,8 @@
                 </template> -->
 
                 <template v-if="column.key === 'type'">
-                    <span v-if="record.script_type === 'positive'">正例</span>
-                    <span v-if="record.script_type === 'negative'">反例</span>
+                    <span v-if="record.type === 'positive'">正例</span>
+                    <span v-if="record.type === 'negative'">反例</span>
                 </template>
 
                 <template v-if="column.key === 'status' && record.info">
@@ -209,16 +209,19 @@ const columns = [
         title: '对应的台架测试用例',
         dataIndex: 'script_name',
         key: 'script_name',
+        width: "30%",
     },
     {
         title: '用例类型',
         dataIndex: 'type',
         key: 'type',
+        width:80
     },
     {
         title: '更新时间',
         dataIndex: 'update_at',
         key: 'update_at',
+        width:230
     },
     {
         title: '版本',
