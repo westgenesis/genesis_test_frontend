@@ -122,7 +122,7 @@ const handleSelectBelongsToOk = (action = '') => {
     http.post(url, {
         data: props.rowData,
         ...selectForm.value,
-        type: action
+        genType: action
     }).then(response => {
         if (response.status === 'need_fill') {
             ElMessage.success('需要补齐元动作，请去列表补齐！');
