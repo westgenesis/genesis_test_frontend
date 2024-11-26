@@ -124,12 +124,9 @@ onMounted(() => {
 
 const updateActionStatus = function (record, status) {
 
-    http({
-        url: '/api/updateScriptStatus',
-        params: {
-            id: record.id,
-            status: status
-        }
+    http.post('/api/updateScriptStatus', {
+        id: record.id,
+        status: status
     }).then(response => {
         record.status = status;
         ElMessage.success('更新成功');
