@@ -56,7 +56,7 @@ http.interceptors.request.use(
     if (config.url !== '/api/display_user_projects') {
       NProgress.start(); // 开始进度条
     }
-
+ 
     config.showloading = false;
     config.finished = false;
 
@@ -95,6 +95,7 @@ http.interceptors.response.use(
       ElMessage.error(response.data.message)
       return Promise.reject(response)
     }
+
     return response.data
   },
   (error) => {

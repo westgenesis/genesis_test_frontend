@@ -33,13 +33,15 @@
                         <a-input v-model:value="item.description" placeholder="请输入初始条件描述" />
                     </a-col>
                     <a-col :span="8">
-                        <a-input v-model:value="item.signal" placeholder="请输入初始条件信号" :disabled="true"/>
+                        <a-input v-model:value="item.signal" placeholder="请输入初始条件信号" :disabled="true" />
                     </a-col>
                     <a-col :span="8">
                         <a-button type="dashed" @click="addPreConditionItem(index)">+</a-button>
                         <a-button type="dashed" @click="removePreConditionItem(index)" class="ml-[10px]">-</a-button>
                         <a-button @click="fill(index, 'pre_condition_items')" class="ml-[10px]">修改</a-button>
-                        <sapn v-if="item.needFill == 1" class="font-bold ml-[20px] text-red-400"><ExclamationCircleOutlined /></sapn>
+                        <sapn v-if="item.needFill == 1" class="font-bold ml-[20px] text-red-400">
+                            <ExclamationCircleOutlined />
+                        </sapn>
                     </a-col>
                 </a-row>
             </div>
@@ -59,7 +61,9 @@
                         <a-button type="dashed" @click="addActionItem(index)">+</a-button>
                         <a-button type="dashed" @click="removeActionItem(index)" class="ml-[10px]">-</a-button>
                         <a-button @click="fill(index, 'action_items')" class="ml-[10px]">修改</a-button>
-                        <sapn v-if="item.needFill == 1" class="font-bold ml-[20px] text-red-400"><ExclamationCircleOutlined /></sapn>
+                        <sapn v-if="item.needFill == 1" class="font-bold ml-[20px] text-red-400">
+                            <ExclamationCircleOutlined />
+                        </sapn>
                     </a-col>
                 </a-row>
             </div>
@@ -79,7 +83,9 @@
                         <a-button type="dashed" @click="addResultItem(index)">+</a-button>
                         <a-button type="dashed" @click="removeResultItem(index)" class="ml-[10px]">-</a-button>
                         <a-button @click="fill(index, 'result_items')" class="ml-[10px]">修改</a-button>
-                        <sapn v-if="item.needFill == 1" class="font-bold ml-[20px] text-red-400"><ExclamationCircleOutlined /></sapn>
+                        <sapn v-if="item.needFill == 1" class="font-bold ml-[20px] text-red-400">
+                            <ExclamationCircleOutlined />
+                        </sapn>
                     </a-col>
                 </a-row>
             </div>
@@ -113,8 +119,9 @@
         <ActionSelect v-if="actionSelectVisible" @select="fillConfirm"></ActionSelect>
     </a-modal>
 
-    <a-modal v-model:open="actionCreateVisible" title="信号补齐" width="50%" :footer="null" >
-        <ActionCreate v-if="actionCreateVisible" @select="fillConfirm" @close="actionCreateVisible = false;" :description="description">
+    <a-modal v-model:open="actionCreateVisible" title="信号补齐" width="50%" :footer="null">
+        <ActionCreate v-if="actionCreateVisible" @select2="fillConfirm2" @close="actionCreateVisible = false;"
+            :description="description">
         </ActionCreate>
     </a-modal>
 
@@ -122,7 +129,8 @@
         @ok="fetchData" @fill="fetchData">
     </GenerateScript>
 
-    <ScriptList v-if="activeTab === 'script_table'" type="testcase" :id="testcase_id" :projectId="project_id"></ScriptList>
+    <ScriptList v-if="activeTab === 'script_table'" type="testcase" :id="testcase_id" :projectId="project_id">
+    </ScriptList>
 
 </template>
 
@@ -133,7 +141,7 @@ import { ElMessage } from 'element-plus';
 import { useProjectStore } from '../../stores/project';
 import FillModal from '../UseCase/FillModal.vue';
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue'
- 
+
 import ActionSelect from '@/components/Script/actionSelect/ActionSelect.vue';
 import ActionCreate from '@/components/Script/actionSelect/ActionCreate.vue';
 import FillTypeSelect from '@/components/Script/actionSelect/FillTypeSelect.vue';
@@ -168,7 +176,7 @@ function handleFillTypeSelectOk(type) {
 // 向回更新描述
 function fill(row, type) {
     // actionSelectVisible.value = true;
-    
+
     description.value = form.value[type][row].description
 
     fillTypeSelectVisible.value = true;
@@ -208,6 +216,15 @@ function fillConfirm(record) {
 
     // 向回更新描述
     http.post(url, data)
+}
+
+function fillConfirm2(name) {
+
+    actionSelectVisible.value = false;
+
+    form.value[fillType][fillRow].signal = name
+    form.value[fillType][fillRow].needFill = false
+
 }
 
 const props = defineProps({

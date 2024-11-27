@@ -8,13 +8,13 @@
     </a-tabs>
 
     <MetaIOEdit v-if="activeTab === '1'" :status="status" :data="editData" @close="emit('close')" :onlyOneStatus="true"
-      @success="emit('select', $event.name + '=' + $event.values[0].status)" :description="props.description">
+      @success="emit('select2', $event.name + '=' + $event.values[0].status)" :description="props.description">
     </MetaIOEdit>
     <MetaCANEdit v-if="activeTab === '2'" :status="status" :data="editData" :description="props.description"
-      @success="emit('select', $event.name + '=' + $event.values[0].value)" :onlyOneStatus="true"
+      @success="emit('select2', $event.name + '=' + $event.values[0].value)" :onlyOneStatus="true"
       @close="emit('close')">
     </MetaCANEdit>
-    <ACEdit v-if="activeTab === '3'" :status="status" :data="editData" @success="emit('select', +'=' + $event.name)"
+    <ACEdit v-if="activeTab === '3'" :status="status" :data="editData" @success="emit('select2', $event.name)"
       @close="emit('close')" :description="props.description"></ACEdit>
   </div>
 </template>

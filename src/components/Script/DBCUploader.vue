@@ -3,7 +3,7 @@
         <a-form :model="submitData" :rules="rules" layout="vertical" ref="formRef">
 
             <a-form-item label="所属项目" name="projectId">
-                <ProjectSelect v-model="submitData.projectId" @selectedObject="submitData.projectName = $event.name" >
+                <ProjectSelect v-model="submitData.projectId" @selectedObject="submitData.projectName = $event.name">
                 </ProjectSelect>
             </a-form-item>
 
@@ -39,6 +39,7 @@ import { http } from "@/http"
 import { ref, onUpdated } from 'vue'
 import { UploadOutlined } from '@ant-design/icons-vue'
 import DBCSelector from './DBCSelector.vue'
+import { ElMessage } from 'element-plus'
 
 const props = defineProps({
     visible: {
@@ -57,7 +58,7 @@ onUpdated(() => {
     }
 })
 
-const emit = defineEmits(['close', 'update:visible','success'])
+const emit = defineEmits(['close', 'update:visible', 'success'])
 
 const defaultData = {
     projectId: null,
@@ -121,12 +122,16 @@ function submit() {
     formRef.value.validate().then(() => {
         // console.log(submitData.value)
 
-        http.post('/api/parsedbc', submitData.value).then(() => {
-            ElMessage.success('DBC文件解析已提交,请耐心等待后刷新页面！');
-            emit('success')
-            emit('update:visible', false)
-        });
+        http.post('/api/parsedbc', submitData.value).then((res) => {
 
+            if (res.status === 'success') {
+                ElMessage.success('DBC文件解析已提交,请耐心等待后刷新页面！');
+                emit('success')
+                emit('update:visible', false)
+            } else {
+                ElMessage.error(res.errText);
+            }
+        });
     })
 }
 
