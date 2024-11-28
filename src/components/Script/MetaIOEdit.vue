@@ -64,6 +64,7 @@
                             <a-select v-model:value="value.relation" style="width: 100%" placeholder="请选择符号">
                                 <a-select-option value="=">=</a-select-option>
                                 <a-select-option value="<">&lt; </a-select-option>
+                                <a-select-option value="≤">≤ </a-select-option>
                                 <a-select-option value=">">&gt;</a-select-option>
                                 <a-select-option value="≥">≥</a-select-option>
                             </a-select>
