@@ -2,7 +2,7 @@
 <template>
     <a-form :model="formData" :rules="rules" layout="vertical" ref="formRef">
         <a-form-item label="动作组合名称" name="name">
-            <a-input v-model:value="formData.name" placeholder="请输入内容"  />
+            <a-input v-model:value="formData.name" placeholder="请输入内容" />
         </a-form-item>
 
         <a-form-item label="动作组合描述" name="description">
@@ -83,7 +83,7 @@ const props = defineProps({
         type: Object,
         default: {}
     },
-    description:{
+    description: {
         type: String,
         default: ''
     }
@@ -299,7 +299,7 @@ onMounted(() => {
     }
 
     // 从台架测试用例详情页抄过来
-    if (props.status === 'new' && props.description){
+    if (props.status === 'new' && props.description) {
         formData.value.description = props.description
     }
 
@@ -322,12 +322,21 @@ const fetchActions = () => {
             }
 
             action.values.forEach((it, index) => {
+                // Vector_IO
+                let name = action.name + '=' + it.status
+
+                // Vector_CAN
+                if (action.belongs_to === 'Vector_CAN') {
+                    name = action.name + '=' + it.value
+                }
+
                 result.push({
-                    name: action.name + '=' + it.value,
+                    name: name,
                     actionName: action.name,
                     value: it.value,
                     _id: action._id + '_' + index,
                 })
+
             })
         })
 
