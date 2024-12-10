@@ -16,7 +16,6 @@ declare module 'vue' {
     AddRequirementDocx: typeof import('./src/components/Requirement/AddRequirementDocx.vue')['default']
     BatchGenerateScript: typeof import('./src/components/Requirement/BatchGenerateScript.vue')['default']
     CANSelector: typeof import('./src/components/Script/CANSelector.vue')['default']
-    copy: typeof import('./src/components/Requirement/GenerateScript copy.vue')['default']
     DBCSelector: typeof import('./src/components/Script/DBCSelector.vue')['default']
     DBCUploader: typeof import('./src/components/Script/DBCUploader.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
