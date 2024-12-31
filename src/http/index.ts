@@ -32,7 +32,7 @@ const baseURL = import.meta.env.VITE_API_BASE_URL || '';
 // 创建 Axios 实例
 const http = axios.create({
   baseURL: baseURL, // 设置基本的请求 URL
-  timeout: 60000 // 设置请求超时时间
+  timeout: 180000 // 设置请求超时时间
 })
 
 // 请求拦截器
