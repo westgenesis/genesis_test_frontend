@@ -80,7 +80,7 @@ const getSplitCases = (req) => {
     }
     const res = [];
     for (const file of req.split_files) {
-        if (file.split_case?.length) {
+        if (file?.split_case?.length) {
             for (const singleCase of file.split_case) {
                 if (singleCase.testcases?.length) {
                     for (const testcase of singleCase.testcases) {
@@ -130,8 +130,10 @@ const treeData = computed(() => {
                         type: 'requirement',
                         split_cases: getSplitCases(req),
                         children: req.split_files && req.split_files.length > 0
-                            ? req.split_files.map((splitReq, splitReqIndex) => ({
-                                title: splitReq.file_name.replace('.docx', ''),
+                            ? req.split_files.filter(x => x && x.file_name).map((splitReq, splitReqIndex) => {
+                                console.log(splitReq);
+                                return {
+                                title: splitReq?.file_name.replace('.docx', ''),
 
                                 key: `${project._id.$oid}-${req.req_id}-${splitReq.split_file_id}`,
                                 fullPath: splitReq.object_name,
@@ -140,6 +142,7 @@ const treeData = computed(() => {
                                 project: project,
                                 type: 'sub_requirement',
                                 split_cases: (splitReq.split_case || []).map((singleCase, splitCaseIndex) => {
+                                    console.log(splitReq);
                                     for (const [index, testcase] of (singleCase.testcases || []).entries()) {
                                         testcase.split_case_name = singleCase.testcase_name;
                                         testcase.testcaseIndex = index; // 添加index字段，值为当前的顺序
@@ -172,7 +175,8 @@ const treeData = computed(() => {
                                             })) : []
                                     }))
                                     : []
-                            }))
+                                }
+                            })
                             : []
                     };
                 })
