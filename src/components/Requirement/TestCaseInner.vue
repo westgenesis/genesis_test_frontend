@@ -6,12 +6,12 @@
 
     <a-form :model="form" layout="vertical" v-show="activeTab === 'detail'">
         <div
-            style="border-left: 2px solid purple; margin-left: 0.25rem; padding-left: 1rem; margin-bottom: 1rem; display:flex; justify-content: space-between; align-items: center;">
+            style="border-left: 2px solid orange; margin-left: 0.25rem; padding-left: 1rem; margin-bottom: 1rem; display:flex; justify-content: space-between; align-items: center;">
             测试用例
             <div class="flex justify-center items-center" style="gap: 2rem; margin-right: 2rem;">
-                <a-button type="primary" @click="handleSave" class="custom-purple-button">保存</a-button>
-                <a-button type="primary" @click="handleGenerateFile" class="custom-purple-button">生成脚本</a-button>
-                <a-button type="primary" @click="downloadFile" class="custom-purple-button"
+                <a-button type="primary" @click="handleSave" class="custom-orange-button">保存</a-button>
+                <a-button type="primary" @click="handleGenerateFile" class="custom-orange-button">生成脚本</a-button>
+                <a-button type="primary" @click="downloadFile" class="custom-orange-button"
                     v-if="form.script_status === 'generated'">下载脚本</a-button>
             </div>
         </div>
@@ -541,15 +541,15 @@ const handleGenerate = async () => {
 </script>
 
 <style scoped lang="less">
-.custom-purple-button {
-    background-color: purple;
-    border-color: purple;
+.custom-orange-button {
+    background-color: orange;
+    border-color: orange;
 }
 
-.custom-purple-button:hover,
-.custom-purple-button:focus {
-    background-color: purple !important;
-    border-color: purple !important;
+.custom-orange-button:hover,
+.custom-orange-button:focus {
+    background-color: orange !important;
+    border-color: orange !important;
     filter: opacity(0.9);
 }
 

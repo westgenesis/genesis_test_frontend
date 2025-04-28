@@ -2,7 +2,7 @@
     <div v-if="!isLoginOrRegistry" class="minh-[60px] flex bg-custom-bg justify-between items-center">
         <div class="flex items-center">
             <div class="h-full flex ml-[16px]">
-                <img :src="logo" />
+                <img style="width: 8rem; height: 2rem" :src="logo" />
             </div>
             <div class="h-full">
                 <a-select ref="select" v-model:value="selectedProject"

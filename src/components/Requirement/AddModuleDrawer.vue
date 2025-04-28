@@ -22,7 +22,7 @@
             </div>
 
             <div class="flex justify-end">
-                <a-button type="primary" @click="saveModule" class="custom-purple-button">保存</a-button>
+                <a-button type="primary" @click="saveModule" class="custom-orange-button">保存</a-button>
             </div>
         </div>
     </a-drawer>
@@ -88,15 +88,15 @@ const saveModule = () => {
 </script>
 
 <style scoped>
-.custom-purple-button {
-    background-color: purple;
-    border-color: purple;
+.custom-orange-button {
+    background-color: orange;
+    border-color: orange;
 }
 
-.custom-purple-button:hover,
-.custom-purple-button:focus {
-    background-color: purple !important;
-    border-color: purple !important;
+.custom-orange-button:hover,
+.custom-orange-button:focus {
+    background-color: orange !important;
+    border-color: orange !important;
     filter: opacity(0.9);
 }
 </style>

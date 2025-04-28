@@ -6,7 +6,7 @@
         <a-tab-pane key="script_table" tab="台架测试脚本"></a-tab-pane>
     </a-tabs>
     <div v-if="activeTab === 'modules'">
-        <div style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;">项目信息</div>
+        <div style="border-left: 2px solid orange; margin-left: 1rem; padding-left: 1rem;">项目信息</div>
         <div class="flex-container" style="margin-left: 1rem">
             <div class="flex-item">
                 <strong>项目ID:</strong> {{ currentRequirement?.project?._id?.$oid }}
@@ -23,17 +23,17 @@
             </div>
         </div>
         <div
-            style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;margin-top: 1rem; margin-bottom: 1rem;">
+            style="border-left: 2px solid orange; margin-left: 1rem; padding-left: 1rem;margin-top: 1rem; margin-bottom: 1rem;">
             功能模块信息</div>
         <div class="w-full flex justify-end mr-[2rem] mb-[1rem]">
             <a-button type="primary" size="large" @click="fetchData"
-                class="custom-purple-button mr-[2rem]">刷新</a-button>
+                class="custom-orange-button mr-[2rem]">刷新</a-button>
             <a-button type="primary" size="large" @click="openAddDrawer"
-                class="custom-purple-button mr-[2rem]">新建功能模块</a-button>
+                class="custom-orange-button mr-[2rem]">新建功能模块</a-button>
             <a-button type="primary" size="large" @click="handleModuleDelete"
-                class="custom-purple-button mr-[2rem]">删除</a-button>
+                class="custom-orange-button mr-[2rem]">删除</a-button>
             <a-button type="primary" size="large" @click="handleBatchSplit"
-                class="custom-purple-button mr-[2rem]">批量拆分</a-button>
+                class="custom-orange-button mr-[2rem]">批量拆分</a-button>
         </div>
         <div style="width: 100%">
             <el-table :data="pagedDataModules" style="width: 100%" id="function_module_table"
@@ -89,11 +89,11 @@
         <div style="width: 100%">
             <div class="w-full flex justify-end mr-[2rem] mb-[1rem]">
                 <a-button type="primary" size="large" @click="fetchData"
-                    class="custom-purple-button mr-[2rem] mb-[1rem]">刷新</a-button>
+                    class="custom-orange-button mr-[2rem] mb-[1rem]">刷新</a-button>
                 <a-button type="primary" size="large" @click="handleBatchGenerate"
-                    class="custom-purple-button mr-[2rem] mb-[1rem]">批量生成用例</a-button>
+                    class="custom-orange-button mr-[2rem] mb-[1rem]">批量生成用例</a-button>
                 <a-button type="primary" size="large" @click="handleBatchDeleteTestcase"
-                    class="custom-purple-button mr-[2rem] mb-[1rem]">删除</a-button>
+                    class="custom-orange-button mr-[2rem] mb-[1rem]">删除</a-button>
             </div>
             <el-table :data="pagedDataPoints" style="width: 100%" id="function_point_table"
                 @selection-change="onPointsSelectionChange">
@@ -155,10 +155,10 @@
     </div>
     <div v-if="activeTab === 'testcase_table'">
         <div style="display: flex; justify-content: flex-end; margin: 1rem;">
-            <a-button type="primary" class="custom-purple-button" size="large" @click="handleBatchDelete">删除</a-button>
-            <a-button type="primary" class="custom-purple-button ml-[10px]" size="large"
+            <a-button type="primary" class="custom-orange-button" size="large" @click="handleBatchDelete">删除</a-button>
+            <a-button type="primary" class="custom-orange-button ml-[10px]" size="large"
                 @click="handleBatchGenerateScript">生成脚本</a-button>
-            <a-button type="primary" class="custom-purple-button ml-[10px]" size="large"
+            <a-button type="primary" class="custom-orange-button ml-[10px]" size="large"
                 @click="handleBatchMergeScript">合成脚本</a-button>
         </div>
         <el-table :data="pagedTableData" style="width: 100%" id="function_point_table" ref="multipleTableRef"
@@ -749,15 +749,15 @@ const handleBatchDeleteTestcase = () => {
     padding: 0.2rem;
 }
 
-.custom-purple-button {
-    background-color: purple;
-    border-color: purple;
+.custom-orange-button {
+    background-color: orange;
+    border-color: orange;
 }
 
-.custom-purple-button:hover,
-.custom-purple-button:focus {
-    background-color: purple !important;
-    border-color: purple !important;
+.custom-orange-button:hover,
+.custom-orange-button:focus {
+    background-color: orange !important;
+    border-color: orange !important;
     filter: opacity(0.9);
 }
 </style>

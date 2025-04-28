@@ -6,11 +6,11 @@
     </a-tabs>
     <div v-if="activeTab === 'detail'">
         <div
-            style="border-left: 2px solid purple; margin-left: 0.25rem; padding-left: 1rem; margin-bottom: 1rem; display:flex; justify-content: space-between;">
+            style="border-left: 2px solid orange; margin-left: 0.25rem; padding-left: 1rem; margin-bottom: 1rem; display:flex; justify-content: space-between;">
             功能点
             <div class="flex justify-center items-center" style="gap: 2rem; margin-right: 2rem;">
-                <a-button type="primary" @click="handleSave" class="custom-purple-button">保存</a-button>
-                <a-button type="primary" @click="handleGenerate" class="custom-purple-button">保存并生成用例</a-button>
+                <a-button type="primary" @click="handleSave" class="custom-orange-button">保存</a-button>
+                <a-button type="primary" @click="handleGenerate" class="custom-orange-button">保存并生成用例</a-button>
             </div>
         </div>
         <a-form :model="form" layout="vertical">
@@ -30,13 +30,13 @@
     </div>
     <div v-if="activeTab === 'testcase_table'" style="margin: 1rem">
         <div style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
-            <a-button type="primary" class="custom-purple-button" size="large" style="margin-right: 1rem;"
+            <a-button type="primary" class="custom-orange-button" size="large" style="margin-right: 1rem;"
                 @click="showDrawer">新建测试用例</a-button>
-            <a-button type="primary" class="custom-purple-button" size="large" @click="handleExport">导出全部</a-button>
-            <a-button type="primary" class="custom-purple-button ml-[20px]" size="large" @click="handleBatchDeleteTestcase">删除</a-button>
-            <a-button type="primary" class="custom-purple-button ml-[10px]" size="large"
+            <a-button type="primary" class="custom-orange-button" size="large" @click="handleExport">导出全部</a-button>
+            <a-button type="primary" class="custom-orange-button ml-[20px]" size="large" @click="handleBatchDeleteTestcase">删除</a-button>
+            <a-button type="primary" class="custom-orange-button ml-[10px]" size="large"
                 @click="handleBatchGenerateScript">生成脚本</a-button>
-            <a-button type="primary" class="custom-purple-button ml-[10px]" size="large"
+            <a-button type="primary" class="custom-orange-button ml-[10px]" size="large"
                 @click="handleBatchMergeScript">合成脚本</a-button>
         </div>
 
@@ -160,7 +160,7 @@
             </a-form-item>
             <a-form-item>
                 <div class="flex justify-center items-center" style="flex-direction: column;">
-                    <a-button type="primary" @click="handleNewSave" class="custom-purple-button">保存</a-button>
+                    <a-button type="primary" @click="handleNewSave" class="custom-orange-button">保存</a-button>
                 </div>
 
             </a-form-item>
@@ -643,15 +643,15 @@ const handleBatchDeleteTestcase = () => {
 </script>
 
 <style scoped lang="less">
-.custom-purple-button {
-    background-color: purple;
-    border-color: purple;
+.custom-orange-button {
+    background-color: orange;
+    border-color: orange;
 }
 
-.custom-purple-button:hover,
-.custom-purple-button:focus {
-    background-color: purple !important;
-    border-color: purple !important;
+.custom-orange-button:hover,
+.custom-orange-button:focus {
+    background-color: orange !important;
+    border-color: orange !important;
     filter: opacity(0.9);
 }
 </style>

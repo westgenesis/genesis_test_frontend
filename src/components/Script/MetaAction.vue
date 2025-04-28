@@ -35,24 +35,24 @@
     </a-form>
 
     <div class="flex justify-end">
-      <a-button type="primary" size="large" @click="query" class="custom-purple-button mr-[2rem] flex items-center">
+      <a-button type="primary" size="large" @click="query" class="custom-orange-button mr-[2rem] flex items-center">
         <SearchOutlined /> 查询
       </a-button>
       <a-button type="primary" v-if="activeTab === '1'" size="large" @click="showDrawer"
-        class="custom-purple-button mr-[2rem] flex items-center">
+        class="custom-orange-button mr-[2rem] flex items-center">
         <PlusOutlined />新建IO信号动作
       </a-button>
       <a-button type="primary" v-if="activeTab === '2'" size="large" @click="showDrawer"
-        class="custom-purple-button mr-[2rem] flex items-center">
+        class="custom-orange-button mr-[2rem] flex items-center">
         <PlusOutlined />新建总线信号动作
       </a-button>
       <a-button type="primary" v-if="activeTab === '2'" size="large" @click="dbcVisible = true"
-        class="custom-purple-button mr-[2rem] flex items-center">
+        class="custom-orange-button mr-[2rem] flex items-center">
         <UploadOutlined />
         上传DBC文件
       </a-button>
       <a-button type="primary" size="large" @click="deleteSelectedActions"
-        class="custom-purple-button mr-[2rem] flex items-center">
+        class="custom-orange-button mr-[2rem] flex items-center">
         <DeleteOutlined />
         删除
       </a-button>
@@ -493,32 +493,32 @@ const deleteAction = async (id) => {
 </script>
 
 <style scoped>
-.custom-purple-button {
-  background-color: purple;
-  border-color: purple;
+.custom-orange-button {
+  background-color: orange;
+  border-color: orange;
 }
 
-.custom-purple-button:hover,
-.custom-purple-button:focus {
-  background-color: purple !important;
-  border-color: purple !important;
+.custom-orange-button:hover,
+.custom-orange-button:focus {
+  background-color: orange !important;
+  border-color: orange !important;
   filter: opacity(0.9);
 }
 
 /* 覆盖 el-radio-button 的默认样式 */
 :deep(.el-radio-button__orig-radio:checked + .el-radio-button__inner) {
-  background-color: purple;
-  border-color: purple;
+  background-color: orange;
+  border-color: orange;
 }
 
 :deep(.el-radio-button__inner) {
-  color: purple;
-  border-color: purple;
+  color: orange;
+  border-color: orange;
 }
 
 :deep(.el-radio-button__original-radio:checked+.el-radio-button__inner) {
-  background-color: purple;
-  border-color: purple !important;
+  background-color: orange;
+  border-color: orange !important;
 }
 
 :deep(.ant-tree-node-content-wrapper) {

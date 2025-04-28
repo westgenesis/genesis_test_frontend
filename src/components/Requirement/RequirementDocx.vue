@@ -10,9 +10,9 @@
 
             <div class="flex justify-center mr-[1rem]" style="gap: 1rem">
                 <a-button type="primary" size="" @click="onSplit"
-                class="custom-purple-button">拆分</a-button>
+                class="custom-orange-button">拆分</a-button>
                     <a-button type="primary" size="" @click="onSaveContent"
-                        class="custom-purple-button">保存</a-button>
+                        class="custom-orange-button">保存</a-button>
                 </div>
         </div>
     </div>
@@ -116,31 +116,31 @@ const onSplit = () => {
 
 
 <style scoped lang="less">
-.custom-purple-button {
-    background-color: purple;
-    border-color: purple;
+.custom-orange-button {
+    background-color: orange;
+    border-color: orange;
 }
 
-.custom-purple-button:hover,
-.custom-purple-button:focus {
-    background-color: purple !important;
-    border-color: purple !important;
+.custom-orange-button:hover,
+.custom-orange-button:focus {
+    background-color: orange !important;
+    border-color: orange !important;
     filter: opacity(0.9);
 }
 
 /* 覆盖 el-radio-button 的默认样式 */
 :deep(.el-radio-button__orig-radio:checked + .el-radio-button__inner) {
-    background-color: purple;
-    border-color: purple;
+    background-color: orange;
+    border-color: orange;
 }
 
 :deep(.el-radio-button__inner) {
-    color: purple;
-    border-color: purple;
+    color: orange;
+    border-color: orange;
 }
 
 :deep(.el-radio-button__original-radio:checked+.el-radio-button__inner) {
-    background-color: purple;
-    border-color: purple !important;
+    background-color: orange;
+    border-color: orange !important;
 }
 </style>

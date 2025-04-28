@@ -32,7 +32,7 @@
                     </el-upload>
                 </a-form-item>
                 <a-form-item :wrapper-col="{ offset: 4, span: 14 }">
-                    <a-button @click="submitForm" type="primary" class="custom-purple-button">创建</a-button>
+                    <a-button @click="submitForm" type="primary" class="custom-orange-button">创建</a-button>
                     <a-button @click="cancel" style="margin-left: 16px;" >取消</a-button>
                 </a-form-item>
             </a-form>
@@ -136,15 +136,15 @@ const changePeriod = (v, strs) => {
     margin: 2rem;
 }
 
-.custom-purple-button {
-    background-color: purple;
-    border-color: purple;
+.custom-orange-button {
+    background-color: orange;
+    border-color: orange;
 }
 
-.custom-purple-button:hover,
-.custom-purple-button:focus {
-    background-color: purple !important;
-    border-color: purple !important;
+.custom-orange-button:hover,
+.custom-orange-button:focus {
+    background-color: orange !important;
+    border-color: orange !important;
     filter: opacity(0.9);
 }
 

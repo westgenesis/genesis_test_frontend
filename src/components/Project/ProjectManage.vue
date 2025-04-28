@@ -13,9 +13,9 @@
                 </div>
             </div>
             <div>
-                <a-button type="primary" @click="onCreate" size="large" class="custom-purple-button">新建项目</a-button>
+                <a-button type="primary" @click="onCreate" size="large" class="custom-orange-button">新建项目</a-button>
                 <a-button type="primary" @click="onDelete" size="large"
-                    class="ml-[10px] custom-purple-button">删除项目</a-button>
+                    class="ml-[10px] custom-orange-button">删除项目</a-button>
             </div>
         </div>
 
@@ -226,31 +226,31 @@ const changePeriod = (v, strs) => {
 </script>
 
 <style scoped>
-.custom-purple-button {
-    background-color: purple;
-    border-color: purple;
+.custom-orange-button {
+    background-color: orange;
+    border-color: orange;
 }
 
-.custom-purple-button:hover,
-.custom-purple-button:focus {
-    background-color: purple !important;
-    border-color: purple !important;
+.custom-orange-button:hover,
+.custom-orange-button:focus {
+    background-color: orange !important;
+    border-color: orange !important;
     filter: opacity(0.9);
 }
 
 /* 覆盖 el-radio-button 的默认样式 */
 :deep(.el-radio-button__orig-radio:checked + .el-radio-button__inner) {
-    background-color: purple;
-    border-color: purple;
+    background-color: orange;
+    border-color: orange;
 }
 
 :deep(.el-radio-button__inner) {
-    color: purple;
-    border-color: purple;
+    color: orange;
+    border-color: orange;
 }
 
 :deep(.el-radio-button__original-radio:checked+.el-radio-button__inner) {
-    background-color: purple;
-    border-color: purple !important;
+    background-color: orange;
+    border-color: orange !important;
 }
 </style>

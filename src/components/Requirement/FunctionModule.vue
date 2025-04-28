@@ -15,7 +15,7 @@
         </div>
         <div class="w-full pt-[2rem] overflow-scroll">
             <div v-show="currentFile && currentType === 'sub_requirement'" class="editor-container">
-                <div style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;">功能模块</div>
+                <div style="border-left: 2px solid orange; margin-left: 1rem; padding-left: 1rem;">功能模块</div>
                 <div class="flex  mt-[2rem] mb-[1rem]">
                     <div class="w-[200px] ml-[1rem]">
                         功能模块名称
@@ -27,12 +27,12 @@
                 <div ref="quillEditorRef" class="docx-editor" />
                 <div class="flex justify-center mt-[1rem]">
                     <a-button type="primary" size="large" @click="onSaveContent"
-                        class="custom-purple-button">保存</a-button>
+                        class="custom-orange-button">保存</a-button>
                 </div>
                 <div style="text-align: center;color: red;font-size: 12px;margin-top: 1rem;">提示：当前为V{{ currentFile?.splitReq?.version }}版本 由文档{{ (currentFile?.req?.name || '').split('/')[1] }} v1版本生成 保存后版本新增</div>
             </div>
             <div v-show="currentType === 'requirement'" class="w-full pt-[2rem]" style="height: 90vh">
-                <div style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;">项目信息</div>
+                <div style="border-left: 2px solid orange; margin-left: 1rem; padding-left: 1rem;">项目信息</div>
                 <div class="flex-container" style="margin-left: 1rem">
                     <div class="flex-item">
                         <strong>项目ID:</strong> {{ currentRequirement?.project?._id?.$oid }}
@@ -49,15 +49,15 @@
                     </div>
                 </div>
                 <div
-                    style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;margin-top: 1rem; margin-bottom: 1rem;">
+                    style="border-left: 2px solid orange; margin-left: 1rem; padding-left: 1rem;margin-top: 1rem; margin-bottom: 1rem;">
                     功能模块信息</div>
                     <div class="w-full flex justify-end mr-[2rem] mb-[1rem]">
                         <a-button type="primary" size="large" @click="openAddDrawer"
-                        class="custom-purple-button mr-[2rem]">新建功能模块</a-button>
+                        class="custom-orange-button mr-[2rem]">新建功能模块</a-button>
                         <a-button type="primary" size="large" @click="handleDelete"
-                        class="custom-purple-button mr-[2rem]">删除</a-button>
+                        class="custom-orange-button mr-[2rem]">删除</a-button>
                         <a-button type="primary" size="large" @click="handleBatchSplit"
-                        class="custom-purple-button mr-[2rem]">批量拆分</a-button>
+                        class="custom-orange-button mr-[2rem]">批量拆分</a-button>
                     </div>
                 <div style="width: 100%">
                     <el-table :data="pagedData" style="width: 100%" id="function_module_table" @selection-change="handleSelectionChange">
@@ -439,31 +439,31 @@ const handleDelete = () => {
     padding: 0.2rem;
 }
 
-.custom-purple-button {
-    background-color: purple;
-    border-color: purple;
+.custom-orange-button {
+    background-color: orange;
+    border-color: orange;
 }
 
-.custom-purple-button:hover,
-.custom-purple-button:focus {
-    background-color: purple !important;
-    border-color: purple !important;
+.custom-orange-button:hover,
+.custom-orange-button:focus {
+    background-color: orange !important;
+    border-color: orange !important;
     filter: opacity(0.9);
 }
 
 /* 覆盖 el-radio-button 的默认样式 */
 :deep(.el-radio-button__orig-radio:checked + .el-radio-button__inner) {
-    background-color: purple;
-    border-color: purple;
+    background-color: orange;
+    border-color: orange;
 }
 
 :deep(.el-radio-button__inner) {
-    color: purple;
-    border-color: purple;
+    color: orange;
+    border-color: orange;
 }
 
 :deep(.el-radio-button__original-radio:checked+.el-radio-button__inner) {
-    background-color: purple;
-    border-color: purple !important;
+    background-color: orange;
+    border-color: orange !important;
 }
 </style>

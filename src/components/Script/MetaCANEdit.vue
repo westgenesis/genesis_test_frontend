@@ -87,9 +87,9 @@
         </a-form-item>
     </a-form>
     <div slot="footer" class="flex justify-end">
-        <a-button class="custom-purple-button mr-[2rem]" type="primary" @click="emit('close', false)"
+        <a-button class="custom-orange-button mr-[2rem]" type="primary" @click="emit('close', false)"
             size="large">关闭</a-button>
-        <a-button class="custom-purple-button mr-[2rem]" type="primary" @click="handleEditOk" size="large">提交</a-button>
+        <a-button class="custom-orange-button mr-[2rem]" type="primary" @click="handleEditOk" size="large">提交</a-button>
     </div>
 
     <CANSelector v-model:visible="canSelVisible" @confirm="select"></CANSelector>

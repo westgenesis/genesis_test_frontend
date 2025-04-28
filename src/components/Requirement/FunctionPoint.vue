@@ -31,7 +31,7 @@
         </div>
         <div class="w-full h-[90%] pt-[2rem] overflow-scroll">
             <div v-show="currentType === 'requirement'" class="w-full pt-[2rem]" style="height: 90vh">
-                <div style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;">项目信息</div>
+                <div style="border-left: 2px solid orange; margin-left: 1rem; padding-left: 1rem;">项目信息</div>
                 <div class="flex-container" style="margin-left: 1rem">
                     <div class="flex-item">
                         <strong>项目ID:</strong> {{ currentRequirement?.project?._id?.$oid }}
@@ -48,17 +48,17 @@
                     </div>
                 </div>
                 <div
-                    style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;margin-top: 1rem; margin-bottom: 1rem;">
+                    style="border-left: 2px solid orange; margin-left: 1rem; padding-left: 1rem;margin-top: 1rem; margin-bottom: 1rem;">
                     功能模块信息</div>
                 <div class="w-full flex justify-end mr-[2rem] mb-[1rem]">
                     <a-button type="primary" size="large" @click="refreshModule"
-                    class="custom-purple-button mr-[2rem]">刷新</a-button>
+                    class="custom-orange-button mr-[2rem]">刷新</a-button>
                     <a-button type="primary" size="large" @click="openAddDrawer"
-                        class="custom-purple-button mr-[2rem]">新建功能模块</a-button>
+                        class="custom-orange-button mr-[2rem]">新建功能模块</a-button>
                     <a-button type="primary" size="large" @click="handleModuleDelete"
-                        class="custom-purple-button mr-[2rem]">删除</a-button>
+                        class="custom-orange-button mr-[2rem]">删除</a-button>
                     <a-button type="primary" size="large" @click="handleBatchSplit"
-                        class="custom-purple-button mr-[2rem]">批量拆分</a-button>
+                        class="custom-orange-button mr-[2rem]">批量拆分</a-button>
                 </div>
                 <div style="width: 100%">
                     <el-table :data="pagedDataModules" style="width: 100%" id="function_module_table"
@@ -107,7 +107,7 @@
             </div>
             <div v-show="currentType === 'sub_requirement'" class="w-full pt-[2rem]"
                 style="height: calc(100vh - 5.3rem)">
-                <div style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;">功能模块名称</div>
+                <div style="border-left: 2px solid orange; margin-left: 1rem; padding-left: 1rem;">功能模块名称</div>
                 <div class="flex-container" style="margin-left: 1rem">
                     <div class="flex-item">
                         <strong>功能模块名称:</strong> {{ currentRequirement?.splitReq?.file_name?.replace('.docx', '') }}
@@ -123,17 +123,17 @@
                     </div>
                 </div>
                 <div
-                    style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;margin-top: 1rem; margin-bottom: 1rem;">
+                    style="border-left: 2px solid orange; margin-left: 1rem; padding-left: 1rem;margin-top: 1rem; margin-bottom: 1rem;">
                     功能点信息
                 </div>
                 <div style="width: 100%">
                     <div class="w-full flex justify-end mr-[2rem] mb-[1rem]">
                         <a-button type="primary" size="large" @click="refreshCases"
-                            class="custom-purple-button mr-[2rem] mb-[1rem]">刷新</a-button>
+                            class="custom-orange-button mr-[2rem] mb-[1rem]">刷新</a-button>
                         <a-button type="primary" size="large" @click="handleBatchGenerate"
-                            class="custom-purple-button mr-[2rem] mb-[1rem]">批量生成用例</a-button>
+                            class="custom-orange-button mr-[2rem] mb-[1rem]">批量生成用例</a-button>
                         <a-button type="primary" size="large" @click="showDrawer"
-                            class="custom-purple-button mr-[2rem] mb-[1rem]">新建功能点</a-button>
+                            class="custom-orange-button mr-[2rem] mb-[1rem]">新建功能点</a-button>
                     </div>
                     <el-table :data="currentRequirement?.splitReq?.split_case" style="width: 100%"
                         id="function_point_table" @selection-change="onPointsSelectionChange">
@@ -185,7 +185,7 @@
                 </div>
             </div>
             <div v-show="currentType === 'split_case'" class="w-full pt-[2rem]" style="height: calc(100vh - 5.3rem)">
-                <div style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem; margin-bottom: 1rem;">
+                <div style="border-left: 2px solid orange; margin-left: 1rem; padding-left: 1rem; margin-bottom: 1rem;">
                     功能点
                 </div>
                 <a-form :model="form" layout="vertical">
@@ -203,7 +203,7 @@
                     </a-form-item>
                     <a-form-item>
                         <div class="flex justify-center items-center" style="flex-direction: column;">
-                            <a-button type="primary" @click="handleSave" class="custom-purple-button">保存</a-button>
+                            <a-button type="primary" @click="handleSave" class="custom-orange-button">保存</a-button>
                             <div style="color: red">提示：当前为V{{ form.version }}版本 保存后版本新增</div>
                         </div>
 
@@ -226,7 +226,7 @@
                     </a-form-item>
                     <a-form-item>
                         <div class="flex justify-center items-center" style="flex-direction: column;">
-                            <a-button type="primary" @click="handleEditSave" class="custom-purple-button">保存</a-button>
+                            <a-button type="primary" @click="handleEditSave" class="custom-orange-button">保存</a-button>
                         </div>
                     </a-form-item>
                 </a-form>
@@ -248,7 +248,7 @@
                     </a-form-item>
                     <a-form-item>
                         <div class="flex justify-center items-center" style="flex-direction: column;">
-                            <a-button type="primary" @click="handleNewSave" class="custom-purple-button">保存</a-button>
+                            <a-button type="primary" @click="handleNewSave" class="custom-orange-button">保存</a-button>
                         </div>
                     </a-form-item>
                 </a-form>
@@ -837,32 +837,32 @@ const refreshCases = async (needShow = true) => {
     padding: 0.2rem;
 }
 
-.custom-purple-button {
-    background-color: purple;
-    border-color: purple;
+.custom-orange-button {
+    background-color: orange;
+    border-color: orange;
 }
 
-.custom-purple-button:hover,
-.custom-purple-button:focus {
-    background-color: purple !important;
-    border-color: purple !important;
+.custom-orange-button:hover,
+.custom-orange-button:focus {
+    background-color: orange !important;
+    border-color: orange !important;
     filter: opacity(0.9);
 }
 
 /* 覆盖 el-radio-button 的默认样式 */
 :deep(.el-radio-button__orig-radio:checked + .el-radio-button__inner) {
-    background-color: purple;
-    border-color: purple;
+    background-color: orange;
+    border-color: orange;
 }
 
 :deep(.el-radio-button__inner) {
-    color: purple;
-    border-color: purple;
+    color: orange;
+    border-color: orange;
 }
 
 :deep(.el-radio-button__original-radio:checked+.el-radio-button__inner) {
-    background-color: purple;
-    border-color: purple !important;
+    background-color: orange;
+    border-color: orange !important;
 }
 
 :deep(.ant-tree-node-content-wrapper) {

@@ -50,9 +50,9 @@
     </a-modal> -->
 
     <div slot="footer" class="flex justify-end">
-        <a-button class="custom-purple-button mr-[2rem]" type="primary" @click="emit('close')"
+        <a-button class="custom-orange-button mr-[2rem]" type="primary" @click="emit('close')"
             size="large">关闭</a-button>
-        <a-button class="custom-purple-button mr-[2rem]" type="primary" @click="handleEditOk" size="large">提交</a-button>
+        <a-button class="custom-orange-button mr-[2rem]" type="primary" @click="handleEditOk" size="large">提交</a-button>
     </div>
 
 </template>

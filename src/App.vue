@@ -47,7 +47,7 @@ const visible = ref(true);
   abc{{ abc }} -->
   <a-config-provider :locale="locale" :theme="{
     token: {
-      colorPrimary: 'purple',
+      colorPrimary: 'orange',
     },
   }">
     <div class="main">

@@ -31,7 +31,7 @@
         </div>
         <div class="w-full h-[90%] pt-[2rem] overflow-scroll">
             <div v-show="currentType === 'requirement'" class="w-full pt-[2rem]" style="height: 90vh">
-                <div style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;">项目信息</div>
+                <div style="border-left: 2px solid yellow; margin-left: 1rem; padding-left: 1rem;">项目信息</div>
                 <div class="flex-container" style="margin-left: 1rem">
                     <div class="flex-item">
                         <strong>项目ID:</strong> {{ currentRequirement?.project?._id?.$oid }}
@@ -48,10 +48,10 @@
                     </div>
                 </div>
                 <div
-                    style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;margin-top: 1rem; margin-bottom: 1rem;">
+                    style="border-left: 2px solid yellow; margin-left: 1rem; padding-left: 1rem;margin-top: 1rem; margin-bottom: 1rem;">
                     测试用例信息</div>
                 <div class="flex" style="justify-content: flex-end; margin-right: 1rem; margin-bottom: 1rem;">
-                    <a-button type="primary" class="custom-purple-button" size="large"
+                    <a-button type="primary" class="custom-orange-button" size="large"
                         @click="export_by_requirement">导出全部</a-button>
                 </div>
                 <el-table :data="flattened_cases_req_paged" style="width: 100%" id="function_point_table">
@@ -117,7 +117,7 @@
                 </div>
             </div>
             <div v-show="currentType === 'sub_requirement'" class="w-full pt-[2rem]" style="height: 90vh">
-                <div style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;">功能模块名称</div>
+                <div style="border-left: 2px solid orange; margin-left: 1rem; padding-left: 1rem;">功能模块名称</div>
                 <div class="flex-container" style="margin-left: 1rem">
                     <div class="flex-item">
                         <strong>功能模块名称:</strong> {{ currentRequirement?.splitReq?.file_name?.replace('.docx', '') }}
@@ -133,12 +133,12 @@
                     </div>
                 </div>
                 <div
-                    style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem;margin-top: 1rem; margin-bottom: 1rem;">
+                    style="border-left: 2px solid yellow; margin-left: 1rem; padding-left: 1rem;margin-top: 1rem; margin-bottom: 1rem;">
                     测试用例信息
                 </div>
                 <div style="width: 100%">
                     <div class="flex" style="justify-content: flex-end; margin-right: 1rem; margin-bottom: 1rem;">
-                        <a-button type="primary" class="custom-purple-button" size="large"
+                        <a-button type="primary" class="custom-orange-button" size="large"
                             @click="export_by_sub_requirement">导出全部</a-button>
                     </div>
                     <el-table :data="pagedData" style="width: 100%" id="function_point_table" :height="table_height1">
@@ -210,7 +210,7 @@
                 </div>
             </div>
             <div v-show="currentType === 'split_case'" class="w-full pt-[2rem]" style="height: 90vh">
-                <div style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem; margin-bottom: 1rem;">
+                <div style="border-left: 2px solid yellow; margin-left: 1rem; padding-left: 1rem; margin-bottom: 1rem;">
                     功能点信息
                 </div>
                 <div class="flex-container" style="margin-left: 1rem">
@@ -228,7 +228,7 @@
                     </div>
                 </div>
                 <div
-                    style="border-left: 2px solid purple; margin-left: 1rem; padding-left: 1rem; margin-bottom: 1rem; margin-top: 1rem">
+                    style="border-left: 2px solid yellow; margin-left: 1rem; padding-left: 1rem; margin-bottom: 1rem; margin-top: 1rem">
                     测试用例
                 </div>
                 <div class="flex" style="justify-content: space-between; margin-right: 1rem; margin-bottom: 1rem;">
@@ -242,7 +242,7 @@
                         </a-select>
                     </div>
                     <div>
-                        <a-button type="primary" class="custom-purple-button" size="large" style="margin-right: 1rem;"
+                        <a-button type="primary" class="custom-orange-button" size="large" style="margin-right: 1rem;"
                             @click="refreshUseCase">刷新</a-button>
                     </div>
 
@@ -349,7 +349,7 @@
                     </a-form-item>
                     <a-form-item>
                         <div class="flex justify-center items-center" style="flex-direction: column;">
-                            <a-button type="primary" @click="handleSave" class="custom-purple-button">保存</a-button>
+                            <a-button type="primary" @click="handleSave" class="custom-orange-button">保存</a-button>
                             <div style="color: red">提示：当前为V{{ form.version }}版本 保存后版本新增</div>
                         </div>
                     </a-form-item>
@@ -386,7 +386,7 @@
                     </a-form-item>
                     <a-form-item>
                         <div class="flex justify-center items-center" style="flex-direction: column;">
-                            <a-button type="primary" @click="handleEditSave" class="custom-purple-button">保存</a-button>
+                            <a-button type="primary" @click="handleEditSave" class="custom-orange-button">保存</a-button>
                         </div>
                     </a-form-item>
                 </a-form>
@@ -423,7 +423,7 @@
                     </a-form-item>
                     <a-form-item>
                         <div class="flex justify-center items-center" style="flex-direction: column;">
-                            <a-button type="primary" @click="handleNewSave" class="custom-purple-button">保存</a-button>
+                            <a-button type="primary" @click="handleNewSave" class="custom-orange-button">保存</a-button>
                         </div>
                     </a-form-item>
                 </a-form>
@@ -1035,15 +1035,15 @@ const export_by_requirement = () => {
     padding: 0.2rem;
 }
 
-.custom-purple-button {
-    background-color: purple;
-    border-color: purple;
+.custom-orange-button {
+    background-color: yellow;
+    border-color: yellow;
 }
 
-.custom-purple-button:hover,
-.custom-purple-button:focus {
-    background-color: purple !important;
-    border-color: purple !important;
+.custom-orange-button:hover,
+.custom-orange-button:focus {
+    background-color: yellow !important;
+    border-color: yellow !important;
     filter: opacity(0.9);
 }
 
@@ -1053,17 +1053,17 @@ const export_by_requirement = () => {
 
 /* 覆盖 el-radio-button 的默认样式 */
 :deep(.el-radio-button__orig-radio:checked + .el-radio-button__inner) {
-    background-color: purple;
-    border-color: purple;
+    background-color: yellow;
+    border-color: yellow;
 }
 
 :deep(.el-radio-button__inner) {
-    color: purple;
-    border-color: purple;
+    color: yellow;
+    border-color: yellow;
 }
 
 :deep(.el-radio-button__original-radio:checked+.el-radio-button__inner) {
-    background-color: purple;
-    border-color: purple !important;
+    background-color: yellow;
+    border-color: yellow !important;
 }
 </style>

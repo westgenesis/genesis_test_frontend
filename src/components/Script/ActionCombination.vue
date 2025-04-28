@@ -34,17 +34,17 @@
 
       <div class="flex justify-end">
         <a-button type="primary" size="large" @click="fetchActionCombinations"
-          class="custom-purple-button mr-[2rem] flex items-center">
+          class="custom-orange-button mr-[2rem] flex items-center">
           <SearchOutlined /> 查询
         </a-button>
 
         <a-button type="primary" size="large" @click="showDrawer"
-          class="custom-purple-button mr-[2rem] flex items-center">
+          class="custom-orange-button mr-[2rem] flex items-center">
           <PlusOutlined />添加动作组合
         </a-button>
 
         <!-- <a-button type="primary" size="large" @click="deleteSelectedActions"
-          class="custom-purple-button mr-[2rem] flex items-center">
+          class="custom-orange-button mr-[2rem] flex items-center">
           <DeleteOutlined />
           删除
         </a-button> -->
@@ -90,7 +90,7 @@
           <el-upload ref="uploadRef" :auto-upload="false" :on-change="onBeforeUpload" :show-file-list="false"
             accept=".blkx,.vtt">
             <template #trigger>
-              <a-button type="primary" size="large" class="custom-purple-button">
+              <a-button type="primary" size="large" class="custom-orange-button">
                 点击上传
               </a-button>
             </template>
@@ -113,8 +113,8 @@
         </a-form-item>
       </a-form>
       <div slot="footer" class="flex justify-end">
-        <a-button class="custom-purple-button mr-[2rem]" type="primary" @click="handleClose" size="large">关闭</a-button>
-        <a-button class="custom-purple-button mr-[2rem]" type="primary" @click="handleOk" size="large"
+        <a-button class="custom-orange-button mr-[2rem]" type="primary" @click="handleClose" size="large">关闭</a-button>
+        <a-button class="custom-orange-button mr-[2rem]" type="primary" @click="handleOk" size="large"
           :loading="submitting">提交</a-button>
       </div>
     </a-drawer>
@@ -137,7 +137,7 @@
           <el-upload ref="uploadRef" :auto-upload="false" :on-change="onBeforeUploadEdit" :show-file-list="false"
             accept=".blkx,.vtt">
             <template #trigger>
-              <a-button type="primary" size="large" class="custom-purple-button">
+              <a-button type="primary" size="large" class="custom-orange-button">
                 点击上传
               </a-button>
             </template>
@@ -160,9 +160,9 @@
         </a-form-item>
       </a-form>
       <div slot="footer" class="flex justify-end">
-        <a-button class="custom-purple-button mr-[2rem]" type="primary" @click="handleEditClose"
+        <a-button class="custom-orange-button mr-[2rem]" type="primary" @click="handleEditClose"
           size="large">关闭</a-button>
-        <a-button class="custom-purple-button mr-[2rem]" type="primary" @click="handleEditOk" size="large"
+        <a-button class="custom-orange-button mr-[2rem]" type="primary" @click="handleEditOk" size="large"
           :loading="submitting">提交</a-button>
       </div>
     </a-drawer>
@@ -524,15 +524,15 @@ const deleteEditStep = (index) => {
 </script>
 
 <style scoped>
-.custom-purple-button {
-  background-color: purple;
-  border-color: purple;
+.custom-orange-button {
+  background-color: orange;
+  border-color: orange;
 }
 
-.custom-purple-button:hover,
-.custom-purple-button:focus {
-  background-color: purple !important;
-  border-color: purple !important;
+.custom-orange-button:hover,
+.custom-orange-button:focus {
+  background-color: orange !important;
+  border-color: orange !important;
   filter: opacity(0.9);
 }
 

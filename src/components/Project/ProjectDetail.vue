@@ -1,9 +1,9 @@
 <template>
     <div class="project-detail">
         <div class="flex justify-end mr-[6rem] mb-[2rem]">
-            <a-button type="primary" v-show="!isEditing" @click="changeEdit" class="custom-purple-button">编辑</a-button>
-            <a-button type="primary" v-show="isEditing" @click="submit" class="custom-purple-button">确定</a-button>
-            <a-button type="primary" v-show="isEditing" @click="changeEdit" class="ml-[1rem] custom-purple-button">取消</a-button>
+            <a-button type="primary" v-show="!isEditing" @click="changeEdit" class="custom-orange-button">编辑</a-button>
+            <a-button type="primary" v-show="isEditing" @click="submit" class="custom-orange-button">确定</a-button>
+            <a-button type="primary" v-show="isEditing" @click="changeEdit" class="ml-[1rem] custom-orange-button">取消</a-button>
         </div>
         <a-form :model="project" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }" ref="formRef">
             <a-form-item label="项目编号" class="form-item-spacing">
@@ -196,31 +196,31 @@ const onBeforeUpload = async (file) => {
     display: none !important;
 }
 
-.custom-purple-button {
-    background-color: purple;
-    border-color: purple;
+.custom-orange-button {
+    background-color: orange;
+    border-color: orange;
 }
 
-.custom-purple-button:hover,
-.custom-purple-button:focus {
-    background-color: purple !important;
-    border-color: purple !important;
+.custom-orange-button:hover,
+.custom-orange-button:focus {
+    background-color: orange !important;
+    border-color: orange !important;
     filter: opacity(0.9);
 }
 
 /* 覆盖 el-radio-button 的默认样式 */
 :deep(.el-radio-button__orig-radio:checked + .el-radio-button__inner) {
-    background-color: purple;
-    border-color: purple;
+    background-color: orange;
+    border-color: orange;
 }
 
 :deep(.el-radio-button__inner) {
-    color: purple;
-    border-color: purple;
+    color: orange;
+    border-color: orange;
 }
 
 :deep(.el-radio-button__original-radio:checked+.el-radio-button__inner) {
-    background-color: purple;
-    border-color: purple !important;
+    background-color: orange;
+    border-color: orange !important;
 }
 </style>

@@ -13,9 +13,9 @@
 
   <div class="m-[32px]">
     <div class="mt-[20px] mb-[20px] flex justify-end">
-      <a-button type="primary" size="large" @click="showDrawer" class="custom-purple-button mr-[2rem]">添加元动作</a-button>
+      <a-button type="primary" size="large" @click="showDrawer" class="custom-orange-button mr-[2rem]">添加元动作</a-button>
       <a-button type="primary" size="large" @click="deleteSelectedActions"
-        class="custom-purple-button mr-[2rem]">删除选中项</a-button>
+        class="custom-orange-button mr-[2rem]">删除选中项</a-button>
     </div>
 
     <a-table :columns="columns" :row-key="record => record._id" bordered :data-source="pagedDataSource" size="middle"
@@ -106,8 +106,8 @@
         <a-button style="margin-top: 1rem" type="dashed" @click="addValue">添加值</a-button>
       </a-form>
       <div slot="footer" class="flex justify-end">
-        <a-button class="custom-purple-button mr-[2rem]" type="primary" @click="handleClose" size="large">关闭</a-button>
-        <a-button class="custom-purple-button mr-[2rem]" type="primary" @click="handleOk" size="large"
+        <a-button class="custom-orange-button mr-[2rem]" type="primary" @click="handleClose" size="large">关闭</a-button>
+        <a-button class="custom-orange-button mr-[2rem]" type="primary" @click="handleOk" size="large"
           :loading="submitting">提交</a-button>
       </div>
     </a-drawer>
@@ -179,9 +179,9 @@
         <a-button style="margin-top: 1rem" type="dashed" @click="addEditValue">添加值</a-button>
       </a-form>
       <div slot="footer" class="flex justify-end">
-        <a-button class="custom-purple-button mr-[2rem]" type="primary" @click="handleEditClose"
+        <a-button class="custom-orange-button mr-[2rem]" type="primary" @click="handleEditClose"
           size="large">关闭</a-button>
-        <a-button class="custom-purple-button mr-[2rem]" type="primary" @click="handleEditOk" size="large"
+        <a-button class="custom-orange-button mr-[2rem]" type="primary" @click="handleEditOk" size="large"
           :loading="submitting">提交</a-button>
       </div>
     </a-drawer>
@@ -526,32 +526,32 @@ const removeEditValue = (index) => {
 </script>
 
 <style scoped>
-.custom-purple-button {
-  background-color: purple;
-  border-color: purple;
+.custom-orange-button {
+  background-color: yellow;
+  border-color: yellow;
 }
 
-.custom-purple-button:hover,
-.custom-purple-button:focus {
-  background-color: purple !important;
-  border-color: purple !important;
+.custom-orange-button:hover,
+.custom-orange-button:focus {
+  background-color: yellow !important;
+  border-color: yellow !important;
   filter: opacity(0.9);
 }
 
 /* 覆盖 el-radio-button 的默认样式 */
 :deep(.el-radio-button__orig-radio:checked + .el-radio-button__inner) {
-  background-color: purple;
-  border-color: purple;
+  background-color: yellow;
+  border-color: yellow;
 }
 
 :deep(.el-radio-button__inner) {
-  color: purple;
-  border-color: purple;
+  color: yellow;
+  border-color: yellow;
 }
 
 :deep(.el-radio-button__original-radio:checked+.el-radio-button__inner) {
-  background-color: purple;
-  border-color: purple !important;
+  background-color: yellow;
+  border-color: yellow !important;
 }
 
 :deep(.ant-tree-node-content-wrapper) {

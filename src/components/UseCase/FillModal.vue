@@ -96,7 +96,7 @@
           <a-button style="margin-top: 1rem" type="dashed" @click="addValue">添加值</a-button>
         </a-form>
         <div class="flex justify-end mt-4" v-if="activeTab === 'action'">
-          <a-button class="custom-purple-button" type="primary" @click="handleCreateAction">添加元动作</a-button>
+          <a-button class="custom-orange-button" type="primary" @click="handleCreateAction">添加元动作</a-button>
         </div>
         <a-form :model="formData" :rules="rules" layout="vertical" v-if="activeTab === 'combination'">
         <a-form-item label="动作组合名称" name="name">
@@ -115,7 +115,7 @@
           <el-upload ref="uploadRef" :auto-upload="false" :on-change="onBeforeUpload" :show-file-list="false"
             accept=".blkx,.vtt">
             <template #trigger>
-              <a-button type="primary" size="large" class="custom-purple-button">
+              <a-button type="primary" size="large" class="custom-orange-button">
                 点击上传
               </a-button>
             </template>
@@ -135,7 +135,7 @@
         </a-form-item>
       </a-form>
       <div slot="footer" class="flex justify-end" v-if="activeTab === 'combination'">
-        <a-button class="custom-purple-button mr-[2rem]" type="primary" @click="handleOk" size="large"
+        <a-button class="custom-orange-button mr-[2rem]" type="primary" @click="handleOk" size="large"
           >添加动作组合</a-button>
       </div>
       </div>
@@ -485,15 +485,15 @@ const updateAllowedMethods = () => {
   padding-right: 1rem;
 }
 
-.custom-purple-button {
-  background-color: purple;
-  border-color: purple;
+.custom-orange-button {
+  background-color: yellow;
+  border-color: yellow;
 }
 
-.custom-purple-button:hover,
-.custom-purple-button:focus {
-  background-color: purple !important;
-  border-color: purple !important;
+.custom-orange-button:hover,
+.custom-orange-button:focus {
+  background-color: yellow !important;
+  border-color: yellow !important;
   filter: opacity(0.9);
 }
 

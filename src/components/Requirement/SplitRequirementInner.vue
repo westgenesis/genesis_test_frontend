@@ -21,7 +21,7 @@
             </a-form-item>
             <a-form-item>
                 <div class="flex justify-center items-center" style="flex-direction: column;">
-                    <a-button type="primary" @click="handleNewSave" class="custom-purple-button">保存</a-button>
+                    <a-button type="primary" @click="handleNewSave" class="custom-orange-button">保存</a-button>
                 </div>
             </a-form-item>
         </a-form>
@@ -33,13 +33,13 @@
         <div style="width: 100%">
             <div class="w-full flex justify-end mr-[2rem] mb-[1rem]">
                 <a-button type="primary" size="large" @click="fetchData"
-                    class="custom-purple-button mr-[2rem] mb-[1rem]">刷新</a-button>
+                    class="custom-orange-button mr-[2rem] mb-[1rem]">刷新</a-button>
                 <a-button type="primary" size="large" @click="handleBatchGenerate"
-                    class="custom-purple-button mr-[2rem] mb-[1rem]">批量生成用例</a-button>
+                    class="custom-orange-button mr-[2rem] mb-[1rem]">批量生成用例</a-button>
                 <a-button type="primary" size="large" @click="showDrawer"
-                    class="custom-purple-button mr-[2rem] mb-[1rem]">新建功能点</a-button>
+                    class="custom-orange-button mr-[2rem] mb-[1rem]">新建功能点</a-button>
                 <a-button type="primary" size="large" @click="handleBatchDeleteTestcase"
-                    class="custom-purple-button mr-[2rem] mb-[1rem]">删除</a-button>
+                    class="custom-orange-button mr-[2rem] mb-[1rem]">删除</a-button>
             </div>
             <el-table :data="pointsTableData" style="width: 100%" id="function_point_table"
                 @selection-change="onPointsSelectionChange">
@@ -96,10 +96,10 @@
     </div>
     <div v-if="activeTab === 'testcase_table'">
         <div style="display: flex; justify-content: flex-end; margin: 1rem;">
-            <a-button type="primary" class="custom-purple-button" size="large" @click="handleBatchDelete">删除</a-button>
-            <a-button type="primary" class="custom-purple-button ml-[10px]" size="large"
+            <a-button type="primary" class="custom-orange-button" size="large" @click="handleBatchDelete">删除</a-button>
+            <a-button type="primary" class="custom-orange-button ml-[10px]" size="large"
                 @click="handleBatchGenerateScript">生成脚本</a-button>
-            <a-button type="primary" class="custom-purple-button ml-[10px]" size="large"
+            <a-button type="primary" class="custom-orange-button ml-[10px]" size="large"
                 @click="handleBatchMergeScript">合成脚本</a-button>
         </div>
         <el-table :data="pagedTableData" style="width: 100%" id="function_point_table" :height="table_height1"
@@ -586,15 +586,15 @@ const handleBatchDeleteTestcase = () => {
 
 
 <style scoped lang="less">
-.custom-purple-button {
-    background-color: purple;
-    border-color: purple;
+.custom-orange-button {
+    background-color: orange;
+    border-color: orange;
 }
 
-.custom-purple-button:hover,
-.custom-purple-button:focus {
-    background-color: purple !important;
-    border-color: purple !important;
+.custom-orange-button:hover,
+.custom-orange-button:focus {
+    background-color: orange !important;
+    border-color: orange !important;
     filter: opacity(0.9);
 }
 </style>

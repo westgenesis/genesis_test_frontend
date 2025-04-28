@@ -1,7 +1,7 @@
 <template>
     <div class="m-[2rem]">
         <a-card>
-            <div style="border-left: 4px solid purple">
+            <div style="border-left: 4px solid orange">
                 <div class="ml-[1rem]">{{ currentProject.name }}</div>
             </div>
 
@@ -22,13 +22,13 @@
         </a-card>
         <a-card style="margin-top: 1rem;" id="requirement-card">
             <div
-                style="border-left: 4px solid purple; display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                style="border-left: 4px solid orange; display: flex; align-items: center; justify-content: space-between; width: 100%;">
                 <div class="ml-[1rem] flex align-center justify-center">需求文档 <div class="ml-[1rem] pb-[2px]" style="cursor: pointer; transform: translateY(-3px);" @click="doRefresh"><RedoOutlined /></div></div>
 
                 <el-upload ref="uploadRef" :auto-upload="false" :on-change="onBeforeUpload" :show-file-list="false"
                     accept=".doc,.docx">
                     <template #trigger>
-                        <a-button type="primary" size="large" class="custom-purple-button">
+                        <a-button type="primary" size="large" class="custom-orange-button">
                             <template #icon>
                                 <CloudUploadOutlined style="transform: translateY(-3px);" />
                             </template>
@@ -64,7 +64,7 @@
                 <el-upload ref="uploadRef" :auto-upload="false" :on-change="onBeforeUpload" :show-file-list="false"
                     accept=".doc,.docx">
                     <template #trigger>
-                        <span style="color: purple; cursor: pointer;">上传需求</span>
+                        <span style="color: orange; cursor: pointer;">上传需求</span>
                     </template>
                 </el-upload>
             </div>
@@ -176,31 +176,31 @@ const doDelete = async (requirement) => {
     padding: 0.2rem;
 }
 
-.custom-purple-button {
-    background-color: purple;
-    border-color: purple;
+.custom-orange-button {
+    background-color: orange;
+    border-color: orange;
 }
 
-.custom-purple-button:hover,
-.custom-purple-button:focus {
-    background-color: purple !important;
-    border-color: purple !important;
+.custom-orange-button:hover,
+.custom-orange-button:focus {
+    background-color: orange !important;
+    border-color: orange !important;
     filter: opacity(0.9);
 }
 
 :deep(.el-radio-button__orig-radio:checked + .el-radio-button__inner) {
-    background-color: purple;
-    border-color: purple;
+    background-color: orange;
+    border-color: orange;
 }
 
 :deep(.el-radio-button__inner) {
-    color: purple;
-    border-color: purple;
+    color: orange;
+    border-color: orange;
 }
 
 :deep(.el-radio-button__original-radio:checked+.el-radio-button__inner) {
-    background-color: purple;
-    border-color: purple !important;
+    background-color: orange;
+    border-color: orange !important;
 }
 
 .requirement {
