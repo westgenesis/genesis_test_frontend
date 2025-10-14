@@ -140,7 +140,7 @@ onMounted(() => {
   fetchData();
 });
 
-watch([project_id, req_id, split_file_id, split_case_id], () => {
+watch(testcase_id, () => {
   fetchData();
 });
 
