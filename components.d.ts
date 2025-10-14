@@ -11,6 +11,7 @@ declare module 'vue' {
     AddModuleDrawer: typeof import('./src/components/Requirement/AddModuleDrawer.vue')['default']
     AddProject: typeof import('./src/components/Project/AddProject.vue')['default']
     AddRequirementDocx: typeof import('./src/components/Requirement/AddRequirementDocx.vue')['default']
+    copy: typeof import('./src/components/Requirement/TestCaseInner copy.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElCheckbox: typeof import('element-plus/es')['ElCheckbox']
     ElInput: typeof import('element-plus/es')['ElInput']
@@ -42,6 +43,7 @@ declare module 'vue' {
     SplitCaseInner: typeof import('./src/components/Requirement/SplitCaseInner.vue')['default']
     SplitRequirementInner: typeof import('./src/components/Requirement/SplitRequirementInner.vue')['default']
     TestCaseInner: typeof import('./src/components/Requirement/TestCaseInner.vue')['default']
+    TestCaseInnerNew: typeof import('./src/components/Requirement/TestCaseInnerNew.vue')['default']
     TopBar: typeof import('./src/components/TopBar.vue')['default']
     UseCase: typeof import('./src/components/UseCase/UseCase.vue')['default']
   }

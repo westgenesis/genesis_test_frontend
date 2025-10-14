@@ -24,3 +24,6 @@ dist-ssr
 *.meta
 *.bkp
 /app/static/minio
+
+dist.zip
+dist/
