@@ -116,10 +116,8 @@ const fetchData = () => {
       testcase_id: testcase_id.value,
     })
     .then((resp) => {
-      if (resp.result) {
-        form.value = resp;
-        tableData.value = resp.testcases || [];
-      }
+      form.value = resp;
+      tableData.value = resp.testcases || [];
     })
     .then(() => {
       refreshAllProjects();
