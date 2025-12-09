@@ -54,6 +54,10 @@ onMounted(() => {
 
 <template>
   <div class="login-form" style="height: 100vh">
+    <div class="particles">
+      <span></span><span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
     <div class="form mt-[32px] min-w-[480px]">
       <div class="title">
         <div class="flex justify-center">
@@ -108,17 +112,142 @@ onMounted(() => {
 </template>
 <style scoped lang="less">
 .login-form {
+  position: relative;
+  overflow: hidden;
   @apply flex flex-1 flex-col items-center justify-center;
+
+  /* 背景：渐变 + Mesh Light + 轻动效 */
+  background: linear-gradient(135deg, #e9eef5, #ffffff);
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -40%;
+    background: radial-gradient(
+      circle at 30% 30%,
+      rgba(86, 156, 214, 0.35),
+      transparent 60%
+    );
+    filter: blur(60px);
+    animation: meshMove 15s infinite linear;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: -30%;
+    background: radial-gradient(
+      circle at 70% 70%,
+      rgba(120, 90, 255, 0.25),
+      transparent 60%
+    );
+    filter: blur(80px);
+    animation: meshMove2 18s infinite linear;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .particles {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+
+    span {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 50%;
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+      animation: floatParticle 12s infinite ease-in-out;
+    }
+
+    span:nth-child(1) {
+      left: 10%;
+      top: 20%;
+      animation-duration: 10s;
+    }
+    span:nth-child(2) {
+      left: 25%;
+      top: 40%;
+      animation-duration: 12s;
+    }
+    span:nth-child(3) {
+      left: 40%;
+      top: 15%;
+      animation-duration: 14s;
+    }
+    span:nth-child(4) {
+      left: 60%;
+      top: 30%;
+      animation-duration: 11s;
+    }
+    span:nth-child(5) {
+      left: 75%;
+      top: 50%;
+      animation-duration: 13s;
+    }
+    span:nth-child(6) {
+      left: 20%;
+      top: 70%;
+      animation-duration: 15s;
+    }
+    span:nth-child(7) {
+      left: 50%;
+      top: 80%;
+      animation-duration: 16s;
+    }
+    span:nth-child(8) {
+      left: 70%;
+      top: 20%;
+      animation-duration: 14s;
+    }
+    span:nth-child(9) {
+      left: 85%;
+      top: 65%;
+      animation-duration: 18s;
+    }
+    span:nth-child(10) {
+      left: 30%;
+      top: 85%;
+      animation-duration: 17s;
+    }
+  }
+
   .title-welcome {
     color: rgb(var(--primary-5));
   }
-  .form {
-    @apply relative bg-white;
 
+  .form {
+    z-index: 1;
+    position: relative;
+    @apply relative bg-white;
     padding: 40px;
-    border-radius: var(--border-radius-large);
-    box-shadow: 0 8px 10px 0 #3232330d, 0 16px 24px 0 #3232330d,
+    border-radius: 8px;
+    box-shadow: 0 8px 10px 0 #3232331a, 0 16px 24px 0 #3232330d,
       0 6px 30px 0 #3232330d;
+
+    /* 卡片微光边框 */
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(
+        135deg,
+        rgba(86, 156, 214, 0.45),
+        rgba(120, 90, 255, 0.45)
+      );
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask-composite: exclude;
+      pointer-events: none;
+      opacity: 0.7;
+    }
+
     .login-form-item {
       margin-bottom: 28px;
     }
@@ -178,5 +307,35 @@ onMounted(() => {
 .flex-center {
   display: flex;
   justify-content: center;
+}
+@keyframes meshMove {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  100% {
+    transform: translate(10%, 10%) rotate(360deg);
+  }
+}
+@keyframes meshMove2 {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  100% {
+    transform: translate(-10%, -10%) rotate(-360deg);
+  }
+}
+@keyframes floatParticle {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0.9;
+  }
+  50% {
+    transform: translateY(-40px) scale(1.3);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 0.9;
+  }
 }
 </style>
