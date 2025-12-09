@@ -21,7 +21,12 @@ export default defineConfig(({ mode }) => {
         },
       },
     },
-    plugins: [vue(), vueJsx(), nodePolyfills(), AutoImport(), Components()],
+    plugins: [
+      vue(),
+      vueJsx(),
+      nodePolyfills(),
+      // AutoImport(), Components()
+    ],
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "src"),
