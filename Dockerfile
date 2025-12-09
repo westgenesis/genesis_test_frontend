@@ -13,7 +13,11 @@ RUN pnpm install --frozen-lockfile
 
 # 拷贝源码并构建
 COPY . .
-RUN npm run build
+
+# 接收构建参数 MODE，默认 production
+ARG MODE=production
+
+RUN pnpm build --mode ${MODE}
 
 # ========== 运行阶段 ==========
 FROM nginx:alpine

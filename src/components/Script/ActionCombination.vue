@@ -14,32 +14,47 @@
   <!-- <TestTree></TestTree> -->
 
   <div class="m-[32px]">
-
     <div class="flex-row flex mt-[20px] mb-[20px] pl-[30px]">
-      <a-form :model="searchForm" layout="inline" style="width:100%">
-        <a-row style="width:80%">
+      <a-form :model="searchForm" layout="inline" style="width: 100%">
+        <a-row style="width: 80%">
           <a-col :span="10" style="max-width: 300px">
             <a-form-item label="关键字" name="keyword">
-              <a-input v-model:value="searchForm.keyword" placeholder="请输入关键字" :allowClear="true" />
+              <a-input
+                v-model:value="searchForm.keyword"
+                placeholder="请输入关键字"
+                :allowClear="true"
+              />
             </a-form-item>
           </a-col>
 
           <a-col :span="10" style="max-width: 300px">
             <a-form-item label="所属项目" name="projectid">
-              <ProjectSelect v-model="searchForm.projectId" placeholder="请选择所属项目" :allowClear="true"></ProjectSelect>
+              <ProjectSelect
+                v-model="searchForm.projectId"
+                placeholder="请选择所属项目"
+                :allowClear="true"
+              ></ProjectSelect>
             </a-form-item>
           </a-col>
         </a-row>
       </a-form>
 
       <div class="flex justify-end">
-        <a-button type="primary" size="large" @click="fetchActionCombinations"
-          class="custom-orange-button mr-[2rem] flex items-center">
+        <a-button
+          type="primary"
+          size="large"
+          @click="fetchActionCombinations"
+          class="custom-orange-button mr-[2rem] flex items-center"
+        >
           <SearchOutlined /> 查询
         </a-button>
 
-        <a-button type="primary" size="large" @click="showDrawer"
-          class="custom-orange-button mr-[2rem] flex items-center">
+        <a-button
+          type="primary"
+          size="large"
+          @click="showDrawer"
+          class="custom-orange-button mr-[2rem] flex items-center"
+        >
           <PlusOutlined />添加动作组合
         </a-button>
 
@@ -49,36 +64,70 @@
           删除
         </a-button> -->
       </div>
-
     </div>
 
-    <a-table :columns="columns" bordered :data-source="pagedDataSource" size="middle" :pagination="false">
+    <a-table
+      :columns="columns"
+      bordered
+      :data-source="pagedDataSource"
+      size="middle"
+      :pagination="false"
+    >
       <template #bodyCell="{ column, record }" :scroll="{ y: table_height }">
         <template v-if="column.key === 'action'">
-          <a-button type="link" size="small" @click="showEditDrawer(record)">编辑</a-button>
-          <a-button type="link" size="small" @click="deleteAction(record._id)">删除</a-button>
+          <a-button type="link" size="small" @click="showEditDrawer(record)"
+            >编辑</a-button
+          >
+          <a-button type="link" size="small" @click="deleteAction(record._id)"
+            >删除</a-button
+          >
         </template>
       </template>
     </a-table>
 
     <div class="mt-[20px] flex justify-end">
-      <a-pagination v-model:current="currentPage" :total="dataSource.length" :page-size="pageSize" show-less-items
-        @change="handlePageChange" />
+      <a-pagination
+        v-model:current="currentPage"
+        :total="dataSource.length"
+        :page-size="pageSize"
+        show-less-items
+        @change="handlePageChange"
+      />
     </div>
 
-    <a-drawer v-model:open="visible" title="添加动作组合" placement="right" width="50%" @close="handleClose">
-      <ACEdit v-if="visible" @success="fetchActionCombinations" @close="visible = false" :status="status"
-        :data="editData">
+    <a-drawer
+      v-model:open="visible"
+      title="添加动作组合"
+      placement="right"
+      width="50%"
+      @close="handleClose"
+    >
+      <ACEdit
+        v-if="visible"
+        @success="fetchActionCombinations"
+        @close="visible = false"
+        :status="status"
+        :data="editData"
+      >
       </ACEdit>
     </a-drawer>
 
-    <a-drawer v-model:open="editVisible" title="添加动作组合" placement="right" width="40%" @close="handleClose">
+    <a-drawer
+      v-model:open="editVisible"
+      title="添加动作组合"
+      placement="right"
+      width="40%"
+      @close="handleClose"
+    >
       <a-form :model="formData" :rules="rules" layout="vertical">
         <a-form-item label="动作组合名称" name="name">
           <a-input v-model:value="formData.name" placeholder="请输入内容" />
         </a-form-item>
         <a-form-item label="动作组合描述" name="description">
-          <a-input v-model:value="formData.description" placeholder="请输入内容" />
+          <a-input
+            v-model:value="formData.description"
+            placeholder="请输入内容"
+          />
         </a-form-item>
         <a-form-item label="选择类型" name="is_file">
           <a-radio-group v-model:value="formData.is_file">
@@ -86,46 +135,107 @@
             <a-radio-button value="元动作">元动作</a-radio-button>
           </a-radio-group>
         </a-form-item>
-        <a-form-item v-if="formData.is_file === '动作组合文件'" label="动作组合文件" name="combination_file">
-          <el-upload ref="uploadRef" :auto-upload="false" :on-change="onBeforeUpload" :show-file-list="false"
-            accept=".blkx,.vtt">
+        <a-form-item
+          v-if="formData.is_file === '动作组合文件'"
+          label="动作组合文件"
+          name="combination_file"
+        >
+          <el-upload
+            ref="uploadRef"
+            :auto-upload="false"
+            :on-change="onBeforeUpload"
+            :show-file-list="false"
+            accept=".blkx,.vtt"
+          >
             <template #trigger>
-              <a-button type="primary" size="large" class="custom-orange-button">
+              <a-button
+                type="primary"
+                size="large"
+                class="custom-orange-button"
+              >
                 点击上传
               </a-button>
             </template>
           </el-upload>
           <div v-if="formData.file_name">{{ formData.file_name }}</div>
         </a-form-item>
-        <a-form-item v-if="formData.is_file === '元动作'" label="动作组合内容" name="exec_path">
-          <div v-for="(step, index) in formData.steps" :key="index" class="mb-[10px]">
+        <a-form-item
+          v-if="formData.is_file === '元动作'"
+          label="动作组合内容"
+          name="exec_path"
+        >
+          <div
+            v-for="(step, index) in formData.steps"
+            :key="index"
+            class="mb-[10px]"
+          >
             <span class="mr-[10px]">Step {{ index + 1 }}</span>
-            <a-select :value="formData.steps[index]._id" @change="(v) => { handleChange(v, index) }" placeholder="请选择动作"
-              class="w-[200px]">
-              <a-select-option v-for="action in availableActions" :key="action.name" :value="action._id">{{ action.name
-                }}</a-select-option>
+            <a-select
+              :value="formData.steps[index]._id"
+              @change="
+                (v) => {
+                  handleChange(v, index);
+                }
+              "
+              placeholder="请选择动作"
+              class="w-[200px]"
+            >
+              <a-select-option
+                v-for="action in availableActions"
+                :key="action.name"
+                :value="action._id"
+                >{{ action.name }}</a-select-option
+              >
             </a-select>
-            <a-button type="link" size="small" @click="deleteStep(index)" class="ml-[10px]">
+            <a-button
+              type="link"
+              size="small"
+              @click="deleteStep(index)"
+              class="ml-[10px]"
+            >
               <delete-outlined />
             </a-button>
           </div>
-          <a-button type="dashed" @click="addStep" class="w-[200px]">添加步骤</a-button>
+          <a-button type="dashed" @click="addStep" class="w-[200px]"
+            >添加步骤</a-button
+          >
         </a-form-item>
       </a-form>
       <div slot="footer" class="flex justify-end">
-        <a-button class="custom-orange-button mr-[2rem]" type="primary" @click="handleClose" size="large">关闭</a-button>
-        <a-button class="custom-orange-button mr-[2rem]" type="primary" @click="handleOk" size="large"
-          :loading="submitting">提交</a-button>
+        <a-button
+          class="custom-orange-button mr-[2rem]"
+          type="primary"
+          @click="handleClose"
+          size="large"
+          >关闭</a-button
+        >
+        <a-button
+          class="custom-orange-button mr-[2rem]"
+          type="primary"
+          @click="handleOk"
+          size="large"
+          :loading="submitting"
+          >提交</a-button
+        >
       </div>
     </a-drawer>
 
-    <a-drawer v-model:open="editVisible" title="编辑动作组合" placement="right" width="40%" @close="handleEditClose">
+    <a-drawer
+      v-model:open="editVisible"
+      title="编辑动作组合"
+      placement="right"
+      width="40%"
+      @close="handleEditClose"
+    >
       <a-form :model="editFormData" :rules="rules" layout="vertical">
         <a-form-item label="动作组合名称" name="name">
           <a-input v-model:value="editFormData.name" placeholder="请输入内容" />
         </a-form-item>
         <a-form-item label="动作组合描述" name="description">
-          <a-input v-model:value="editFormData.description" placeholder="请输入内容" />
+          <a-input
+            v-model:value="editFormData.description"
+            placeholder="请输入内容"
+          />
         </a-form-item>
         <a-form-item label="选择类型" name="is_file">
           <a-radio-group v-model:value="editFormData.is_file">
@@ -133,52 +243,108 @@
             <a-radio-button value="元动作">元动作</a-radio-button>
           </a-radio-group>
         </a-form-item>
-        <a-form-item v-if="editFormData.is_file === '动作组合文件'" label="动作组合文件" name="combination_file">
-          <el-upload ref="uploadRef" :auto-upload="false" :on-change="onBeforeUploadEdit" :show-file-list="false"
-            accept=".blkx,.vtt">
+        <a-form-item
+          v-if="editFormData.is_file === '动作组合文件'"
+          label="动作组合文件"
+          name="combination_file"
+        >
+          <el-upload
+            ref="uploadRef"
+            :auto-upload="false"
+            :on-change="onBeforeUploadEdit"
+            :show-file-list="false"
+            accept=".blkx,.vtt"
+          >
             <template #trigger>
-              <a-button type="primary" size="large" class="custom-orange-button">
+              <a-button
+                type="primary"
+                size="large"
+                class="custom-orange-button"
+              >
                 点击上传
               </a-button>
             </template>
           </el-upload>
           {{ editFormData.file_name }}
         </a-form-item>
-        <a-form-item v-if="editFormData.is_file === '元动作'" label="动作组合内容" name="exec_path">
-          <div v-for="(step, index) in editFormData.steps" :key="index" class="mb-[10px]">
+        <a-form-item
+          v-if="editFormData.is_file === '元动作'"
+          label="动作组合内容"
+          name="exec_path"
+        >
+          <div
+            v-for="(step, index) in editFormData.steps"
+            :key="index"
+            class="mb-[10px]"
+          >
             <span class="mr-[10px]">Step {{ index + 1 }}</span>
-            <a-select :value="editFormData.steps[index]._id" @change="(v) => { handleEditChange(v, index) }"
-              placeholder="请选择动作" class="w-[200px]">
-              <a-select-option v-for="action in availableActions" :key="action.name" :value="action._id">{{ action.name
-                }}</a-select-option>
+            <a-select
+              :value="editFormData.steps[index]._id"
+              @change="
+                (v) => {
+                  handleEditChange(v, index);
+                }
+              "
+              placeholder="请选择动作"
+              class="w-[200px]"
+            >
+              <a-select-option
+                v-for="action in availableActions"
+                :key="action.name"
+                :value="action._id"
+                >{{ action.name }}</a-select-option
+              >
             </a-select>
-            <a-button type="link" size="small" @click="deleteEditStep(index)" class="ml-[10px]">
+            <a-button
+              type="link"
+              size="small"
+              @click="deleteEditStep(index)"
+              class="ml-[10px]"
+            >
               <delete-outlined />
             </a-button>
           </div>
-          <a-button type="dashed" @click="addEditStep" class="w-[200px]">添加步骤</a-button>
+          <a-button type="dashed" @click="addEditStep" class="w-[200px]"
+            >添加步骤</a-button
+          >
         </a-form-item>
       </a-form>
       <div slot="footer" class="flex justify-end">
-        <a-button class="custom-orange-button mr-[2rem]" type="primary" @click="handleEditClose"
-          size="large">关闭</a-button>
-        <a-button class="custom-orange-button mr-[2rem]" type="primary" @click="handleEditOk" size="large"
-          :loading="submitting">提交</a-button>
+        <a-button
+          class="custom-orange-button mr-[2rem]"
+          type="primary"
+          @click="handleEditClose"
+          size="large"
+          >关闭</a-button
+        >
+        <a-button
+          class="custom-orange-button mr-[2rem]"
+          type="primary"
+          @click="handleEditOk"
+          size="large"
+          :loading="submitting"
+          >提交</a-button
+        >
       </div>
     </a-drawer>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, computed, nextTick } from 'vue';
-import { ElMessageBox } from 'element-plus';
-import { http } from '../../http';
-import { ElMessage } from 'element-plus';
-import { HomeOutlined } from '@ant-design/icons-vue';
-import ACEdit from './ACEdit.vue';
-import TestTree from './TestTree.vue';
+import { ref, reactive, onMounted, computed, nextTick } from "vue";
+import { ElMessageBox, ElLoading } from "element-plus";
+import { http } from "../../http";
+import { ElMessage } from "element-plus";
+import { HomeOutlined } from "@ant-design/icons-vue";
+import ACEdit from "./ACEdit.vue";
+import TestTree from "./TestTree.vue";
 
-import { SearchOutlined, DeleteOutlined, UploadOutlined, PlusOutlined } from '@ant-design/icons-vue'
+import {
+  SearchOutlined,
+  DeleteOutlined,
+  UploadOutlined,
+  PlusOutlined,
+} from "@ant-design/icons-vue";
 const dataSource = ref([]);
 const currentPage = ref(1);
 const pageSize = 10;
@@ -187,48 +353,47 @@ const editVisible = ref(false);
 const submitting = ref(false);
 const availableActions = ref([]);
 
-const status = ref('new')
-const editData = ref({})
+const status = ref("new");
+const editData = ref({});
 
 const searchForm = ref({
   keyword: null,
   projectId: null,
-})
-
+});
 
 const formData = reactive({
-  name: '',
-  description: '',
-  steps: [{ action: '' }],
-  file_name: '',
-  is_file: '元动作' // 默认值为元动作
+  name: "",
+  description: "",
+  steps: [{ action: "" }],
+  file_name: "",
+  is_file: "元动作", // 默认值为元动作
 });
 const editFormData = reactive({
-  _id: '',
-  name: '',
-  description: '',
-  steps: [{ action: '' }],
-  file_name: '',
-  is_file: '元动作' // 默认值为元动作
+  _id: "",
+  name: "",
+  description: "",
+  steps: [{ action: "" }],
+  file_name: "",
+  is_file: "元动作", // 默认值为元动作
 });
 
 const rules = {
-  name: [{ required: true, message: '请输入动作名称' }],
-  description: [{ required: true, message: '请输入动作描述' }],
+  name: [{ required: true, message: "请输入动作名称" }],
+  description: [{ required: true, message: "请输入动作描述" }],
 };
 
 const handleChange = (v, index) => {
   console.log(v, index);
-  const action = availableActions.value.find(x => x._id === v)
+  const action = availableActions.value.find((x) => x._id === v);
   formData.steps[index] = { action: action };
-  console.log(formData)
-}
+  console.log(formData);
+};
 
 const handleEditChange = (v, index) => {
   console.log(v, index);
-  const action = availableActions.value.find(x => x._id === v)
+  const action = availableActions.value.find((x) => x._id === v);
   editFormData.steps[index] = { action: action };
-}
+};
 
 onMounted(() => {
   fetchActionCombinations();
@@ -236,23 +401,27 @@ onMounted(() => {
 });
 
 const fetchActionCombinations = () => {
-
   // start, pagesize: pageSize
-  const params = Object.assign({}, searchForm.value)
+  const params = Object.assign({}, searchForm.value);
 
-  http('/api/action_combinations', { params }).then(response => {
-    dataSource.value = response.action_combinations;
-  }).catch(error => {
-    ElMessage.error('获取数据失败');
-  });
+  http("/api/action_combinations", { params })
+    .then((response) => {
+      dataSource.value = response.action_combinations;
+    })
+    .catch((error) => {
+      ElMessage.error("获取数据失败");
+    });
 };
 
 const fetchAvailableActions = () => {
-  http.get('/api/get_actions').then(response => {
-    availableActions.value = response.actions;
-  }).catch(error => {
-    ElMessage.error('获取可用动作失败');
-  });
+  http
+    .get("/api/get_actions")
+    .then((response) => {
+      availableActions.value = response.actions;
+    })
+    .catch((error) => {
+      ElMessage.error("获取可用动作失败");
+    });
 };
 
 const pagedDataSource = computed(() => {
@@ -269,11 +438,11 @@ const table_height = window.innerHeight * 0.6;
 
 const showDrawer = () => {
   // 重置 formData
-  formData.name = '';
-  formData.description = '';
-  formData.steps = [{ action: '' }];
-  formData.file_name = '';
-  formData.is_file = '元动作'; // 默认值为元动作
+  formData.name = "";
+  formData.description = "";
+  formData.steps = [{ action: "" }];
+  formData.file_name = "";
+  formData.is_file = "元动作"; // 默认值为元动作
 
   visible.value = true;
 };
@@ -284,25 +453,25 @@ const handleClose = () => {
 
 const handleOk = async () => {
   if (!formData.name) {
-    ElMessage.error('名称不能为空');
+    ElMessage.error("名称不能为空");
     return;
   }
   if (!formData.description) {
-    ElMessage.error('描述不能为空');
+    ElMessage.error("描述不能为空");
     return;
   }
 
   // 检查 steps 数组中的每个 step 的 action 是否为空
-  if (formData.is_file === '元动作') {
-    const hasEmptyAction = formData.steps.some(step => !step.action);
+  if (formData.is_file === "元动作") {
+    const hasEmptyAction = formData.steps.some((step) => !step.action);
     if (hasEmptyAction) {
-      ElMessage.error('请为每个步骤选择动作');
+      ElMessage.error("请为每个步骤选择动作");
       return;
     }
     formData.file_name = undefined;
-  } else if (formData.is_file === '动作组合文件') {
+  } else if (formData.is_file === "动作组合文件") {
     if (!formData.file_name) {
-      ElMessage.error('请选择动作组合文件');
+      ElMessage.error("请选择动作组合文件");
       return;
     }
     formData.steps = [];
@@ -311,28 +480,27 @@ const handleOk = async () => {
   }
 
   try {
-    const steps = formData.steps.map(step => step.action);
+    const steps = formData.steps.map((step) => step.action);
     const payload = {
       ...formData,
       steps,
     };
-    const resp = await http.post('/api/action_combinations', payload);
+    const resp = await http.post("/api/action_combinations", payload);
     visible.value = false;
     fetchActionCombinations();
   } catch (e) {
     if (e?.response?.data?.message) {
-
     }
     formData.steps = [];
   }
 
   try {
-    const steps = formData.steps.map(step => step.action);
+    const steps = formData.steps.map((step) => step.action);
     const payload = {
       ...formData,
       steps,
     };
-    const resp = await http.post('/api/action_combinations', payload);
+    const resp = await http.post("/api/action_combinations", payload);
     visible.value = false;
     fetchActionCombinations();
   } catch (e) {
@@ -343,41 +511,40 @@ const handleOk = async () => {
 };
 
 const addStep = () => {
-  formData.steps.push({ action: '' });
+  formData.steps.push({ action: "" });
 };
 
 const addEditStep = () => {
-  editFormData.steps.push({ action: '' });
+  editFormData.steps.push({ action: "" });
 };
 
 const columns = [
   {
-    title: '动作组合名称',
-    dataIndex: 'name',
-    key: 'name',
+    title: "动作组合名称",
+    dataIndex: "name",
+    key: "name",
   },
   {
-    title: '动作组合描述',
-    dataIndex: 'description',
-    key: 'description',
+    title: "动作组合描述",
+    dataIndex: "description",
+    key: "description",
   },
   {
-    title: '所属项目',
-    dataIndex: 'projectName',
-    key: 'projectName',
+    title: "所属项目",
+    dataIndex: "projectName",
+    key: "projectName",
   },
   {
-    title: '操作',
-    key: 'action',
-    fixed: 'right',
+    title: "操作",
+    key: "action",
+    fixed: "right",
     width: 200,
   },
 ];
 
 const showEditDrawer = (record) => {
-
   editData.value = record;
-  status.value = 'edit'
+  status.value = "edit";
   visible.value = true;
   // // 重置 editFormData
   // editFormData._id = '';
@@ -411,25 +578,25 @@ const handleEditClose = () => {
 
 const handleEditOk = async () => {
   if (!editFormData.name) {
-    ElMessage.error('名称不能为空');
+    ElMessage.error("名称不能为空");
     return;
   }
   if (!editFormData.description) {
-    ElMessage.error('描述不能为空');
+    ElMessage.error("描述不能为空");
     return;
   }
 
-  if (editFormData.is_file === '元动作') {
-    console.log(editFormData.steps)
-    editFormData.steps = editFormData.steps.map(step => {
+  if (editFormData.is_file === "元动作") {
+    console.log(editFormData.steps);
+    editFormData.steps = editFormData.steps.map((step) => {
       if (step.action) {
         return step.action;
       }
       return step;
-    })
+    });
     for (const step of editFormData.steps) {
       if (!step.name) {
-        ElMessage.error('请选择正确的步骤名称');
+        ElMessage.error("请选择正确的步骤名称");
         return;
       }
     }
@@ -439,7 +606,10 @@ const handleEditOk = async () => {
     const payload = {
       ...editFormData,
     };
-    const resp = await http.put(`/api/action_combinations/${editFormData._id}`, payload);
+    const resp = await http.put(
+      `/api/action_combinations/${editFormData._id}`,
+      payload
+    );
     editVisible.value = false;
     fetchActionCombinations();
   } catch (errInfo) {
@@ -448,10 +618,10 @@ const handleEditOk = async () => {
 };
 
 const deleteAction = async (id) => {
-  ElMessageBox.confirm('确定要删除选中的动作组合吗？', '删除确认', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning'
+  ElMessageBox.confirm("确定要删除选中的动作组合吗？", "删除确认", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
   }).then(async () => {
     try {
       const resp = await http.delete(`/api/action_combinations/${id}`);
@@ -463,20 +633,18 @@ const deleteAction = async (id) => {
 };
 
 const onBeforeUpload = async (file) => {
-  console.log(file)
-  const newFormData = new FormData()
-  const info = new Blob([
-    JSON.stringify({ category: 'new_file' })
-  ])
-  newFormData.append('user_file', file.raw);
-  newFormData.append('info', info);
+  console.log(file);
+  const newFormData = new FormData();
+  const info = new Blob([JSON.stringify({ category: "new_file" })]);
+  newFormData.append("user_file", file.raw);
+  newFormData.append("info", info);
   const loadingInstance = ElLoading.service({
-    target: '.ant-form'
-  })
+    target: ".ant-form",
+  });
   try {
     const result = await http.post(`/api/upload_combination_file`, newFormData);
-    if (result.status === 'ok') {
-      ElMessage.success('文件上传成功');
+    if (result.status === "ok") {
+      ElMessage.success("文件上传成功");
       formData.file_name = file.name;
     }
   } catch (e) {
@@ -484,25 +652,25 @@ const onBeforeUpload = async (file) => {
       ElMessage.error(e.response.data.message);
     }
   } finally {
-    loadingInstance.close()
+    loadingInstance.close();
   }
-}
+};
 
 const onBeforeUploadEdit = async (file) => {
-  console.log(file)
-  const newFormData = new FormData()
+  console.log(file);
+  const newFormData = new FormData();
   const info = new Blob([
-    JSON.stringify({ category: 'edit_file', id: editFormData._id }),
-  ])
-  newFormData.append('user_file', file.raw);
-  newFormData.append('info', info);
+    JSON.stringify({ category: "edit_file", id: editFormData._id }),
+  ]);
+  newFormData.append("user_file", file.raw);
+  newFormData.append("info", info);
   const loadingInstance = ElLoading.service({
-    target: '.ant-form'
-  })
+    target: ".ant-form",
+  });
   try {
     const result = await http.post(`/api/upload_combination_file`, newFormData);
-    if (result.status === 'ok') {
-      ElMessage.success('文件上传成功');
+    if (result.status === "ok") {
+      ElMessage.success("文件上传成功");
       editFormData.file_name = file.name;
     }
   } catch (e) {
@@ -510,9 +678,9 @@ const onBeforeUploadEdit = async (file) => {
       ElMessage.error(e.response.data.message);
     }
   } finally {
-    loadingInstance.close()
+    loadingInstance.close();
   }
-}
+};
 
 const deleteStep = (index) => {
   formData.steps.splice(index, 1);

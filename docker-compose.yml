@@ -3,6 +3,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        MODE: oem # production/oem 任意模式
     container_name: genesis-test-frontend
     ports:
       - "8077:80" # 本地 8077 → 容器 nginx 80
