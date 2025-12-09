@@ -8,7 +8,7 @@ WORKDIR /app
 RUN npm install -g pnpm
 
 # 拷贝依赖文件并安装依赖
-COPY package.json pnpm-lock.yaml ./
+COPY package.json ./
 RUN pnpm install --registry=https://registry.npmmirror.com
 
 # 拷贝源码并构建
