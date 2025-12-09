@@ -9,7 +9,7 @@ RUN npm install -g pnpm
 
 # 拷贝依赖文件并安装依赖
 COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --registry=https://registry.npmmirror.com
 
 # 拷贝源码并构建
 COPY . .
