@@ -7,23 +7,16 @@
       <div class="h-full flex ml-[16px]">
         <img :src="logo" />
       </div>
-      <div class="h-full">
-        <a-select
-          ref="select"
-          v-model:value="selectedProject"
-          style="width: 12rem; margin-top: 2px; margin-left: 16px"
-          class="mt-[12px]"
-          @change="handleSelect"
-        >
-          <a-select-option
-            v-for="project in projects"
-            :key="project._id.$oid"
-            :value="project._id.$oid"
-          >
-            {{ project.name }}
-          </a-select-option>
-        </a-select>
-      </div>
+
+      <!-- <div class="h-full">
+                <a-select ref="select" v-model:value="selectedProject"
+                    style="width: 12rem; margin-top: 2px; margin-left: 16px;" class="mt-[12px]" @change="handleSelect">
+                    <a-select-option v-for="project in projects" :key="project._id.$oid" :value="project._id.$oid">
+                        {{ project.name }}
+                    </a-select-option>
+                </a-select>
+            </div> -->
+
       <div class="ml-[10px]"></div>
       <div class="h-full flex items-center">
         <div

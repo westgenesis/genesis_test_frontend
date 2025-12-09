@@ -19,22 +19,11 @@
         class="flex justify-center items-center"
         style="gap: 2rem; margin-right: 2rem"
       >
-        <a-button
-          type="primary"
-          @click="handleSave"
-          class="custom-purple-button"
-          >保存</a-button
-        >
-        <a-button
-          type="primary"
-          @click="handleGenerateFile"
-          class="custom-purple-button"
-          >生成脚本</a-button
-        >
+        <a-button type="primary" @click="handleSave">保存</a-button>
+        <a-button type="primary" @click="handleGenerateFile">生成脚本</a-button>
         <a-button
           type="primary"
           @click="downloadFile"
-          class="custom-purple-button"
           v-if="form.script_status === 'generated'"
           >下载脚本</a-button
         >
@@ -513,19 +502,7 @@ const handleGenerate = async () => {
 </script>
 
 <style scoped lang="less">
-.custom-purple-button {
-  background-color: purple;
-  border-color: purple;
-}
-
-.custom-purple-button:hover,
-.custom-purple-button:focus {
-  background-color: purple !important;
-  border-color: purple !important;
-  filter: opacity(0.9);
-}
-
-.condition-row {
+main .condition-row {
   margin-bottom: 1rem;
 }
 </style>

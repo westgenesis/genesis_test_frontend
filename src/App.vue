@@ -1,41 +1,47 @@
 <script setup lang="ts">
-import TopBar from './components/TopBar.vue'
-import LeftMenu from './components/LeftMenu/LeftMenu.vue'
-import { useUserStore } from './stores/user';
-import { onMounted } from 'vue'
-import { http } from './http';
-import { useProjectStore } from './stores/project';
-import 'quill/dist/quill.snow.css'
-
+import TopBar from "./components/TopBar.vue";
+import LeftMenu from "./components/LeftMenu/LeftMenu.vue";
+import { useUserStore } from "./stores/user";
+import { onMounted } from "vue";
+import { http } from "./http";
+import { useProjectStore } from "./stores/project";
+import "quill/dist/quill.snow.css";
 
 const projectStore = useProjectStore();
 const userStore = useUserStore();
 
 onMounted(() => {
-  if (localStorage.getItem('email')) {
-    userStore.updateEmail(localStorage.getItem('email'));
+  if (localStorage.getItem("email")) {
+    userStore.updateEmail(localStorage.getItem("email"));
   }
-  http.get('/api/display_user_projects', { })
-        .then(response => {
-            projectStore.updateProjects(response.data);
-            projectStore.updateCurrentProject(response.data[0]);
-            return {
-                data: response.data,
-                total: response.total,
-            }
-        });
-})
+  http.get("/api/display_user_projects", {}).then((response) => {
+    projectStore.updateProjects(response.data);
+    projectStore.updateCurrentProject(response.data[0]);
+    return {
+      data: response.data,
+      total: response.total,
+    };
+  });
+});
 </script>
 
 <template>
-  <div class="main">
-    <TopBar></TopBar>
-    <div class="flex flex-1" style="overflow: hidden;">
-        <div class="flex-1" style="background-color: #fff; overflow: hidden;" >
+  <a-config-provider
+    :theme="{
+      token: {
+        colorPrimary: '#9362f2',
+      },
+    }"
+  >
+    <div class="main">
+      <TopBar></TopBar>
+      <div class="flex flex-1" style="overflow: hidden">
+        <div class="flex-1" style="background-color: #fff; overflow: hidden">
           <router-view></router-view>
         </div>
+      </div>
     </div>
-  </div>
+  </a-config-provider>
 </template>
 
 <style scoped>

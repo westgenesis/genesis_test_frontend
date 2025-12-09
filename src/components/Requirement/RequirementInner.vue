@@ -43,32 +43,16 @@
       功能模块信息
     </div>
     <div class="w-full flex justify-end mr-[2rem] mb-[1rem]">
-      <a-button
-        type="primary"
-        size="large"
-        @click="fetchData"
-        class="custom-purple-button mr-[2rem]"
+      <a-button type="primary" @click="fetchData" class="mr-[2rem]"
         >刷新</a-button
       >
-      <a-button
-        type="primary"
-        size="large"
-        @click="openAddDrawer"
-        class="custom-purple-button mr-[2rem]"
+      <a-button type="primary" @click="openAddDrawer" class="mr-[2rem]"
         >新建功能模块</a-button
       >
-      <a-button
-        type="primary"
-        size="large"
-        @click="handleModuleDelete"
-        class="custom-purple-button mr-[2rem]"
+      <a-button type="primary" @click="handleModuleDelete" class="mr-[2rem]"
         >删除</a-button
       >
-      <a-button
-        type="primary"
-        size="large"
-        @click="handleBatchSplit"
-        class="custom-purple-button mr-[2rem]"
+      <a-button type="primary" @click="handleBatchSplit" class="mr-[2rem]"
         >批量拆分</a-button
       >
     </div>
@@ -173,13 +157,7 @@
   <div v-if="activeTab === 'points'">
     <div style="width: 100%">
       <div class="w-full flex justify-end mr-[2rem] mb-[1rem]">
-        <a-button
-          type="primary"
-          size="large"
-          @click="fetchData"
-          class="custom-purple-button mr-[2rem] mb-[1rem]"
-          >刷新</a-button
-        >
+        <a-button type="primary" size="large" @click="fetchData">刷新</a-button>
       </div>
       <el-table
         :data="pagedDataPoints"
@@ -863,17 +841,5 @@ const handleBatchDelete = () => {
   /* 每个项目占据1/3的宽度，减去间距 */
   box-sizing: border-box;
   padding: 0.2rem;
-}
-
-.custom-purple-button {
-  background-color: purple;
-  border-color: purple;
-}
-
-.custom-purple-button:hover,
-.custom-purple-button:focus {
-  background-color: purple !important;
-  border-color: purple !important;
-  filter: opacity(0.9);
 }
 </style>
