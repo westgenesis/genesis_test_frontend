@@ -88,9 +88,9 @@ onMounted(() => {
         </div>
 
         <div class="mb-[20px] mt-[12px] flex-center">
-          <a-button type="primary" @click="onSubmitFormData" class="w-[200px]">
+          <el-button type="primary" @click="onSubmitFormData" class="w-[200px]">
             登录
-          </a-button>
+          </el-button>
         </div>
       </form>
       <div class="mt-4 flex items-center justify-center">

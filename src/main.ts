@@ -1,12 +1,13 @@
 import { createApp } from "vue";
 import App from "./App.vue";
+import "./styles/element/index.scss";
 import ElementPlus from "element-plus";
-import "element-plus/dist/index.css";
 import router from "./router/router";
 import Antd from "ant-design-vue";
 import "ant-design-vue/dist/reset.css";
 import { createPinia } from "pinia";
 import NProgress from "nprogress"; // 引入 nprogress
+
 import "./styles/index.css";
 
 const app = createApp(App);
