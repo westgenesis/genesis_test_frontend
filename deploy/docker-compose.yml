@@ -5,6 +5,6 @@ services:
       dockerfile: Dockerfile
     container_name: genesis-test-frontend
     ports:
-      - "8087:80" # 本地 8087 → 容器 nginx 80
+      - "8077:80" # 本地 8077 → 容器 nginx 80
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
