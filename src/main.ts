@@ -4,7 +4,6 @@ import "./styles/element/index.scss";
 import ElementPlus from "element-plus";
 import router from "./router/router";
 import Antd from "ant-design-vue";
-import "ant-design-vue/dist/reset.css";
 import { createPinia } from "pinia";
 import NProgress from "nprogress"; // 引入 nprogress
 import "./styles/index.css";
@@ -12,6 +11,12 @@ import "./styles/index.css";
 import dayjs from "dayjs";
 import "dayjs/locale/zh-cn";
 dayjs.locale("zh-cn");
+
+Object.entries(import.meta.env).forEach(([key, val]) => {
+  if (key.startsWith("VITE_APP_CSS")) {
+    document.documentElement.style.setProperty(`--${key}`, val);
+  }
+});
 
 const app = createApp(App);
 const pinia = createPinia();

@@ -44,7 +44,7 @@
           type="primary"
           size="large"
           @click="fetchActionCombinations"
-          class="custom-orange-button mr-[2rem] flex items-center"
+          class="mr-2 flex items-center"
         >
           <SearchOutlined /> 查询
         </a-button>
@@ -53,13 +53,13 @@
           type="primary"
           size="large"
           @click="showDrawer"
-          class="custom-orange-button mr-[2rem] flex items-center"
+          class="mr-2 flex items-center"
         >
           <PlusOutlined />添加动作组合
         </a-button>
 
         <!-- <a-button type="primary" size="large" @click="deleteSelectedActions"
-          class="custom-orange-button mr-[2rem] flex items-center">
+          class="mr-2 flex items-center">
           <DeleteOutlined />
           删除
         </a-button> -->
@@ -148,13 +148,7 @@
             accept=".blkx,.vtt"
           >
             <template #trigger>
-              <a-button
-                type="primary"
-                size="large"
-                class="custom-orange-button"
-              >
-                点击上传
-              </a-button>
+              <a-button type="primary" size="large"> 点击上传 </a-button>
             </template>
           </el-upload>
           <div v-if="formData.file_name">{{ formData.file_name }}</div>
@@ -202,15 +196,11 @@
         </a-form-item>
       </a-form>
       <div slot="footer" class="flex justify-end">
-        <a-button
-          class="custom-orange-button mr-[2rem]"
-          type="primary"
-          @click="handleClose"
-          size="large"
+        <a-button class="mr-2" type="primary" @click="handleClose" size="large"
           >关闭</a-button
         >
         <a-button
-          class="custom-orange-button mr-[2rem]"
+          class="mr-2"
           type="primary"
           @click="handleOk"
           size="large"
@@ -256,13 +246,7 @@
             accept=".blkx,.vtt"
           >
             <template #trigger>
-              <a-button
-                type="primary"
-                size="large"
-                class="custom-orange-button"
-              >
-                点击上传
-              </a-button>
+              <a-button type="primary" size="large"> 点击上传 </a-button>
             </template>
           </el-upload>
           {{ editFormData.file_name }}
@@ -311,14 +295,14 @@
       </a-form>
       <div slot="footer" class="flex justify-end">
         <a-button
-          class="custom-orange-button mr-[2rem]"
+          class="mr-2"
           type="primary"
           @click="handleEditClose"
           size="large"
           >关闭</a-button
         >
         <a-button
-          class="custom-orange-button mr-[2rem]"
+          class="mr-2"
           type="primary"
           @click="handleEditOk"
           size="large"
@@ -692,18 +676,6 @@ const deleteEditStep = (index) => {
 </script>
 
 <style scoped>
-.custom-orange-button {
-  background-color: orange;
-  border-color: orange;
-}
-
-.custom-orange-button:hover,
-.custom-orange-button:focus {
-  background-color: orange !important;
-  border-color: orange !important;
-  filter: opacity(0.9);
-}
-
 :deep(.el-upload__input) {
   display: none !important;
 }

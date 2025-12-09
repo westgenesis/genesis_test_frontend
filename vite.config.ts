@@ -5,7 +5,7 @@ import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
 import nodePolyfills from "vite-plugin-node-stdlib-browser";
 import vueJsx from "@vitejs/plugin-vue-jsx";
-import { terser } from "rollup-plugin-terser";
+import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
@@ -21,12 +21,7 @@ export default defineConfig(({ mode }) => {
         },
       },
     },
-    plugins: [
-      vue(),
-      vueJsx(),
-      nodePolyfills(),
-      // AutoImport(), Components()
-    ],
+    plugins: [vue(), vueJsx(), nodePolyfills(), tailwindcss()],
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "src"),
@@ -62,13 +57,6 @@ export default defineConfig(({ mode }) => {
             return "[name].[ext]"; // 其他文件保持默认输出
           },
         },
-        plugins: [
-          terser({
-            compress: {
-              drop_console: true, // 移除 console 语句
-            },
-          }),
-        ],
       },
     },
   };

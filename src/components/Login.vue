@@ -53,17 +53,20 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="login-form" style="height: 100vh">
+  <div
+    class="login-form flex flex-1 flex-col items-center justify-center"
+    style="height: 100vh"
+  >
     <div class="particles">
       <span></span><span></span><span></span><span></span><span></span>
       <span></span><span></span><span></span><span></span><span></span>
     </div>
-    <div class="form mt-[32px] min-w-[480px]">
+    <div class="form mt-8 min-w-[480px]">
       <div class="title">
         <div class="flex justify-center">
           <img :src="logo" class="h-[60px] w-[290px]" />
         </div>
-        <div class="title-0 m-[16px] flex justify-center">
+        <div class="title-0 m-4 flex justify-center">
           <span class="title-welcome one-line-text max-w-[300px]">
             现代化的测试和用例管理工具
           </span>
@@ -91,14 +94,14 @@ onMounted(() => {
           <el-checkbox v-model="rememberMe" label="记住密码"></el-checkbox>
         </div>
 
-        <div class="mb-[20px] mt-[12px] flex-center">
+        <div class="mb-5 mt-3 flex-center">
           <el-button type="primary" @click="onSubmitFormData" class="w-[200px]">
             登录
           </el-button>
         </div>
       </form>
       <div class="mt-4 flex items-center justify-center">
-        <div class="loginType">
+        <div class="loginType flex cursor-pointer items-center justify-center">
           <svg-icon
             name="scan_code"
             width="18px"
@@ -110,11 +113,10 @@ onMounted(() => {
     </div>
   </div>
 </template>
-<style scoped lang="less">
+<style scoped lang="scss">
 .login-form {
   position: relative;
   overflow: hidden;
-  @apply flex flex-1 flex-col items-center justify-center;
 
   /* 背景：渐变 + Mesh Light + 轻动效 */
   background: linear-gradient(135deg, #e9eef5, #ffffff);
@@ -224,7 +226,7 @@ onMounted(() => {
   .form {
     z-index: 1;
     position: relative;
-    @apply relative bg-white;
+    background: #fff;
     padding: 40px;
     border-radius: 8px;
     box-shadow: 0 8px 10px 0 #3232331a, 0 16px 24px 0 #3232330d,
@@ -251,20 +253,13 @@ onMounted(() => {
     .login-form-item {
       margin-bottom: 28px;
     }
-    .mask {
-      @apply absolute left-0 top-0 h-full w-full;
-    }
+
     .loginType {
       margin: 0 8px;
       width: 32px;
       height: 32px;
       border: 1px solid var(--color-text-n8);
       border-radius: 50%;
-      @apply flex cursor-pointer items-center justify-center;
-      .type-text {
-        color: rgb(var(--primary-5));
-        @apply font-medium;
-      }
     }
   }
 }

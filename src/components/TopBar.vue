@@ -144,7 +144,7 @@ onMounted(() => {
 });
 </script>
 
-<style scoped lang="less">
+<style scoped lang="scss">
 :deep(.ant-select-selector) {
   border: none !important;
   background-color: transparent !important;

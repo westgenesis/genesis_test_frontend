@@ -39,6 +39,8 @@ onMounted(() => {
 
 // const abc = ref("Robot")
 const visible = ref(true);
+
+const colorPrimary = import.meta.env.VITE_APP_CSS_PRIMARY_COLOR;
 </script>
 
 <template>
@@ -48,7 +50,7 @@ const visible = ref(true);
     :locale="locale"
     :theme="{
       token: {
-        colorPrimary: 'orange',
+        colorPrimary,
       },
     }"
   >
