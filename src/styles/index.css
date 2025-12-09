@@ -1,0 +1,6 @@
+@import './tailwind.css';
+@import './nprogress.css';
+
+:root {
+  --el-color-primary: #9362f2;
+}
