@@ -104,7 +104,7 @@
             margin-bottom: 1rem;
           "
         >
-          <a-button type="primary" size="large" @click="export_by_requirement"
+          <a-button type="primary" @click="export_by_requirement"
             >导出全部</a-button
           >
         </div>
@@ -292,10 +292,7 @@
               margin-bottom: 1rem;
             "
           >
-            <a-button
-              type="primary"
-              size="large"
-              @click="export_by_sub_requirement"
+            <a-button type="primary" @click="export_by_sub_requirement"
               >导出全部</a-button
             >
           </div>
@@ -512,7 +509,6 @@
           <div>
             <a-button
               type="primary"
-              size="large"
               style="margin-right: 1rem"
               @click="refreshUseCase"
               >刷新</a-button

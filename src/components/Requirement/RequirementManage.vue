@@ -1,118 +1,86 @@
 <template>
-  <div class="m-[2rem]">
-    <a-card>
-      <div style="border-left: 4px solid var(--VITE_APP_CSS_PRIMARY_COLOR)">
-        <div class="ml-[1rem]">{{ currentProject.name }}</div>
-      </div>
-
-      <div class="flex-container">
-        <div class="flex-item">
-          <strong>项目ID:</strong> {{ currentProject._id.$oid }}
-        </div>
-        <div class="flex-item">
-          <strong>测试环境:</strong> {{ currentProject.kind }}
-        </div>
-        <div class="flex-item">
-          <strong>计划周期:</strong> {{ currentProject.period_start }} 至
-          {{ currentProject.period_end }}
-        </div>
-        <div class="flex-item">
-          <strong>项目描述:</strong> {{ currentProject.notes || "无描述" }}
-        </div>
-      </div>
+  <div>
+    <a-card title="项目信息">
+      <a-descriptions>
+        <a-descriptions-item label="项目名称">{{
+          currentProject.name
+        }}</a-descriptions-item>
+        <a-descriptions-item label="项目ID">{{
+          currentProject._id.$oid
+        }}</a-descriptions-item>
+        <a-descriptions-item label="测试环境">{{
+          currentProject.kind
+        }}</a-descriptions-item>
+        <a-descriptions-item label="计划周期"
+          >{{ currentProject.period_start }} 至
+          {{ currentProject.period_end }}</a-descriptions-item
+        >
+        <a-descriptions-item label="项目描述">{{
+          currentProject.notes || "无描述"
+        }}</a-descriptions-item>
+      </a-descriptions>
     </a-card>
-    <a-card style="margin-top: 1rem" id="requirement-card">
-      <div
-        style="
-          border-left: 4px solid var(--VITE_APP_CSS_PRIMARY_COLOR);
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          width: 100%;
-        "
-      >
-        <div class="ml-[1rem] flex align-center justify-center">
-          需求文档
-          <div
-            class="ml-[1rem] pb-[2px]"
-            style="cursor: pointer; transform: translateY(-3px)"
-            @click="doRefresh"
-          >
-            <RedoOutlined />
-          </div>
-        </div>
+    <a-card title="需求文档" class="mt-4!" id="requirement-card">
+      <template #extra>
+        <div class="flex gap-2">
+          <a-button type="primary" @click="doRefresh">
+            <RedoOutlined />刷新
+          </a-button>
 
-        <el-upload
-          ref="uploadRef"
-          :auto-upload="false"
-          :on-change="onBeforeUpload"
-          :show-file-list="false"
-          accept=".doc,.docx"
-        >
-          <template #trigger>
-            <a-button type="primary" size="large">
-              <template #icon>
-                <CloudUploadOutlined style="transform: translateY(-3px)" />
-              </template>
-              上传需求
-            </a-button>
-          </template>
-        </el-upload>
-      </div>
-      <div v-if="requirements?.length">
-        <div v-for="requirement in requirements" class="flex requirement">
-          <div class="flex-1 requirement-item">{{ requirement.req_id }}</div>
-          <div class="flex-1 requirement-item">
-            {{ requirement.name.split("/")[1] }}
-          </div>
-          <div class="flex-1 requirement-item">{{ requirement.creator }}</div>
-          <div class="flex-1 requirement-item">
-            {{ requirement.created_time }}
-          </div>
-          <div class="flex-1 requirement-item">
-            {{ "V" + requirement.version }}
-          </div>
-          <div class="flex-1 requirement-item">
-            {{ requirementStatusMap[requirement.status] }}
-          </div>
-          <div class="flex-1 flex" style="gap: 1rem">
-            <el-upload
-              ref="uploadRef"
-              :auto-upload="false"
-              :on-change="(file) => onBeforeUpdate(file, requirement)"
-              :show-file-list="false"
-              accept=".doc,.docx,.pdf"
-            >
-              <template #trigger>
-                <el-button type="text">更新</el-button>
-              </template>
-            </el-upload>
-            <el-button type="text" @click="doSplitRequirement(requirement)"
-              >解析</el-button
-            >
-            <el-button type="text" @click="doDelete(requirement)"
-              >删除</el-button
-            >
-          </div>
+          <el-upload
+            ref="uploadRef"
+            :auto-upload="false"
+            :on-change="onBeforeUpload"
+            :show-file-list="false"
+            accept=".doc,.docx"
+          >
+            <template #trigger>
+              <a-button type="primary">
+                <template #icon>
+                  <CloudUploadOutlined />
+                </template>
+                上传需求
+              </a-button>
+            </template>
+          </el-upload>
         </div>
-      </div>
-      <div v-else class="flex justify-center items-center w-full">
-        <div>暂无数据，请</div>
-        <el-upload
-          ref="uploadRef"
-          :auto-upload="false"
-          :on-change="onBeforeUpload"
-          :show-file-list="false"
-          accept=".doc,.docx"
-        >
-          <template #trigger>
-            <span
-              style="color: var(--VITE_APP_CSS_PRIMARY_COLOR); cursor: pointer"
-              >上传需求</span
-            >
+      </template>
+
+      <a-table
+        bordered
+        :dataSource="requirements"
+        :columns="columns"
+        :pagination="false"
+      >
+        <template #bodyCell="{ column, record }">
+          <template v-if="column.key === 'status'">
+            {{ requirementStatusMap[record.status] }}
           </template>
-        </el-upload>
-      </div>
+          <template v-if="column.key === 'actions'">
+            <div class="flex items-center">
+              <el-upload
+                ref="uploadRef"
+                :auto-upload="false"
+                :on-change="(file) => onBeforeUpdate(file, record)"
+                :show-file-list="false"
+                accept=".doc,.docx,.pdf"
+              >
+                <template #trigger>
+                  <el-button type="text">更新</el-button>
+                </template>
+              </el-upload>
+              <el-button
+                class="ml-2"
+                type="text"
+                @click="doSplitRequirement(record)"
+              >
+                解析
+              </el-button>
+              <el-button type="text" @click="doDelete(record)">删除</el-button>
+            </div>
+          </template>
+        </template>
+      </a-table>
     </a-card>
   </div>
 </template>
@@ -136,6 +104,38 @@ watch(currentProject, (newVal) => {
 const requirements = computed(
   () => currentProject.value?.requirement_files || []
 );
+
+const columns = [
+  {
+    title: "ID",
+    dataIndex: "req_id",
+    key: "req_id",
+  },
+  {
+    title: "名称",
+    dataIndex: "name",
+    key: "name",
+  },
+  {
+    title: "创建人",
+    dataIndex: "creator",
+    key: "creator",
+  },
+  {
+    title: "创建时间",
+    dataIndex: "created_time",
+    key: "created_time",
+  },
+  {
+    title: "状态",
+    dataIndex: "status",
+    key: "status",
+  },
+  {
+    title: "操作",
+    key: "actions",
+  },
+];
 
 const onUploadMainDoc = () => {
   // 跳转到上传需求文档的页面

@@ -207,7 +207,7 @@
               accept=".blkx,.vtt"
             >
               <template #trigger>
-                <a-button type="primary" size="large"> 点击上传 </a-button>
+                <a-button type="primary"> 点击上传 </a-button>
               </template>
             </el-upload>
             <div v-if="formData.file_name">{{ formData.file_name }}</div>
@@ -251,7 +251,7 @@
           class="flex justify-end"
           v-if="activeTab === 'combination'"
         >
-          <a-button class="mr-2" type="primary" @click="handleOk" size="large"
+          <a-button class="mr-2" type="primary" @click="handleOk"
             >添加动作组合</a-button
           >
         </div>

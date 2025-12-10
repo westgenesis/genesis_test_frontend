@@ -97,32 +97,16 @@
           功能模块信息
         </div>
         <div class="w-full flex justify-end mr-8 mb-4">
-          <a-button
-            type="primary"
-            size="large"
-            @click="refreshModule"
-            class="mr-2"
+          <a-button type="primary" @click="refreshModule" class="mr-2"
             >刷新</a-button
           >
-          <a-button
-            type="primary"
-            size="large"
-            @click="openAddDrawer"
-            class="mr-2"
+          <a-button type="primary" @click="openAddDrawer" class="mr-2"
             >新建功能模块</a-button
           >
-          <a-button
-            type="primary"
-            size="large"
-            @click="handleModuleDelete"
-            class="mr-2"
+          <a-button type="primary" @click="handleModuleDelete" class="mr-2"
             >删除</a-button
           >
-          <a-button
-            type="primary"
-            size="large"
-            @click="handleBatchSplit"
-            class="mr-2"
+          <a-button type="primary" @click="handleBatchSplit" class="mr-2"
             >批量拆分</a-button
           >
         </div>
@@ -258,25 +242,13 @@
         </div>
         <div style="width: 100%">
           <div class="w-full flex justify-end mr-8 mb-4">
-            <a-button
-              type="primary"
-              size="large"
-              @click="refreshCases"
-              class="mr-2"
+            <a-button type="primary" @click="refreshCases" class="mr-2"
               >刷新</a-button
             >
-            <a-button
-              type="primary"
-              size="large"
-              @click="handleBatchGenerate"
-              class="mr-2"
+            <a-button type="primary" @click="handleBatchGenerate" class="mr-2"
               >批量生成用例</a-button
             >
-            <a-button
-              type="primary"
-              size="large"
-              @click="showDrawer"
-              class="mr-2"
+            <a-button type="primary" @click="showDrawer" class="mr-2"
               >新建功能点</a-button
             >
           </div>

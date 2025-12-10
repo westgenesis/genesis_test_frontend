@@ -13,14 +13,10 @@
 
   <div class="m-[32px]">
     <div class="mt-[20px] mb-[20px] flex justify-end">
-      <a-button type="primary" size="large" @click="showDrawer" class="mr-2"
+      <a-button type="primary" @click="showDrawer" class="mr-2"
         >添加元动作</a-button
       >
-      <a-button
-        type="primary"
-        size="large"
-        @click="deleteSelectedActions"
-        class="mr-2"
+      <a-button type="primary" @click="deleteSelectedActions" class="mr-2"
         >删除选中项</a-button
       >
     </div>
@@ -166,14 +162,13 @@
         >
       </a-form>
       <div slot="footer" class="flex justify-end">
-        <a-button class="mr-2" type="primary" @click="handleClose" size="large"
+        <a-button class="mr-2" type="primary" @click="handleClose"
           >关闭</a-button
         >
         <a-button
           class="mr-2"
           type="primary"
           @click="handleOk"
-          size="large"
           :loading="submitting"
           >提交</a-button
         >
@@ -283,18 +278,13 @@
         >
       </a-form>
       <div slot="footer" class="flex justify-end">
-        <a-button
-          class="mr-2"
-          type="primary"
-          @click="handleEditClose"
-          size="large"
+        <a-button class="mr-2" type="primary" @click="handleEditClose"
           >关闭</a-button
         >
         <a-button
           class="mr-2"
           type="primary"
           @click="handleEditOk"
-          size="large"
           :loading="submitting"
           >提交</a-button
         >

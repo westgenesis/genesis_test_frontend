@@ -60,9 +60,7 @@
 
         <div ref="quillEditorRef" class="docx-editor" />
         <div class="flex justify-center mt-[1rem]">
-          <a-button type="primary" size="large" @click="onSaveContent"
-            >保存</a-button
-          >
+          <a-button type="primary" @click="onSaveContent">保存</a-button>
         </div>
         <div
           style="
@@ -122,25 +120,13 @@
           功能模块信息
         </div>
         <div class="w-full flex justify-end mr-[2rem] mb-[1rem]">
-          <a-button
-            type="primary"
-            size="large"
-            @click="openAddDrawer"
-            class="mr-2"
+          <a-button type="primary" @click="openAddDrawer" class="mr-2"
             >新建功能模块</a-button
           >
-          <a-button
-            type="primary"
-            size="large"
-            @click="handleDelete"
-            class="mr-2"
+          <a-button type="primary" @click="handleDelete" class="mr-2"
             >删除</a-button
           >
-          <a-button
-            type="primary"
-            size="large"
-            @click="handleBatchSplit"
-            class="mr-2"
+          <a-button type="primary" @click="handleBatchSplit" class="mr-2"
             >批量拆分</a-button
           >
         </div>

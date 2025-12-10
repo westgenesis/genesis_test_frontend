@@ -7,6 +7,10 @@ import nodePolyfills from "vite-plugin-node-stdlib-browser";
 import vueJsx from "@vitejs/plugin-vue-jsx";
 import tailwindcss from "@tailwindcss/vite";
 
+import Icons from "unplugin-icons/vite";
+import IconsResolver from "unplugin-icons/resolver";
+import { FileSystemIconLoader } from "unplugin-icons/loaders";
+
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
 
@@ -21,7 +25,36 @@ export default defineConfig(({ mode }) => {
         },
       },
     },
-    plugins: [vue(), vueJsx(), nodePolyfills(), tailwindcss()],
+    plugins: [
+      vue(),
+      vueJsx(),
+      nodePolyfills(),
+      tailwindcss(),
+      AutoImport({
+        imports: ["vue", "vue-router", "pinia"],
+        eslintrc: {
+          enabled: true,
+        },
+      }),
+      Components({
+        resolvers: [
+          IconsResolver({
+            prefix: "icon",
+            customCollections: ["my-icons"],
+          }),
+        ],
+      }),
+      // 图标插件 支持使用 unplugin-icons 提供的图标 例如：<icon-park-outline:home />
+      Icons({
+        compiler: "vue3",
+        autoInstall: true,
+        customCollections: {
+          "my-icons": FileSystemIconLoader("./src/assets/icons", (svg) =>
+            svg.replace(/^<svg /, '<svg fill="currentColor" ')
+          ),
+        },
+      }),
+    ],
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "src"),
@@ -31,6 +64,7 @@ export default defineConfig(({ mode }) => {
       },
     },
     server: {
+      host: true, // 允许局域网访问
       port: 9200,
       proxy: {
         "/dev-api": {

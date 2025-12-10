@@ -34,12 +34,7 @@
       </a-form>
 
       <div class="flex justify-end">
-        <a-button
-          type="primary"
-          size="large"
-          @click="query"
-          class="mr-2 flex items-center"
-        >
+        <a-button type="primary" @click="query" class="mr-2 flex items-center">
           <SearchOutlined /> 查询
         </a-button>
       </div>

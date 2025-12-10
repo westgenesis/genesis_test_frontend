@@ -2,7 +2,7 @@ import { createApp } from "vue";
 import App from "./App.vue";
 import "./styles/element/index.scss";
 import ElementPlus from "element-plus";
-import router from "./router/router";
+import router from "./router/index";
 import Antd from "ant-design-vue";
 import { createPinia } from "pinia";
 import NProgress from "nprogress"; // 引入 nprogress

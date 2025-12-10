@@ -105,7 +105,7 @@
             margin-bottom: 1rem;
           "
         >
-          <a-button type="primary" size="large" @click="export_by_requirement"
+          <a-button type="primary" @click="export_by_requirement"
             >导出全部</a-button
           >
         </div>
@@ -293,10 +293,7 @@
               margin-bottom: 1rem;
             "
           >
-            <a-button
-              type="primary"
-              size="large"
-              @click="export_by_sub_requirement"
+            <a-button type="primary" @click="export_by_sub_requirement"
               >导出全部</a-button
             >
           </div>
@@ -513,13 +510,12 @@
           <div>
             <a-button
               type="primary"
-              size="large"
               style="margin-right: 1rem"
               @click="refreshUseCase"
               >刷新</a-button
             >
             <a-dropdown>
-              <a-button type="primary" size="large" style="margin-right: 1rem"
+              <a-button type="primary" style="margin-right: 1rem"
                 >批量操作</a-button
               >
               <template #overlay>
@@ -536,14 +532,11 @@
 
             <a-button
               type="primary"
-              size="large"
               style="margin-right: 1rem"
               @click="showDrawer"
               >新建测试用例</a-button
             >
-            <a-button type="primary" size="large" @click="handleExport"
-              >导出全部</a-button
-            >
+            <a-button type="primary" @click="handleExport">导出全部</a-button>
           </div>
         </div>
 

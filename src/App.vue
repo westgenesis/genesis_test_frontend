@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import TopBar from "./components/TopBar.vue";
-import LeftMenu from "./components/LeftMenu/LeftMenu.vue";
 import { useUserStore } from "./stores/user";
 import { onMounted } from "vue";
 import { http } from "./http";
@@ -8,10 +6,8 @@ import { useProjectStore } from "./stores/project";
 import "quill/dist/quill.snow.css";
 import zhCN from "ant-design-vue/es/locale/zh_CN";
 import { ref } from "vue";
-// import { theme } from 'ant-design-vue';
 import ActionSelect from "@/components/Script/actionSelect/ActionSelect.vue";
 import ActionCreate from "@/components/Script/actionSelect/ActionCreate.vue";
-// import Project from './components/common/projectSelect.vue'
 
 const locale = zhCN;
 const projectStore = useProjectStore();
@@ -37,15 +33,12 @@ onMounted(() => {
   });
 });
 
-// const abc = ref("Robot")
 const visible = ref(true);
 
 const colorPrimary = import.meta.env.VITE_APP_CSS_PRIMARY_COLOR;
 </script>
 
 <template>
-  <!-- <Project style="width: 100px;" v-model="abc" ></Project>
-  abc{{ abc }} -->
   <a-config-provider
     :locale="locale"
     :theme="{
@@ -54,15 +47,11 @@ const colorPrimary = import.meta.env.VITE_APP_CSS_PRIMARY_COLOR;
       },
     }"
   >
-    <div class="main">
-      <TopBar></TopBar>
-      <!-- style="overflow: hidden;" -->
-      <div class="flex flex-1">
-        <div class="flex-1" style="background-color: #fff; overflow: hidden">
-          <router-view></router-view>
-        </div>
-      </div>
-    </div>
+    <a-style-provider hash-priority="high">
+      <RouterView v-slot="{ Component }">
+        <component :is="Component" />
+      </RouterView>
+    </a-style-provider>
 
     <!-- <a-modal v-model:open="visible" title="脚本信息" width="90%">
       <ActionSelect v-if="visible"></ActionSelect>
@@ -73,12 +62,3 @@ const colorPrimary = import.meta.env.VITE_APP_CSS_PRIMARY_COLOR;
     </a-modal> -->
   </a-config-provider>
 </template>
-
-<style scoped>
-.main {
-  height: 100%;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-}
-</style>

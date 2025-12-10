@@ -38,7 +38,7 @@
     <a-table
       :columns="columns"
       :row-key="(record) => record._id.$oid"
-      :data-source="data.data"
+      :data-source="data?.data"
       :pagination="false"
       :loading="loading"
       :row-selection="{

@@ -59,35 +59,17 @@
   </div>
   <div v-if="activeTab === 'testcase_table'" style="margin: 1rem">
     <div style="display: flex; justify-content: flex-end; margin-bottom: 1rem">
-      <a-button
-        type="primary"
-        size="large"
-        style="margin-right: 1rem"
-        @click="showDrawer"
+      <a-button type="primary" style="margin-right: 1rem" @click="showDrawer"
         >新建测试用例</a-button
       >
-      <a-button type="primary" size="large" @click="handleExport"
-        >导出全部</a-button
-      >
-      <a-button
-        type="primary"
-        class="ml-2"
-        size="large"
-        @click="handleBatchDeleteTestcase"
+      <a-button type="primary" @click="handleExport">导出全部</a-button>
+      <a-button type="primary" class="ml-2" @click="handleBatchDeleteTestcase"
         >删除</a-button
       >
-      <a-button
-        type="primary"
-        class="ml-2"
-        size="large"
-        @click="handleBatchGenerateScript"
+      <a-button type="primary" class="ml-2" @click="handleBatchGenerateScript"
         >生成脚本</a-button
       >
-      <a-button
-        type="primary"
-        class="ml-2"
-        size="large"
-        @click="handleBatchMergeScript"
+      <a-button type="primary" class="ml-2" @click="handleBatchMergeScript"
         >合成脚本</a-button
       >
     </div>

@@ -89,12 +89,8 @@
     </a-modal> -->
 
   <div slot="footer" class="flex justify-end">
-    <a-button class="mr-2" type="primary" @click="emit('close')" size="large"
-      >关闭</a-button
-    >
-    <a-button class="mr-2" type="primary" @click="handleEditOk" size="large"
-      >提交</a-button
-    >
+    <a-button class="mr-2" type="primary" @click="emit('close')">关闭</a-button>
+    <a-button class="mr-2" type="primary" @click="handleEditOk">提交</a-button>
   </div>
 </template>
 

@@ -1,18 +1,6 @@
 <template>
-  <div class="p-4">
-    <div class="mb-4">
-      <a-breadcrumb>
-        <a-breadcrumb-item href="">
-          <home-outlined />
-        </a-breadcrumb-item>
-        <a-breadcrumb-item href="">
-          <span>动作库</span>
-        </a-breadcrumb-item>
-        <a-breadcrumb-item>元动作库</a-breadcrumb-item>
-      </a-breadcrumb>
-    </div>
-
-    <a-tabs v-model:activeKey="activeTab" @change="query" class="mx-4">
+  <div>
+    <a-tabs v-model:activeKey="activeTab" @change="query">
       <a-tab-pane key="1" tab="IO信号"></a-tab-pane>
       <a-tab-pane key="2" tab="总线信号"></a-tab-pane>
     </a-tabs>
@@ -43,18 +31,12 @@
       </a-form>
 
       <div class="flex justify-end">
-        <a-button
-          type="primary"
-          size="large"
-          @click="query"
-          class="mr-2 flex items-center"
-        >
+        <a-button type="primary" @click="query" class="mr-2 flex items-center">
           <SearchOutlined /> 查询
         </a-button>
         <a-button
           type="primary"
           v-if="activeTab === '1'"
-          size="large"
           @click="showDrawer"
           class="mr-2 flex items-center"
         >
@@ -63,7 +45,6 @@
         <a-button
           type="primary"
           v-if="activeTab === '2'"
-          size="large"
           @click="showDrawer"
           class="mr-2 flex items-center"
         >
@@ -72,7 +53,6 @@
         <a-button
           type="primary"
           v-if="activeTab === '2'"
-          size="large"
           @click="dbcVisible = true"
           class="mr-2 flex items-center"
         >
@@ -81,7 +61,6 @@
         </a-button>
         <a-button
           type="primary"
-          size="large"
           @click="deleteSelectedActions"
           class="mr-2 flex items-center"
         >

@@ -59,24 +59,14 @@
   <div v-if="activeTab === 'points'">
     <div style="width: 100%">
       <div class="w-full flex justify-end mr-2 mb-2">
-        <a-button type="primary" size="large" @click="fetchData" class="mr-2"
-          >刷新</a-button
-        >
-        <a-button
-          type="primary"
-          size="large"
-          @click="handleBatchGenerate"
-          class="mr-2"
+        <a-button type="primary" @click="fetchData" class="mr-2">刷新</a-button>
+        <a-button type="primary" @click="handleBatchGenerate" class="mr-2"
           >批量生成用例</a-button
         >
-        <a-button type="primary" size="large" @click="showDrawer" class="mr-2"
+        <a-button type="primary" @click="showDrawer" class="mr-2"
           >新建功能点</a-button
         >
-        <a-button
-          type="primary"
-          size="large"
-          @click="handleBatchDeleteTestcase"
-          class="mr-2"
+        <a-button type="primary" @click="handleBatchDeleteTestcase" class="mr-2"
           >删除</a-button
         >
       </div>
@@ -187,21 +177,11 @@
   </div>
   <div v-if="activeTab === 'testcase_table'">
     <div style="display: flex; justify-content: flex-end; margin: 1rem">
-      <a-button type="primary" size="large" @click="handleBatchDelete"
-        >删除</a-button
-      >
-      <a-button
-        type="primary"
-        class="ml-2"
-        size="large"
-        @click="handleBatchGenerateScript"
+      <a-button type="primary" @click="handleBatchDelete">删除</a-button>
+      <a-button type="primary" class="ml-2" @click="handleBatchGenerateScript"
         >生成脚本</a-button
       >
-      <a-button
-        type="primary"
-        class="ml-2"
-        size="large"
-        @click="handleBatchMergeScript"
+      <a-button type="primary" class="ml-2" @click="handleBatchMergeScript"
         >合成脚本</a-button
       >
     </div>

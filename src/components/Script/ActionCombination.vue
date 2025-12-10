@@ -1,20 +1,8 @@
 <template>
-  <div class="m-[20px] ml-[30px]">
-    <a-breadcrumb>
-      <a-breadcrumb-item href="">
-        <home-outlined />
-      </a-breadcrumb-item>
-      <a-breadcrumb-item href="">
-        <span>动作库</span>
-      </a-breadcrumb-item>
-      <a-breadcrumb-item>动作组合库</a-breadcrumb-item>
-    </a-breadcrumb>
-  </div>
-
   <!-- <TestTree></TestTree> -->
 
-  <div class="m-[32px]">
-    <div class="flex-row flex mt-[20px] mb-[20px] pl-[30px]">
+  <div>
+    <div class="flex-row flex mb-4">
       <a-form :model="searchForm" layout="inline" style="width: 100%">
         <a-row style="width: 80%">
           <a-col :span="10" style="max-width: 300px">
@@ -39,27 +27,21 @@
         </a-row>
       </a-form>
 
-      <div class="flex justify-end">
+      <div class="flex justify-end gap-2">
         <a-button
           type="primary"
-          size="large"
           @click="fetchActionCombinations"
-          class="mr-2 flex items-center"
+          class="flex items-center"
         >
           <SearchOutlined /> 查询
         </a-button>
 
-        <a-button
-          type="primary"
-          size="large"
-          @click="showDrawer"
-          class="mr-2 flex items-center"
-        >
+        <a-button type="primary" @click="showDrawer" class="flex items-center">
           <PlusOutlined />添加动作组合
         </a-button>
 
-        <!-- <a-button type="primary" size="large" @click="deleteSelectedActions"
-          class="mr-2 flex items-center">
+        <!-- <a-button type="primary"  @click="deleteSelectedActions"
+          class="flex items-center">
           <DeleteOutlined />
           删除
         </a-button> -->
@@ -148,7 +130,7 @@
             accept=".blkx,.vtt"
           >
             <template #trigger>
-              <a-button type="primary" size="large"> 点击上传 </a-button>
+              <a-button type="primary"> 点击上传 </a-button>
             </template>
           </el-upload>
           <div v-if="formData.file_name">{{ formData.file_name }}</div>
@@ -196,14 +178,13 @@
         </a-form-item>
       </a-form>
       <div slot="footer" class="flex justify-end">
-        <a-button class="mr-2" type="primary" @click="handleClose" size="large"
+        <a-button class="mr-2" type="primary" @click="handleClose"
           >关闭</a-button
         >
         <a-button
           class="mr-2"
           type="primary"
           @click="handleOk"
-          size="large"
           :loading="submitting"
           >提交</a-button
         >
@@ -246,7 +227,7 @@
             accept=".blkx,.vtt"
           >
             <template #trigger>
-              <a-button type="primary" size="large"> 点击上传 </a-button>
+              <a-button type="primary"> 点击上传 </a-button>
             </template>
           </el-upload>
           {{ editFormData.file_name }}
@@ -294,18 +275,13 @@
         </a-form-item>
       </a-form>
       <div slot="footer" class="flex justify-end">
-        <a-button
-          class="mr-2"
-          type="primary"
-          @click="handleEditClose"
-          size="large"
+        <a-button class="mr-2" type="primary" @click="handleEditClose"
           >关闭</a-button
         >
         <a-button
           class="mr-2"
           type="primary"
           @click="handleEditOk"
-          size="large"
           :loading="submitting"
           >提交</a-button
         >

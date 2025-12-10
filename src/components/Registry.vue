@@ -59,7 +59,6 @@ const onSubmitFormData = async () => {
             class="login-input"
             max-length="64"
             v-model="username"
-            size="large"
             placeholder="请输入用户名"
           />
         </div>
@@ -68,7 +67,6 @@ const onSubmitFormData = async () => {
             class="login-input"
             max-length="64"
             v-model="email"
-            size="large"
             placeholder="请输入邮箱"
           />
         </div>
@@ -78,7 +76,6 @@ const onSubmitFormData = async () => {
             type="password"
             class="login-password-input"
             placeholder="请输入密码"
-            size="large"
           />
         </div>
         <div class="login-form-item">
@@ -87,7 +84,6 @@ const onSubmitFormData = async () => {
             type="password"
             class="login-password-input"
             placeholder="请再次输入密码"
-            size="large"
           />
         </div>
 
