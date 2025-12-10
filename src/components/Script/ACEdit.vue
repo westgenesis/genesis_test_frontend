@@ -1,65 +1,83 @@
 <!-- 动作组合编辑 -->
 <template>
-  <a-form :model="formData" :rules="rules" layout="vertical" ref="formRef">
-    <a-form-item label="动作组合名称" name="name">
-      <a-input v-model:value="formData.name" placeholder="请输入内容" />
-    </a-form-item>
+  <div class="h-full overflow-hidden flex flex-col gap-2">
+    <div class="flex-1 overflow-hidden overflow-y-auto">
+      <a-form :model="formData" :rules="rules" layout="vertical" ref="formRef">
+        <a-form-item label="动作组合名称" name="name">
+          <a-input v-model:value="formData.name" placeholder="请输入内容" />
+        </a-form-item>
 
-    <a-form-item label="动作组合描述" name="description">
-      <a-input v-model:value="formData.description" placeholder="请输入内容" />
-    </a-form-item>
+        <a-form-item label="动作组合描述" name="description">
+          <a-input
+            v-model:value="formData.description"
+            placeholder="请输入内容"
+          />
+        </a-form-item>
 
-    <a-form-item label="所属项目" name="projectId">
-      <Project
-        v-model="formData.projectId"
-        @selectedObject="formData.projectName = $event.name"
-      ></Project>
-    </a-form-item>
+        <a-form-item label="所属项目" name="projectId">
+          <Project
+            v-model="formData.projectId"
+            @selectedObject="formData.projectName = $event.name"
+          ></Project>
+        </a-form-item>
 
-    <a-form-item label="动作组合编辑" name="expression">
-      <div class="flex">
-        <a-textarea
-          v-model:value="formData.expression"
-          :allowClear="true"
-          placeholder="请输入内容"
-          :readonly="true"
-        />
-        <a-button
-          type="primary"
-          class="ml-[15px]"
-          :disabled="history.length === 0"
-          @click="historyBack()"
-          >回退</a-button
-        >
-        <a-button type="primary" class="ml-[15px]" @click="clearAll"
-          >清除</a-button
+        <a-form-item label="动作组合编辑" name="expression">
+          <div class="flex items-center">
+            <a-textarea
+              v-model:value="formData.expression"
+              :allowClear="true"
+              placeholder="请输入内容"
+              :readonly="true"
+            />
+            <a-button
+              type="primary"
+              class="ml-[15px]"
+              :disabled="history.length === 0"
+              @click="historyBack()"
+              >回退</a-button
+            >
+            <a-button type="primary" class="ml-[15px]" @click="clearAll"
+              >清除</a-button
+            >
+          </div>
+        </a-form-item>
+      </a-form>
+
+      <div class="border border-gray-200 rounded p-[20px] mb-[20px]">
+        <div class="mb-[10px]">
+          操作符：<a-tag
+            @click="actionClick(obj)"
+            v-for="obj in orperations"
+            :key="obj.name"
+            color="red"
+            class="cursor-pointer"
+            >{{ obj.name }}</a-tag
+          >
+        </div>
+        <div class="min-h-[42px]">
+          元动作：<a-tag
+            @click="actionClick(obj)"
+            v-for="obj in names"
+            :key="obj"
+            color="processing"
+            class="cursor-pointer mb-[20px]"
+            >{{ obj.name }}</a-tag
+          >
+        </div>
+        <a-button type="primary" @click="transVisible = true"
+          >添加元动作</a-button
         >
       </div>
-    </a-form-item>
-  </a-form>
+    </div>
 
-  <div class="border border-inherit rounded p-[20px] mb-[20px]">
-    <div class="mb-[10px]">
-      操作符：<a-tag
-        @click="actionClick(obj)"
-        v-for="obj in orperations"
-        :key="obj.name"
-        color="red"
-        class="cursor-pointer"
-        >{{ obj.name }}</a-tag
+    <div slot="footer" class="flex justify-center">
+      <a-button class="mr-2" type="primary" @click="emit('close')"
+        >关闭</a-button
+      >
+      <a-button class="mr-2" type="primary" @click="handleEditOk"
+        >提交</a-button
       >
     </div>
-    <div class="min-h-[42px]">
-      元动作：<a-tag
-        @click="actionClick(obj)"
-        v-for="obj in names"
-        :key="obj"
-        color="processing"
-        class="cursor-pointer mb-[20px]"
-        >{{ obj.name }}</a-tag
-      >
-    </div>
-    <a-button type="primary" @click="transVisible = true">添加元动作</a-button>
   </div>
 
   <a-modal
@@ -87,11 +105,6 @@
             :one-way="true" :titles="['  未选择', '  已选择']" :rowKey="(obj) => obj._id" @change="change"
             :filter-option="filterOption" pagination show-search />
     </a-modal> -->
-
-  <div slot="footer" class="flex justify-end">
-    <a-button class="mr-2" type="primary" @click="emit('close')">关闭</a-button>
-    <a-button class="mr-2" type="primary" @click="handleEditOk">提交</a-button>
-  </div>
 </template>
 
 <script setup>

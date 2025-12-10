@@ -57,10 +57,15 @@
     >
       <template #bodyCell="{ column, record }" :scroll="{ y: table_height }">
         <template v-if="column.key === 'action'">
-          <a-button type="link" size="small" @click="showEditDrawer(record)"
+          <a-button type="primary" size="small" @click="showEditDrawer(record)"
             >编辑</a-button
           >
-          <a-button type="link" size="small" @click="deleteAction(record._id)"
+          <a-button
+            type="primary"
+            danger
+            class="ml-2"
+            size="small"
+            @click="deleteAction(record._id)"
             >删除</a-button
           >
         </template>
@@ -177,7 +182,7 @@
           >
         </a-form-item>
       </a-form>
-      <div slot="footer" class="flex justify-end">
+      <div slot="footer" class="flex justify-center">
         <a-button class="mr-2" type="primary" @click="handleClose"
           >关闭</a-button
         >
@@ -274,7 +279,7 @@
           >
         </a-form-item>
       </a-form>
-      <div slot="footer" class="flex justify-end">
+      <div slot="footer" class="flex justify-center">
         <a-button class="mr-2" type="primary" @click="handleEditClose"
           >关闭</a-button
         >

@@ -21,7 +21,10 @@
         </div>
       </div>
       <div>
-        <a-button type="primary" @click="onCreate">新建项目</a-button>
+        <a-button type="primary" @click="onCreate">
+          <PlusOutlined />
+          新建项目
+        </a-button>
 
         <a-button
           type="primary"
@@ -30,6 +33,7 @@
           :disabled="selectedRowKeys.length === 0"
           @click="onDelete"
         >
+          <DeleteOutlined />
           删除项目
         </a-button>
       </div>
@@ -138,7 +142,10 @@ import {
   ExclamationCircleOutlined,
   ClockCircleOutlined,
   MinusCircleOutlined,
+  PlusOutlined,
+  DeleteOutlined,
 } from "@ant-design/icons-vue";
+
 import { message } from "ant-design-vue";
 import ProjectDetail from "./ProjectDetail.vue";
 import AddProject from "./AddProject.vue";

@@ -6,64 +6,68 @@
     width="80%"
     :footer="null"
   >
-    <div class="max-h-[80vh] min-h[50vh]">
-      <div class="flex-row flex mt-[20px] mb-[20px] pl-[30px]">
-        <a-form :model="searchForm" layout="inline" style="width: 100%">
-          <a-row style="width: 80%">
-            <a-col :span="10" style="max-width: 300px">
-              <a-form-item label="关键字" name="key">
-                <a-input
-                  v-model:value="searchForm.name"
-                  placeholder="请输入关键字"
-                  :allowClear="true"
-                />
-              </a-form-item>
-            </a-col>
+    <div class="flex-row flex mb-2">
+      <a-form :model="searchForm" layout="inline" style="width: 100%">
+        <a-row style="width: 80%">
+          <a-col :span="10" style="max-width: 300px">
+            <a-form-item label="关键字" name="key">
+              <a-input
+                v-model:value="searchForm.name"
+                placeholder="请输入关键字"
+                :allowClear="true"
+              />
+            </a-form-item>
+          </a-col>
 
-            <a-col :span="10" style="max-width: 300px">
-              <a-form-item label="所属项目" name="projectid">
-                <ProjectSelect
-                  v-model="searchForm.projectId"
-                  placeholder="请选择所属项目"
-                  :allowClear="true"
-                >
-                </ProjectSelect>
-              </a-form-item>
-            </a-col>
-          </a-row>
-        </a-form>
+          <a-col :span="10" style="max-width: 300px">
+            <a-form-item label="所属项目" name="projectid">
+              <ProjectSelect
+                v-model="searchForm.projectId"
+                placeholder="请选择所属项目"
+                :allowClear="true"
+              >
+              </ProjectSelect>
+            </a-form-item>
+          </a-col>
+        </a-row>
+      </a-form>
 
-        <div class="flex justify-end">
-          <a-button type="primary" @click="query" class="mr-[2rem]"
-            >查询</a-button
-          >
-        </div>
+      <div class="flex justify-end">
+        <a-button type="primary" @click="query" class="mr-[2rem]"
+          >查询</a-button
+        >
       </div>
+    </div>
 
+    <div class="flex-1 overflow-auto">
       <a-table
         :columns="canColumns"
         :dataSource="pagedDataSource"
         :row-class-name="
           (_record, index) => (index % 2 === 1 ? 'table-striped' : null)
         "
+        :pagination="false"
+        sticky
+        :scroll="{ y: 500 }"
       >
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'action'">
-            <a-button type="link" size="small" @click="confirm(record)"
+            <a-button type="primary" size="small" @click="confirm(record)"
               >选择</a-button
             >
           </template>
         </template>
       </a-table>
-      <div class="mt-[20px] flex justify-end">
-        <a-pagination
-          v-model:current="currentPage"
-          :total="dataSource.length"
-          :page-size="pageSize"
-          show-less-items
-          @change="handlePageChange"
-        />
-      </div>
+    </div>
+
+    <div class="mt-2 flex justify-end">
+      <a-pagination
+        v-model:current="currentPage"
+        :total="dataSource.length"
+        :page-size="pageSize"
+        show-less-items
+        @change="handlePageChange"
+      />
     </div>
   </a-modal>
 </template>
@@ -146,28 +150,32 @@ const canColumns = [
     title: "动作执行路径",
     dataIndex: "exec_path",
     key: "exec_path",
+    width: "120px",
   },
   {
     title: "路径参数",
     dataIndex: "path_parameter",
     key: "path_parameter",
+    width: "120px",
   },
   {
     title: "路径类型",
     dataIndex: "relation",
     key: "relation",
+    width: "120px",
   },
   {
     title: "所属项目",
     dataIndex: "projectName",
     key: "projectName",
+    width: "120px",
   },
 
   {
     title: "操作",
     key: "action",
     fixed: "right",
-    width: 180,
+    width: 80,
   },
 ];
 

@@ -61,7 +61,9 @@
         </a-button>
         <a-button
           type="primary"
+          danger
           @click="deleteSelectedActions"
+          :disabled="!selectedRowKeys.length"
           class="mr-2 flex items-center"
         >
           <DeleteOutlined />
@@ -111,14 +113,23 @@
 
           <template v-if="column.key === 'action'">
             <template v-if="record.values">
-              <a-button type="link" size="small" @click="showCopyDrawer(record)"
+              <a-button
+                type="primary"
+                size="small"
+                @click="showCopyDrawer(record)"
                 >复制</a-button
               >
-              <a-button type="link" size="small" @click="showEditDrawer(record)"
+              <a-button
+                type="primary"
+                size="small"
+                class="ml-2"
+                @click="showEditDrawer(record)"
                 >编辑</a-button
               >
               <a-button
-                type="link"
+                type="primary"
+                danger
+                class="ml-2"
                 size="small"
                 @click="deleteAction(record._id)"
                 >删除</a-button
@@ -155,15 +166,22 @@
           <template v-if="column.key === 'action'">
             <template v-if="record.values">
               <!-- <a-button type="link" size="small" @click="showCopyDrawer(record)">复制</a-button> -->
-              <a-button type="link" size="small" @click="showEditDrawer(record)"
-                >编辑</a-button
-              >
               <a-button
-                type="link"
+                type="primary"
+                size="small"
+                @click="showEditDrawer(record)"
+              >
+                编辑
+              </a-button>
+              <a-button
+                type="primary"
+                danger
+                class="ml-2"
                 size="small"
                 @click="deleteAction(record._id)"
-                >删除</a-button
               >
+                删除
+              </a-button>
             </template>
           </template>
         </template>
@@ -408,21 +426,25 @@ const ioColumns = [
     title: "动作执行路径",
     dataIndex: "exec_path",
     key: "exec_path",
+    width: "120px",
   },
   {
     title: "通道参数",
     dataIndex: "path_parameter",
     key: "path_parameter",
+    width: "120px",
   },
   {
     title: "通道类型",
     dataIndex: "relation",
     key: "relation",
+    width: "120px",
   },
   {
     title: "所属项目",
     dataIndex: "projectName",
     key: "projectName",
+    width: "120px",
   },
 
   {
@@ -453,6 +475,7 @@ const canColumns = [
     title: "动作执行路径",
     dataIndex: "exec_path",
     key: "exec_path",
+    width: "120px",
   },
   // {
   //   title: '路径参数',
@@ -463,11 +486,13 @@ const canColumns = [
     title: "路径类型",
     dataIndex: "relation",
     key: "relation",
+    width: "120px",
   },
   {
     title: "所属项目",
     dataIndex: "projectName",
     key: "projectName",
+    width: "120px",
   },
 
   {
@@ -533,11 +558,6 @@ const handleEditClose = () => {
 };
 
 const deleteSelectedActions = async () => {
-  if (selectedRowKeys.value.length === 0) {
-    ElMessage.warning("请选择要删除的项");
-    return;
-  }
-
   ElMessageBox.confirm("确定要删除选中的功能模块吗？", "删除确认", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",

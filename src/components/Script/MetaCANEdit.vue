@@ -1,133 +1,144 @@
 <template>
-  <a-form :model="formData" :rules="rules" layout="vertical" ref="formRef">
-    <!-- 需要选择 -->
-    <a-form-item label="动作名称" name="name">
-      <a-row :gutter="[16, 16]">
-        <a-col :span="16">
-          <a-input v-model:value="formData.name" placeholder="请输入内容" />
-        </a-col>
-        <a-col>
-          <a-button
-            type="primary"
-            @click="canSelVisible = true"
-            :disabled="onlyOneStatus"
-            >选择</a-button
+  <div class="h-full overflow-hidden flex flex-col gap-2">
+    <div class="flex-1 overflow-hidden overflow-y-auto">
+      <a-form :model="formData" :rules="rules" layout="vertical" ref="formRef">
+        <!-- 需要选择 -->
+        <a-form-item label="动作名称" name="name">
+          <a-row :gutter="[16, 16]">
+            <a-col :span="16">
+              <a-input v-model:value="formData.name" placeholder="请输入内容" />
+            </a-col>
+            <a-col>
+              <a-button
+                type="primary"
+                @click="canSelVisible = true"
+                :disabled="onlyOneStatus"
+                >选择</a-button
+              >
+            </a-col>
+          </a-row>
+        </a-form-item>
+
+        <a-form-item label="动作描述" name="description">
+          <a-input
+            v-model:value="formData.description"
+            placeholder="请输入内容"
+          />
+        </a-form-item>
+
+        <a-form-item label="所属项目" name="projectId">
+          <Project
+            v-model="formData.projectId"
+            @selectedObject="formData.projectName = $event.name"
+          ></Project>
+        </a-form-item>
+        <a-form-item name="exec_path" class="mt-[20px]">
+          <template v-slot:label>
+            动作执行路径<span style="color: brown; margin-left: 10px"
+              >(选接口卡通道)
+            </span>
+          </template>
+          <!-- <a-input v-model:value="formData.exec_path" placeholder="请输入内容" /> -->
+
+          <a-select
+            v-model:value="formData.exec_path"
+            style="width: 100%"
+            placeholder="请选择内容"
+            :allowClear="true"
           >
-        </a-col>
-      </a-row>
-    </a-form-item>
+            <a-select-option value="Channel1">Channel1</a-select-option>
+            <a-select-option value="Channel2">Channel2</a-select-option>
+          </a-select>
+        </a-form-item>
 
-    <a-form-item label="动作描述" name="description">
-      <a-input v-model:value="formData.description" placeholder="请输入内容" />
-    </a-form-item>
-
-    <a-form-item label="所属项目" name="projectId">
-      <Project
-        v-model="formData.projectId"
-        @selectedObject="formData.projectName = $event.name"
-      ></Project>
-    </a-form-item>
-    <!-- 
-        <a-form-item label="状态" name="status">
-            <a-input v-model:value="formData.status" placeholder="请输入内容" />
-        </a-form-item> -->
-
-    <a-form-item label="状态" name="values">
-      <div
-        v-for="(value, index) in formData.values"
-        :key="index"
-        class="mb-[20px] pt-[20px] pl-[20px]"
-        style="background-color: rgb(236 236 236 / 34%)"
-      >
-        <a-row :gutter="[16, 16]">
-          <a-col :span="8">
-            <a-form-item
-              label="状态名称"
-              :name="['values', index, 'vt_signal']"
-              :rules="{
-                required: true,
-                message: '状态名称',
-                trigger: 'change',
-              }"
-            >
-              <a-input
-                v-model:value="value.vt_signal"
-                placeholder="请输入状态名称"
-              />
-            </a-form-item>
-          </a-col>
-
-          <a-col :span="8">
-            <a-form-item
-              label="状态值"
-              :name="['values', index, 'value']"
-              :rules="{
-                required: true,
-                message: '状态值不可为空',
-                trigger: 'change',
-              }"
-            >
-              <a-input v-model:value="value.value" placeholder="请输入状态值" />
-            </a-form-item>
-          </a-col>
-
-          <a-col class="flex items-center">
-            <a-button
-              type="link"
-              :disabled="formData.values.length < 2"
-              @click="formData.values.splice(index, 1)"
-              >删除</a-button
-            >
-          </a-col>
-        </a-row>
-      </div>
-    </a-form-item>
-    <a-button
-      style="margin-top: 0"
-      type="primary"
-      @click="addValue"
-      :disabled="props.onlyOneStatus"
-      >添加状态</a-button
-    >
-
-    <a-form-item name="exec_path" class="mt-[20px]">
-      <template v-slot:label>
-        动作执行路径<span style="color: brown; margin-left: 10px"
-          >(选接口卡通道)
-        </span>
-      </template>
-      <!-- <a-input v-model:value="formData.exec_path" placeholder="请输入内容" /> -->
-
-      <a-select
-        v-model:value="formData.exec_path"
-        style="width: 100%"
-        placeholder="请选择内容"
-        :allowClear="true"
-      >
-        <a-select-option value="Channel1">Channel1</a-select-option>
-        <a-select-option value="Channel2">Channel2</a-select-option>
-      </a-select>
-    </a-form-item>
-
-    <!-- <a-form-item name="path_parameter">
+        <!-- <a-form-item name="path_parameter">
             <template v-slot:label>
                 路径参数<span style="color:brown;margin-left: 10px;">(仅dspace环境填写) </span>
             </template>
             <a-input v-model:value="formData.path_parameter" placeholder="请输入内容" />
         </a-form-item> -->
 
-    <a-form-item label="通道类型" name="relation">
-      <a-select v-model:value="formData.relation" style="width: 100%">
-        <a-select-option value="IN">IN</a-select-option>
-        <a-select-option value="OUT">OUT</a-select-option>
-      </a-select>
-    </a-form-item>
-  </a-form>
-  <div slot="footer" class="flex justify-end">
-    <a-button class="mr-2" type="primary" @click="emit('close', false)"
-      >关闭</a-button
-    >
-    <a-button class="mr-2" type="primary" @click="handleEditOk">提交</a-button>
+        <a-form-item label="通道类型" name="relation">
+          <a-select v-model:value="formData.relation" style="width: 100%">
+            <a-select-option value="IN">IN</a-select-option>
+            <a-select-option value="OUT">OUT</a-select-option>
+          </a-select>
+        </a-form-item>
+
+        <a-form-item label="状态" name="values">
+          <div class="border border-dashed border-gray-200 p-2 rounded-md">
+            <a-card
+              class="mt-4! first:mt-0!"
+              v-for="(value, index) in formData.values"
+              :key="index"
+              :title="`状态${index + 1}`"
+            >
+              <template #extra>
+                <a-button
+                  type="link"
+                  :disabled="formData.values.length < 2"
+                  @click="formData.values.splice(index, 1)"
+                  >删除</a-button
+                >
+              </template>
+              <a-row :gutter="[16, 16]">
+                <a-col :span="8">
+                  <a-form-item
+                    label="状态名称"
+                    :name="['values', index, 'vt_signal']"
+                    :rules="{
+                      required: true,
+                      message: '状态名称',
+                      trigger: 'change',
+                    }"
+                  >
+                    <a-input
+                      v-model:value="value.vt_signal"
+                      placeholder="请输入状态名称"
+                    />
+                  </a-form-item>
+                </a-col>
+
+                <a-col :span="8">
+                  <a-form-item
+                    label="状态值"
+                    :name="['values', index, 'value']"
+                    :rules="{
+                      required: true,
+                      message: '状态值不可为空',
+                      trigger: 'change',
+                    }"
+                  >
+                    <a-input
+                      v-model:value="value.value"
+                      placeholder="请输入状态值"
+                    />
+                  </a-form-item>
+                </a-col>
+              </a-row>
+            </a-card>
+            <div class="flex justify-center mt-4">
+              <a-button
+                type="primary"
+                @click="addValue"
+                :disabled="props.onlyOneStatus"
+              >
+                添加状态
+              </a-button>
+            </div>
+          </div>
+        </a-form-item>
+      </a-form>
+    </div>
+
+    <div slot="footer" class="flex justify-center">
+      <a-button class="mr-2" type="primary" @click="emit('close', false)"
+        >关闭</a-button
+      >
+      <a-button class="mr-2" type="primary" @click="handleEditOk"
+        >提交</a-button
+      >
+    </div>
   </div>
 
   <CANSelector v-model:visible="canSelVisible" @confirm="select"></CANSelector>

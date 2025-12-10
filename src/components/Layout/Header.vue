@@ -3,7 +3,7 @@
     <div class="flex justify-between items-center">
       <Logo />
       <Breadcrumb class="flex-1 ml-4" />
-      <ProjectSelect class="ml-4!" />
+      <!-- <ProjectSelect class="ml-4!" /> -->
     </div>
 
     <div class="flex justify-between items-center gap-2 pr-4">
@@ -15,6 +15,6 @@
 <script setup lang="ts">
 import Logo from "./Logo.vue";
 import Breadcrumb from "./Breadcrumb.vue";
-import ProjectSelect from "./ProjectSelect.vue";
+// import ProjectSelect from "./ProjectSelect.vue";
 import Actions from "./Actions.vue";
 </script>

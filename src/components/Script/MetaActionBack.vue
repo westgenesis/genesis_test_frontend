@@ -161,7 +161,7 @@
           >添加值</a-button
         >
       </a-form>
-      <div slot="footer" class="flex justify-end">
+      <div slot="footer" class="flex justify-center">
         <a-button class="mr-2" type="primary" @click="handleClose"
           >关闭</a-button
         >
@@ -277,7 +277,7 @@
           >添加值</a-button
         >
       </a-form>
-      <div slot="footer" class="flex justify-end">
+      <div slot="footer" class="flex justify-center">
         <a-button class="mr-2" type="primary" @click="handleEditClose"
           >关闭</a-button
         >

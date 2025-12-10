@@ -76,7 +76,7 @@
               >
                 解析
               </el-button>
-              <el-button type="text" @click="doDelete(record)">删除</el-button>
+              <!-- <el-button type="text" @click="doDelete(record)">删除</el-button> -->
             </div>
           </template>
         </template>
@@ -94,12 +94,18 @@ import { UploadProps, ElMessage } from "element-plus";
 import { http } from "../../http";
 import { requirementStatusMap } from "./RequirementModel";
 import { ElLoading } from "element-plus";
-const projectStore = useProjectStore();
-const { currentProject } = storeToRefs(projectStore);
+import { useRoute } from "vue-router";
 
-watch(currentProject, (newVal) => {
-  console.log(newVal);
-});
+const projectStore = useProjectStore();
+
+const { projects } = storeToRefs(projectStore);
+const route = useRoute();
+
+const id = computed(() => route.params.id);
+
+const currentProject = computed(() =>
+  projects.value.find((item) => item?._id?.$oid === id.value)
+);
 
 const requirements = computed(
   () => currentProject.value?.requirement_files || []

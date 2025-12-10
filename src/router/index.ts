@@ -55,7 +55,7 @@ const routes: AppRouteRecordRaw[] = [
         path: "project/manageRequirement/:id",
         component: RequirementManage,
         meta: {
-          title: "需求配置",
+          title: "需求文档配置",
           hidden: true,
         },
       },
