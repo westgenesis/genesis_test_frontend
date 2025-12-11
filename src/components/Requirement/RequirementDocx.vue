@@ -14,8 +14,10 @@
       </div>
 
       <div class="flex justify-center mr-[1rem]" style="gap: 1rem">
-        <a-button type="primary" size="" @click="onSplit">拆分</a-button>
-        <a-button type="primary" size="" @click="onSaveContent">保存</a-button>
+        <a-button type="primary" size="small" @click="onSplit">拆分</a-button>
+        <a-button type="primary" size="small" @click="onSaveContent"
+          >保存</a-button
+        >
       </div>
     </div>
   </div>

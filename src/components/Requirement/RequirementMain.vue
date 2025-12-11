@@ -1,92 +1,124 @@
 <template>
-  <div class="flex">
-    <div
-      style="height: 100%; border-right: 1px solid #ddd"
-      class="m-[20px] mt-[0] w-[28rem]"
-    >
-      <div style="height: 2rem; margin: 1rem">
-        <a-input-search
-          placeholder="请输入要搜索的名称"
-          style="width: 100%"
-          @search="onSearch"
-        />
-      </div>
-
-      <div
-        style="
-          height: calc(100vh - 6.3rem);
-          overflow: scroll;
-          background-color: rgba(248, 248, 254, 0.5);
-        "
+  <div class="h-full overflow-hidden flex flex-col gap-2">
+    <el-tabs v-model="currentProject">
+      <el-tab-pane
+        :label="item.name"
+        :name="item._id.$oid"
+        v-for="item in projects"
+        :key="item._id.$oid"
       >
-        <a-tree
-          :show-line="false"
-          :show-icon="true"
-          :default-expanded-keys="[
-            projects?.[0]?._id?.$oid +
-              '-' +
-              projects?.[0]?.requirement_files?.[0]?.req_id,
-          ]"
-          :tree-data="treeData"
-          @select="onSelect"
-          v-model:selectedKeys="selectedKeys"
-        >
-          <template #switcherIcon="{ switcherCls }"
-            ><down-outlined :class="switcherCls"
-          /></template>
-          <template #icon="node">
-            <template v-if="node.type === 'project'">
-              <project-outlined />
-            </template>
-            <template v-if="node.type === 'requirement'">
-              <profile-outlined />
-            </template>
-            <template v-else-if="node.type === 'sub_requirement'">
-              <database-outlined />
-            </template>
-            <template v-else-if="node.type === 'split_case'">
-              <ExperimentOutlined />
-            </template>
-            <template v-else-if="node.type === 'testcase'">
-              <ApiOutlined />
-            </template>
-          </template>
-        </a-tree>
-      </div>
-    </div>
+        <template #label>
+          <span class="flex items-center gap-2 text-lg">
+            <el-icon :size="20"><Document /></el-icon>
+            <span>{{ item.name }}</span>
+          </span>
+        </template>
+      </el-tab-pane>
+    </el-tabs>
 
-    <div class="w-full h-[96vh] pt-[2rem] overflow-scroll">
-      <div v-if="currentType === 'requirement'">
-        <RequirementInner
-          :currentRequirement="currentRequirement"
-          :selectNodeByKey="selectNodeByKey"
-        />
-      </div>
-      <div v-else-if="currentType === 'sub_requirement'">
-        <SplitRequirementInner
-          :currentRequirement="currentRequirement"
-          :selectNodeByKey="selectNodeByKey"
-        />
-      </div>
-      <div v-else-if="currentType === 'split_case'">
-        <SplitCaseInner
-          :currentRequirement="currentRequirement"
-          :selectNodeByKey="selectNodeByKey"
-        />
-      </div>
-      <div v-else-if="currentType === 'testcase'">
-        <TestCaseInner
-          :currentRequirement="currentRequirement"
-          :selectNodeByKey="selectNodeByKey"
-        />
-      </div>
+    <div class="flex-1 flex gap-2 overflow-hidden">
+      <SplitPanel
+        :paneCount="2"
+        :sizes="[35, 65]"
+        class="h-full overflow-hidden"
+        :gutterSize="10"
+      >
+        <template #pane-0>
+          <div class="h-full overflow-hidden flex flex-col mr-2">
+            <div class="mb-2">
+              <a-input-search
+                placeholder="请输入要搜索的名称"
+                style="width: 100%"
+                @search="onSearch"
+              />
+            </div>
+
+            <div class="flex-1 overflow-auto">
+              <el-tree
+                ref="elTree"
+                :default-expanded-keys="
+                  treeData.length ? [treeData[0]?.key] : []
+                "
+                :data="treeData"
+                :props="{
+                  label: 'title',
+                }"
+                node-key="key"
+                highlight-current
+                accordion
+                :current-node-key="currentKey"
+                @node-click="onSelect"
+                :expand-on-click-node="false"
+              >
+                <template #default="{ node, data }">
+                  <div
+                    class="flex justify-between items-center gap-2 w-full overflow-hidden pr-2"
+                  >
+                    <div class="flex-1 flex items-center overflow-hidden">
+                      <el-tooltip
+                        effect="dark"
+                        :content="data.title"
+                        placement="top"
+                        :show-after="300"
+                      >
+                        <MiddleEllipsis :text="data.title"> </MiddleEllipsis>
+                      </el-tooltip>
+                    </div>
+
+                    <ElTag
+                      size="small"
+                      effect="plain"
+                      :type="typeMap[data.type].tagType"
+                    >
+                      <component :is="typeMap[data.type].icon" />
+                      <span class="ml-1">{{ typeMap[data.type].title }}</span>
+                    </ElTag>
+                  </div>
+                </template>
+              </el-tree>
+            </div>
+          </div>
+        </template>
+
+        <template #pane-1>
+          <div
+            class="h-full overflow-auto flex-1 border p-4 border-solid border-gray-200 rounded-md ml-2"
+          >
+            <div v-if="currentType === 'requirement'">
+              <RequirementInner
+                :currentRequirement="currentRequirement"
+                :selectNodeByKey="selectNodeByKey"
+              />
+            </div>
+            <div v-else-if="currentType === 'sub_requirement'">
+              <SplitRequirementInner
+                :currentRequirement="currentRequirement"
+                :selectNodeByKey="selectNodeByKey"
+              />
+            </div>
+            <div v-else-if="currentType === 'split_case'">
+              <SplitCaseInner
+                :currentRequirement="currentRequirement"
+                :selectNodeByKey="selectNodeByKey"
+              />
+            </div>
+            <div v-else-if="currentType === 'testcase'">
+              <TestCaseInner
+                :currentRequirement="currentRequirement"
+                :selectNodeByKey="selectNodeByKey"
+              />
+            </div>
+            <ElEmpty description="请先选中文档节点进行查看" v-else />
+          </div>
+        </template>
+      </SplitPanel>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useProjectStore } from "../../stores/project";
-import { ref, computed, onUpdated, nextTick } from "vue";
+import { ref, computed, onUpdated, nextTick, useTemplateRef, watch } from "vue";
 import type { TreeProps } from "ant-design-vue";
 import { storeToRefs } from "pinia";
 import {
@@ -101,14 +133,40 @@ import RequirementInner from "./RequirementInner.vue";
 import SplitCaseInner from "./SplitCaseInner.vue";
 import TestCaseInner from "./TestCaseInner.vue";
 import SplitRequirementInner from "./SplitRequirementInner.vue";
+import { ElEmpty, ElTag } from "element-plus";
+import { Document } from "@element-plus/icons-vue";
+import MiddleEllipsis from "@/components/MiddleEllipsis.vue";
+import SplitPanel from "@/components/SplitPanel.vue";
+
 const currentType = ref();
 const projectStore = useProjectStore();
-const refreshAllProjects = projectStore.refreshAllProjects;
 const { projects } = storeToRefs(projectStore);
-const currentRequirement = ref();
-const selectedKeys = ref<string[]>([]);
 
+const currentProject = ref("");
+const currentRequirement = ref();
+const currentKey = ref("");
 const searchValue = ref("");
+
+const currentProjectInfo = computed(() => {
+  if (!(projects.value.length && currentProject.value)) {
+    return null;
+  }
+  return projects.value?.find(
+    (item) => item._id?.$oid === currentProject.value
+  );
+});
+
+watch(
+  projects,
+  () => {
+    if (projects.value.length && !currentProject.value) {
+      currentProject.value = projects.value[0]._id?.$oid;
+    }
+  },
+  {
+    immediate: true,
+  }
+);
 
 const onSearch = (value) => {
   searchValue.value = value;
@@ -153,131 +211,141 @@ const filterTree = (items, searchTerm) => {
 };
 
 const treeData = computed(() => {
-  const searchTerm = searchValue.value.trim();
+  const searchTerm = searchValue.value?.trim() || "";
 
-  const buildTree = (projects) => {
-    return projects.map((project, index) => ({
-      title: project.name,
-      key: `${project._id.$oid}`,
-      project: project,
-      type: "project",
-      children:
-        project.requirement_files && project.requirement_files.length > 0
-          ? project.requirement_files.map((req, reqIndex) => {
-              const parts = req.name.split("/");
-              const fileName = parts.pop();
-              return {
-                title: fileName,
-                key: `${project._id.$oid}-${req.req_id}`,
-                fullPath: req.name,
-                req: req,
-                project: project,
-                type: "requirement",
-                split_cases: getSplitCases(req),
-                children:
-                  req.split_files && req.split_files.length > 0
-                    ? req.split_files
-                        .filter((x) => x && x.file_name)
-                        .map((splitReq, splitReqIndex) => {
-                          console.log(splitReq);
-                          return {
-                            title: splitReq?.file_name.replace(".docx", ""),
+  const buildTree = (project) =>
+    project.requirement_files && project.requirement_files.length > 0
+      ? project.requirement_files.map((req, reqIndex) => {
+          const parts = req.name.split("/");
+          const fileName = parts.pop();
+          return {
+            title: fileName,
+            key: `${project._id.$oid}-${req.req_id}`,
+            fullPath: req.name,
+            req: req,
+            project: project,
+            type: "requirement",
+            split_cases: getSplitCases(req),
+            children:
+              req.split_files && req.split_files.length > 0
+                ? req.split_files
+                    .filter((x) => x && x.file_name)
+                    .map((splitReq, splitReqIndex) => {
+                      return {
+                        title: splitReq?.file_name.replace(".docx", ""),
 
-                            key: `${project._id.$oid}-${req.req_id}-${splitReq.split_file_id}`,
-                            fullPath: splitReq.object_name,
-                            splitReq: splitReq,
-                            req: req,
-                            project: project,
-                            type: "sub_requirement",
-                            split_cases: (splitReq.split_case || []).map(
-                              (singleCase, splitCaseIndex) => {
-                                console.log(splitReq);
-                                for (const [index, testcase] of (
-                                  singleCase.testcases || []
-                                ).entries()) {
-                                  testcase.split_case_name =
-                                    singleCase.testcase_name;
-                                  testcase.testcaseIndex = index; // 添加index字段，值为当前的顺序
-                                  testcase.reqIndex = reqIndex;
-                                  testcase.splitReqIndex = splitReqIndex; // 添加splitReqIndex字段，值为当前的splitReq的顺序
-                                  testcase.splitCaseIndex = splitCaseIndex;
-                                }
-                                return singleCase.testcases || [];
-                              }
-                            ),
-                            children:
-                              splitReq.split_case &&
-                              splitReq.split_case.length > 0
-                                ? splitReq.split_case.map(
-                                    (splitCase, splitCaseIndex) => ({
-                                      title: splitCase.testcase_name || "",
-                                      fullPath: splitCase.testcase_name,
-                                      key: `${project._id.$oid}-${req.req_id}-${splitReq.split_file_id}-${splitCase.testcase_id}`,
-                                      splitCase: splitCase,
-                                      splitReq: splitReq,
-                                      req: req,
-                                      project: project,
-                                      type: "split_case",
-                                      children:
-                                        splitCase.testcases &&
-                                        splitCase.testcases.length > 0
-                                          ? splitCase.testcases.map(
-                                              (testcase, testcaseIndex) => ({
-                                                title:
-                                                  testcase.testcase_name || "",
-                                                type: "testcase",
-                                                key: `${project._id.$oid}-${req.req_id}-${splitReq.split_file_id}-${splitCase.testcase_id}-${testcase.testcase_id}`,
-                                                splitCase: splitCase,
-                                                splitReq: splitReq,
-                                                req: req,
-                                                project: project,
-                                                testcase: testcase || [],
-                                              })
-                                            )
-                                          : [],
-                                    })
-                                  )
-                                : [],
-                          };
-                        })
-                    : [],
-              };
-            })
-          : [],
-    }));
-  };
+                        key: `${project._id.$oid}-${req.req_id}-${splitReq.split_file_id}`,
+                        fullPath: splitReq.object_name,
+                        splitReq: splitReq,
+                        req: req,
+                        project: project,
+                        type: "sub_requirement",
+                        split_cases: (splitReq.split_case || []).map(
+                          (singleCase, splitCaseIndex) => {
+                            for (const [index, testcase] of (
+                              singleCase.testcases || []
+                            ).entries()) {
+                              testcase.split_case_name =
+                                singleCase.testcase_name;
+                              testcase.testcaseIndex = index; // 添加index字段，值为当前的顺序
+                              testcase.reqIndex = reqIndex;
+                              testcase.splitReqIndex = splitReqIndex; // 添加splitReqIndex字段，值为当前的splitReq的顺序
+                              testcase.splitCaseIndex = splitCaseIndex;
+                            }
+                            return singleCase.testcases || [];
+                          }
+                        ),
+                        children:
+                          splitReq.split_case && splitReq.split_case.length > 0
+                            ? splitReq.split_case.map(
+                                (splitCase, splitCaseIndex) => ({
+                                  title: splitCase.testcase_name || "",
+                                  fullPath: splitCase.testcase_name,
+                                  key: `${project._id.$oid}-${req.req_id}-${splitReq.split_file_id}-${splitCase.testcase_id}`,
+                                  splitCase: splitCase,
+                                  splitReq: splitReq,
+                                  req: req,
+                                  project: project,
+                                  type: "split_case",
+                                  children:
+                                    splitCase.testcases &&
+                                    splitCase.testcases.length > 0
+                                      ? splitCase.testcases.map(
+                                          (testcase, testcaseIndex) => ({
+                                            title: testcase.testcase_name || "",
+                                            type: "testcase",
+                                            key: `${project._id.$oid}-${req.req_id}-${splitReq.split_file_id}-${splitCase.testcase_id}-${testcase.testcase_id}`,
+                                            splitCase: splitCase,
+                                            splitReq: splitReq,
+                                            req: req,
+                                            project: project,
+                                            testcase: testcase || [],
+                                          })
+                                        )
+                                      : [],
+                                })
+                              )
+                            : [],
+                      };
+                    })
+                : [],
+          };
+        })
+      : [];
 
   if (searchTerm === "") {
-    return buildTree(projects.value);
+    return buildTree(currentProjectInfo.value);
   }
 
   return filterTree(buildTree(projects.value), searchTerm);
 });
 
-const onSelect: TreeProps["onSelect"] = (_, info) => {
-  // console.log(info?.node)
-  if (info?.node?.type === "requirement") {
+const typeMap = {
+  project: {
+    title: "项目",
+    icon: ProjectOutlined,
+  },
+  requirement: {
+    title: "需求",
+    icon: ProfileOutlined,
+    tagType: "primary",
+  },
+  sub_requirement: {
+    title: "功能模块",
+    icon: DatabaseOutlined,
+    tagType: "warning",
+  },
+  split_case: {
+    title: "功能点",
+    icon: ExperimentOutlined,
+    tagType: "success",
+  },
+  testcase: {
+    title: "测试用例",
+    icon: ApiOutlined,
+    tagType: "info",
+  },
+};
+
+const onSelect = (info) => {
+  currentKey.value = info.key;
+  if (info.type === "requirement") {
     currentType.value = "requirement";
-    currentRequirement.value = info.node;
-  } else if (info?.node?.type === "sub_requirement") {
+    currentRequirement.value = info;
+  } else if (info.type === "sub_requirement") {
     currentType.value = "sub_requirement";
-    currentRequirement.value = info.node;
-  } else if (info?.node?.type === "split_case") {
+    currentRequirement.value = info;
+  } else if (info.type === "split_case") {
     currentType.value = "split_case";
-    currentRequirement.value = info.node;
-  } else if (info?.node?.type === "testcase") {
+    currentRequirement.value = info;
+  } else if (info.type === "testcase") {
     currentType.value = "testcase";
-    currentRequirement.value = info.node;
+    currentRequirement.value = info;
   }
 };
 
 const selectNodeByKey = async (key) => {
-  // 使用 ref 获取树实例，并设置选中 key
-  selectedKeys.value = [key];
-  console.log(key);
-  // 等待 nextTick 确保 DOM 更新
-  await nextTick();
-
+  currentKey.value = key;
   // 手动找到 key 对应的节点，并触发 onSelect
   const findNode = (nodes, targetKey) => {
     for (const node of nodes) {
@@ -295,11 +363,21 @@ const selectNodeByKey = async (key) => {
   };
 
   const node = findNode(treeData.value, key);
-  console.log(node);
-  if (node) {
-    onSelect([], { node });
-  }
+
+  onSelect(node);
 };
+
+watch(
+  currentProject,
+  () => {
+    if (treeData.value.length) {
+      selectNodeByKey(treeData.value[0].key);
+    }
+  },
+  {
+    immediate: true,
+  }
+);
 </script>
 <style scoped lang="scss">
 :deep(.el-table__empty_block) {

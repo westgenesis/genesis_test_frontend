@@ -157,7 +157,9 @@
                   placeholder="请输入值描述"
                 />
               </a-form-item>
-              <a-button type="link" @click="removeValue(index)">删除</a-button>
+              <a-button type="link" danger @click="removeValue(index)"
+                >删除</a-button
+              >
             </a-card>
           </div>
           <a-button style="margin-top: 1rem" type="dashed" @click="addValue"

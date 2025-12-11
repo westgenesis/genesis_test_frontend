@@ -197,35 +197,15 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column
-            prop="testcase_id"
-            label="测试用例ID"
-            :width="table_width1 / 5 || 100"
-          />
-          <el-table-column
-            prop="testcase_name"
-            label="测试用例名称"
-            :width="table_width1 / 6 || 100"
-          />
-          <el-table-column
-            prop="version"
-            label="版本"
-            :width="table_width1 / 6 || 100"
-          />
-          <el-table-column
-            prop="type"
-            label="用例类型"
-            :width="table_width1 / 6 || 100"
-          >
+          <el-table-column prop="testcase_id" label="测试用例ID" :width="200" />
+          <el-table-column prop="testcase_name" label="测试用例名称" />
+          <el-table-column prop="version" label="版本" :width="100" />
+          <el-table-column prop="type" label="用例类型" :width="100">
             <template #default="scope">
               {{ scope.row.type === "positive" ? "正例" : "反例" }}
             </template>
           </el-table-column>
-          <el-table-column
-            prop="is_generalized"
-            label="是否泛化"
-            :width="table_width1 / 6 || 100"
-          >
+          <el-table-column prop="is_generalized" label="是否泛化" :width="100">
             <template #default="scope">
               {{ scope.row.is_generalized ? "泛化用例" : "非泛化用例" }}
             </template>
@@ -300,7 +280,6 @@
             :data="pagedData"
             style="width: 100%"
             id="function_point_table"
-            :height="table_height1"
           >
             <el-table-column type="expand">
               <template #default="scope">
@@ -389,32 +368,16 @@
             <el-table-column
               prop="testcase_id"
               label="测试用例ID"
-              :width="table_width1 / 6 || 100"
+              :width="200"
             />
-            <el-table-column
-              prop="testcase_name"
-              label="测试用例名称"
-              :width="table_width1 / 7 || 100"
-            />
-            <el-table-column
-              prop="version"
-              label="版本"
-              :width="table_width1 / 7 || 100"
-            />
-            <el-table-column
-              prop="type"
-              label="用例类型"
-              :width="table_width1 / 7 || 100"
-            >
+            <el-table-column prop="testcase_name" label="测试用例名称" />
+            <el-table-column prop="version" label="版本" :width="100" />
+            <el-table-column prop="type" label="用例类型" :width="100">
               <template #default="scope">
                 {{ scope.row.type === "positive" ? "正例" : "反例" }}
               </template>
             </el-table-column>
-            <el-table-column
-              prop="status"
-              label="状态"
-              :width="table_width1 / 10 || 100"
-            >
+            <el-table-column prop="status" label="状态" :width="100">
               <template #default="scope">
                 {{ scope.row.status ? scope.row.status : "待操作" }}
               </template>
@@ -422,7 +385,7 @@
             <el-table-column
               prop="is_generalized"
               label="是否泛化"
-              :width="table_width1 / 7 || 100"
+              :width="100"
             >
               <template #default="scope">
                 {{ scope.row.is_generalized ? "泛化用例" : "非泛化用例" }}
@@ -520,7 +483,6 @@
           :data="testcasesForSplitCase"
           style="width: 100%"
           id="function_point_table"
-          :height="table_height1"
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="expand">
@@ -608,51 +570,30 @@
             </template>
           </el-table-column>
           <el-table-column type="selection" width="50"></el-table-column>
-          <el-table-column
-            prop="testcase_id"
-            label="测试用例ID"
-            :width="table_width1 / 7 || 100"
-          />
-          <el-table-column
-            prop="testcase_name"
-            label="测试用例名称"
-            :width="table_width1 / 7 || 100"
-          />
-          <el-table-column
-            prop="version"
-            label="版本"
-            :width="table_width1 / 7 || 100"
-          />
-          <el-table-column
-            prop="type"
-            label="用例类型"
-            :width="table_width1 / 7 || 100"
-          >
+          <el-table-column prop="testcase_id" label="测试用例ID" :width="200" />
+          <el-table-column prop="testcase_name" label="测试用例名称" />
+          <el-table-column prop="version" label="版本" :width="100" />
+          <el-table-column prop="type" label="用例类型" :width="100">
             <template #default="scope">
               {{ scope.row.type === "positive" ? "正例" : "反例" }}
             </template>
           </el-table-column>
-          <el-table-column
-            prop="is_generalized"
-            label="是否泛化"
-            :width="table_width1 / 7 || 100"
-          >
+          <el-table-column prop="is_generalized" label="是否泛化" :width="100">
             <template #default="scope">
               {{ scope.row.is_generalized ? "泛化用例" : "非泛化用例" }}
             </template>
           </el-table-column>
-          <el-table-column
-            prop="status"
-            label="状态"
-            :width="table_width1 / 10 || 100"
-          >
+          <el-table-column prop="status" label="状态" :width="100">
             <template #default="scope">
               {{ scope.row.status ? scope.row.status : "待操作" }}
             </template>
           </el-table-column>
           <el-table-column label="操作" :width="150">
             <template #default="scope">
-              <el-button type="text" @click="handleModify(scope.row)"
+              <el-button
+                type="primary"
+                size="small"
+                @click="handleModify(scope.row)"
                 >下载脚本文件</el-button
               >
             </template>
@@ -1275,9 +1216,6 @@ const onSelect: TreeProps["onSelect"] = (_, info) => {
     };
   }
 };
-
-const table_width1 = ref(window.innerWidth * 0.6);
-const table_height1 = ref(window.innerHeight * 0.5);
 
 const currentPage = ref(1);
 const pageSize = ref(10);

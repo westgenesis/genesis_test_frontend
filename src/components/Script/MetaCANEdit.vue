@@ -75,7 +75,8 @@
             >
               <template #extra>
                 <a-button
-                  type="link"
+                  type="primary"
+                  danger
                   :disabled="formData.values.length < 2"
                   @click="formData.values.splice(index, 1)"
                   >删除</a-button

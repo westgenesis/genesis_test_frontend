@@ -123,11 +123,12 @@
           <a-button type="primary" @click="openAddDrawer" class="mr-2"
             >新建功能模块</a-button
           >
-          <a-button type="primary" @click="handleDelete" class="mr-2"
-            >删除</a-button
-          >
+
           <a-button type="primary" @click="handleBatchSplit" class="mr-2"
             >批量拆分</a-button
+          >
+          <a-button type="primary" danger @click="handleDelete" class="mr-2"
+            >删除</a-button
           >
         </div>
         <div style="width: 100%">
@@ -146,31 +147,20 @@
             <el-table-column
               prop="split_file_id"
               label="功能模块ID"
-              :width="table_width / 7 || 100"
+              :width="100"
             />
-            <el-table-column
-              prop="file_name"
-              label="功能模块名称"
-              :width="table_width / 7 || 100"
-            >
+            <el-table-column prop="file_name" label="功能模块名称">
               <template #default="scope">
                 {{ scope.row.file_name?.replace(".docx", "") }}
               </template>
             </el-table-column>
-            <el-table-column
-              prop="description"
-              label="功能模块描述"
-              :width="table_width / 7 || 100"
-            />
-            <el-table-column
-              prop="version"
-              label="版本"
-              :width="table_width / 7 || 100"
-            />
-            <el-table-column label="操作" :width="table_width / 7 || 100">
+            <el-table-column prop="description" label="功能模块描述" />
+            <el-table-column prop="version" label="版本" :width="100" />
+            <el-table-column label="操作" :width="100">
               <template #default="scope">
                 <el-button
-                  type="text"
+                  type="primary"
+                  size="small"
                   @click="handleSplit(scope.row)"
                   :disabled="scope.row.is_table === true"
                   >拆分</el-button
@@ -400,7 +390,6 @@ const onSaveContent = () => {
 
 const currentPage = ref(1);
 const pageSize = ref(10);
-const table_width = ref(1000);
 
 const pagedData = computed(() => {
   const start = (currentPage.value - 1) * pageSize.value;
@@ -476,14 +465,6 @@ const handleBatchSplit = () => {
       ElMessage.info("已取消拆分操作");
     });
 };
-
-onUpdated(() => {
-  const ele = document.getElementById("function_module_table");
-  if (ele) {
-    const width = ele.getBoundingClientRect().width;
-    table_width.value = width;
-  }
-});
 
 // 新增的代码
 const drawerVisible = ref(false);

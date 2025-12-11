@@ -66,17 +66,19 @@
                 accept=".doc,.docx,.pdf"
               >
                 <template #trigger>
-                  <el-button type="text">更新</el-button>
+                  <el-button type="primary" size="small">更新</el-button>
                 </template>
               </el-upload>
               <el-button
                 class="ml-2"
-                type="text"
+                type="primary"
+                size="small"
                 @click="doSplitRequirement(record)"
               >
                 解析
               </el-button>
-              <!-- <el-button type="text" @click="doDelete(record)">删除</el-button> -->
+              <!-- <el-button type="primary"
+                  size="small" danger @click="doDelete(record)">删除</el-button> -->
             </div>
           </template>
         </template>

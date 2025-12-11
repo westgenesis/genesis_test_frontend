@@ -103,11 +103,16 @@
           <a-button type="primary" @click="openAddDrawer" class="mr-2"
             >新建功能模块</a-button
           >
-          <a-button type="primary" @click="handleModuleDelete" class="mr-2"
-            >删除</a-button
-          >
+
           <a-button type="primary" @click="handleBatchSplit" class="mr-2"
             >批量拆分</a-button
+          >
+          <a-button
+            type="primary"
+            danger
+            @click="handleModuleDelete"
+            class="mr-2"
+            >删除</a-button
           >
         </div>
         <div style="width: 100%">
@@ -129,38 +134,22 @@
             <el-table-column
               prop="split_file_id"
               label="功能模块ID"
-              :width="table_width2 / 7 || 100"
+              :width="100"
             />
-            <el-table-column
-              prop="file_name"
-              label="功能模块名称"
-              :width="table_width2 / 7 || 100"
-            >
+            <el-table-column prop="file_name" label="功能模块名称">
               <template #default="scope">
                 {{ scope.row.file_name?.replace(".docx", "") }}
               </template>
             </el-table-column>
-            <el-table-column
-              prop="version"
-              label="版本"
-              :width="table_width2 / 7 || 100"
-            />
-            <el-table-column
-              prop="status"
-              label="状态"
-              :width="table_width2 / 10 || 100"
-            >
+            <el-table-column prop="version" label="版本" :width="100" />
+            <el-table-column prop="status" label="状态" :width="100">
               <template #default="scope">
                 <a-tag :color="statusMap[scope.row.status] || ''">
                   {{ scope.row.status ? scope.row.status : "待操作" }}
                 </a-tag>
               </template>
             </el-table-column>
-            <el-table-column
-              prop="progress"
-              label="拆分进度"
-              :width="table_width2 / 10 || 100"
-            >
+            <el-table-column prop="progress" label="拆分进度" :width="200">
               <template #default="scope">
                 <a-progress
                   v-if="
@@ -175,10 +164,11 @@
                 <span v-else>- -</span>
               </template>
             </el-table-column>
-            <el-table-column label="操作" :width="table_width2 / 7 || 100">
+            <el-table-column label="操作" :width="100">
               <template #default="scope">
                 <el-button
-                  type="text"
+                  type="primary"
+                  size="small"
                   @click="handleSplit(scope.row)"
                   :disabled="scope.row.is_table === true"
                   >拆分</el-button
@@ -304,43 +294,30 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column
-              prop="testcase_id"
-              label="功能点ID"
-              :width="table_width1 / 6 || 100"
-            />
-            <el-table-column
-              prop="testcase_name"
-              label="功能点名称"
-              :width="table_width1 / 7 || 100"
-            />
+            <el-table-column prop="testcase_id" label="功能点ID" :width="140" />
+            <el-table-column prop="testcase_name" label="功能点名称" />
             <el-table-column
               prop="last_modified.$date"
               label="更新时间"
-              :width="table_width1 / 7 || 100"
+              :width="120"
             >
+              <template #default="scope">
+                {{ formatDateTime(scope.row.last_modified) }}
+              </template>
             </el-table-column>
-            <el-table-column
-              prop="version"
-              label="版本"
-              :width="table_width1 / 7 || 100"
-            />
-            <el-table-column
-              prop="status"
-              label="状态"
-              :width="table_width1 / 10 || 100"
-            >
+            <el-table-column prop="version" label="版本" :width="100" />
+            <el-table-column prop="status" label="状态" :width="200">
               <template #default="scope">
                 {{ scope.row.status ? scope.row.status : "待操作" }}
               </template>
             </el-table-column>
-            <el-table-column label="操作" :width="150">
+            <el-table-column label="操作" :width="250">
               <template #default="scope">
-                <el-button type="text" @click="handleModify(scope.row)"
+                <el-button type="primary" @click="handleModify(scope.row)"
                   >修改</el-button
                 >
 
-                <el-button type="text" @click="handleGenerate(scope.row)"
+                <el-button size="small" @click="handleGenerate(scope.row)"
                   >生成用例</el-button
                 >
               </template>
@@ -532,6 +509,7 @@ import {
   DownOutlined,
   ExperimentOutlined,
 } from "@ant-design/icons-vue";
+import { formatDateTime } from "@/utils/formatters.ts";
 
 const statusMap = {
   正在拆分: "processing",
@@ -731,11 +709,6 @@ const onSelect: TreeProps["onSelect"] = (_, info) => {
 
 const currentPage = ref(1);
 const pageSize = ref(10);
-const table_width1 = ref(1000);
-const table_height1 = ref(500);
-
-const table_width2 = ref(1000);
-const table_height2 = ref(500);
 
 const pagedData = computed(() => {
   const start = (currentPage.value - 1) * pageSize.value;
@@ -759,26 +732,6 @@ const totalItems = computed(
 const handlePageChange = (page: number) => {
   currentPageModules.value = page;
 };
-
-onUpdated(() => {
-  const ele = document.getElementById("function_point_table");
-  if (ele) {
-    const width = ele.getBoundingClientRect().width;
-    table_width1.value = width;
-    const height = window.innerHeight * 0.7;
-    table_height1.value = height;
-  }
-});
-
-onUpdated(() => {
-  const ele = document.getElementById("function_module_table");
-  if (ele) {
-    const width = ele.getBoundingClientRect().width;
-    table_width2.value = width;
-    const height = window.innerHeight * 0.7;
-    table_height2.value = height;
-  }
-});
 
 const handleSave = async () => {
   console.log(form.value);

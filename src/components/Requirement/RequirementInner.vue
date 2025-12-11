@@ -48,11 +48,11 @@
       <a-button type="primary" @click="openAddDrawer" class="mr-2"
         >新建功能模块</a-button
       >
-      <a-button type="primary" @click="handleModuleDelete" class="mr-2"
-        >删除</a-button
-      >
       <a-button type="primary" @click="handleBatchSplit" class="mr-2"
         >批量拆分</a-button
+      >
+      <a-button type="primary" danger @click="handleModuleDelete" class="mr-2"
+        >删除</a-button
       >
     </div>
     <div style="width: 100%">
@@ -62,8 +62,8 @@
         id="function_module_table"
         @selection-change="handleModuleSelectionChange"
       >
-        <el-table-column type="selection" width="50" />
-        <el-table-column type="expand" width="70">
+        <el-table-column type="selection" width="30" />
+        <el-table-column type="expand" width="50">
           <template #default="props">
             <requirement-docx
               :record="props.row"
@@ -74,13 +74,9 @@
         <el-table-column
           prop="split_file_id"
           label="功能模块ID"
-          :width="table_width2 / 7 || 100"
+          width="120px"
         />
-        <el-table-column
-          prop="file_name"
-          label="功能模块名称"
-          :width="table_width2 / 7 || 100"
-        >
+        <el-table-column prop="file_name" label="功能模块名称">
           <template #default="scope">
             <el-tooltip
               class="box-item"
@@ -97,44 +93,36 @@
             >
           </template>
         </el-table-column>
-        <el-table-column
-          prop="version"
-          label="版本"
-          :width="table_width2 / 7 || 100"
-        />
-        <el-table-column
-          prop="status"
-          label="状态"
-          :width="table_width2 / 10 || 100"
-        >
+        <el-table-column prop="version" label="版本" width="80px" />
+        <el-table-column prop="status" label="状态" width="120px">
           <template #default="scope">
-            <a-tag :color="statusMap[scope.row.status] || ''">
+            <a-tag :color="statusMap[scope.row.status] || 'warning'">
               {{ scope.row.status ? scope.row.status : "待操作" }}
             </a-tag>
           </template>
         </el-table-column>
-        <el-table-column
-          prop="progress"
-          label="拆分进度"
-          :width="table_width2 / 10 || 100"
-        >
+        <el-table-column prop="progress" label="拆分进度" width="180px">
           <template #default="scope">
-            <a-progress
-              v-if="
-                scope.row.progress !== undefined && scope.row.progress !== null
-              "
-              :percent="scope.row.progress"
-              size="small"
-              stroke-width="4"
-              show-info
-            />
-            <span v-else>- -</span>
+            <div class="w-[180px] overflow-hidden">
+              <a-progress
+                v-if="
+                  scope.row.progress !== undefined &&
+                  scope.row.progress !== null
+                "
+                :percent="scope.row.progress"
+                size="small"
+                stroke-width="4"
+                show-info
+              />
+              <span v-else>-</span>
+            </div>
           </template>
         </el-table-column>
-        <el-table-column label="操作" :width="table_width2 / 7 || 100">
+        <el-table-column label="操作" width="100px">
           <template #default="scope">
             <el-button
-              type="text"
+              type="primary"
+              size="small"
               @click="handleSplit(scope.row)"
               :disabled="scope.row.is_table === true"
               >拆分</el-button
@@ -160,7 +148,11 @@
         <a-button type="primary" @click="handleBatchGenerate" class="mr-2"
           >批量生成用例</a-button
         >
-        <a-button type="primary" @click="handleBatchDeleteTestcase" class="mr-2"
+        <a-button
+          type="primary"
+          danger
+          @click="handleBatchDeleteTestcase"
+          class="mr-2"
           >删除</a-button
         >
       </div>
@@ -216,16 +208,8 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column
-          prop="testcase_id"
-          label="功能点ID"
-          :width="table_width1 / 8 || 100"
-        />
-        <el-table-column
-          prop="testcase_name"
-          label="功能点名称"
-          :width="table_width1 / 4 || 100"
-        >
+        <el-table-column prop="testcase_id" label="功能点ID" :width="140" />
+        <el-table-column prop="testcase_name" label="功能点名称">
           <template #default="scope">
             <el-tooltip
               class="box-item"
@@ -233,35 +217,30 @@
               :content="scope.row.testcase_name"
               placement="top-start"
             >
-              <el-button type="primary" text @click="clickTitle(scope.row)">{{
-                scope.row.testcase_name
-              }}</el-button></el-tooltip
-            >
+              <MiddleEllipsis
+                link
+                :text="scope.row.testcase_name"
+                @click="clickTitle(scope.row)"
+            /></el-tooltip>
           </template>
         </el-table-column>
-        <el-table-column
-          prop="last_modified"
-          label="更新时间"
-          :width="table_width1 / 7 || 100"
-        >
+        <el-table-column prop="last_modified" label="更新时间" :width="200">
+          <template #default="scope">
+            {{ formatDateTime(scope.row.last_modified) }}
+          </template>
         </el-table-column>
-        <el-table-column
-          prop="version"
-          label="版本"
-          :width="table_width1 / 14 || 100"
-        />
-        <el-table-column
-          prop="status"
-          label="状态"
-          :width="table_width1 / 10 || 100"
-        >
+        <el-table-column prop="version" label="版本" :width="100" />
+        <el-table-column prop="status" label="状态" :width="100">
           <template #default="scope">
             {{ scope.row.status ? scope.row.status : "待操作" }}
           </template>
         </el-table-column>
         <el-table-column label="操作" :width="100">
           <template #default="scope">
-            <el-button type="text" @click="handleGenerate(scope.row)"
+            <el-button
+              type="primary"
+              size="small"
+              @click="handleGenerate(scope.row)"
               >生成用例</el-button
             >
           </template>
@@ -283,12 +262,14 @@
   </div>
   <div v-if="activeTab === 'testcase_table'">
     <div style="display: flex; justify-content: flex-end; margin: 1rem">
-      <a-button type="primary" @click="handleBatchDelete">删除</a-button>
-      <a-button type="primary" class="ml-2" @click="handleBatchGenerateScript"
+      <a-button type="primary" @click="handleBatchGenerateScript"
         >生成脚本</a-button
       >
       <a-button type="primary" class="ml-2" @click="handleBatchMergeScript"
         >合成脚本</a-button
+      >
+      <a-button type="primary" danger class="ml-2" @click="handleBatchDelete"
+        >删除</a-button
       >
     </div>
     <el-table
@@ -383,16 +364,8 @@
         </template>
       </el-table-column>
       <el-table-column type="selection" width="50"></el-table-column>
-      <el-table-column
-        prop="testcase_id"
-        label="测试用例ID"
-        :width="table_width1 / 8 || 100"
-      />
-      <el-table-column
-        prop="testcase_name"
-        label="测试用例名称"
-        :width="table_width1 / 5 || 100"
-      >
+      <el-table-column prop="testcase_id" label="测试用例ID" :width="200" />
+      <el-table-column prop="testcase_name" label="测试用例名称">
         <template #default="scope">
           <el-tooltip
             class="box-item"
@@ -400,25 +373,16 @@
             :content="scope.row.testcase_name"
             placement="top-start"
           >
-            <el-button
-              type="primary"
-              text
+            <MiddleEllipsis
+              link
+              :text="scope.row.testcase_name"
               @click="clickTitleTestCase(scope.row)"
-              >{{ scope.row.testcase_name }}</el-button
-            ></el-tooltip
-          >
+            />
+          </el-tooltip>
         </template>
       </el-table-column>
-      <el-table-column
-        prop="version"
-        label="版本"
-        :width="table_width1 / 15 || 100"
-      />
-      <el-table-column
-        prop="integrity"
-        label="完整性"
-        :width="table_width1 / 15 || 100"
-      >
+      <el-table-column prop="version" label="版本" :width="100" />
+      <el-table-column prop="integrity" label="完整性" :width="100">
         <template #default="scope">
           <span v-if="String(scope.row.integrity) === '1'" class="text-red-400"
             >不完整</span
@@ -426,40 +390,31 @@
           <span v-if="String(scope.row.integrity) === '0'">完整</span>
         </template>
       </el-table-column>
-      <el-table-column
-        prop="type"
-        label="用例类型"
-        :width="table_width1 / 8 || 100"
-      >
+      <el-table-column prop="type" label="用例类型" :width="100">
         <template #default="scope">
           {{ scope.row.type === "positive" ? "正例" : "反例" }}
         </template>
       </el-table-column>
-      <el-table-column
-        prop="is_generalized"
-        label="是否泛化"
-        :width="table_width1 / 8 || 100"
-      >
+      <el-table-column prop="is_generalized" label="是否泛化" :width="200">
         <template #default="scope">
           {{ scope.row.is_generalized ? "泛化用例" : "非泛化用例" }}
         </template>
       </el-table-column>
-      <el-table-column
-        prop="status"
-        label="状态"
-        :width="table_width1 / 10 || 100"
-      >
+      <el-table-column prop="status" label="状态" :width="100">
         <template #default="scope">
           {{ scope.row.status ? scope.row.status : "待操作" }}
         </template>
       </el-table-column>
-      <el-table-column label="操作" :width="150">
+      <el-table-column label="操作" :width="250">
         <template #default="scope">
-          <el-button type="text" @click="handleDelete(scope.row)"
-            >删除</el-button
-          >
-          <el-button type="text" @click="handleGenerateScript(scope.row)"
+          <el-button
+            type="primary"
+            size="small"
+            @click="handleGenerateScript(scope.row)"
             >生成脚本</el-button
+          >
+          <el-button type="danger" size="small" @click="handleDelete(scope.row)"
+            >删除</el-button
           >
         </template>
       </el-table-column>
@@ -527,6 +482,8 @@ import GenerateScript from "./GenerateScript.vue";
 import BatchGenerateScript from "./BatchGenerateScript.vue";
 import { message } from "ant-design-vue";
 import ScriptList from "./ScriptList.vue";
+import { formatDateTime } from "@/utils/formatters.ts";
+import MiddleEllipsis from "@/components/MiddleEllipsis.vue";
 
 const multipleTableRef = ref<any>();
 const generateScriptVisible = ref(false);
@@ -660,6 +617,7 @@ watch([project_id, req_id], () => {
 });
 
 const statusMap = {
+  待操作: "warning",
   正在拆分: "processing",
   拆分完成: "success",
   拆分过程中出错: "error",
@@ -712,17 +670,6 @@ const handleModuleDelete = () => {
 };
 
 const totalItems = computed(() => moduleTableData.value?.length || 0);
-
-const table_width2 = ref(1000);
-
-onUpdated(() => {
-  const ele = document.getElementById("function_module_table");
-  if (ele) {
-    const width = ele.getBoundingClientRect().width;
-    table_width2.value = width;
-    const height = window.innerHeight * 0.7;
-  }
-});
 
 const handleModulePageChange = (page: number) => {
   currentPageModules.value = page;
@@ -810,15 +757,6 @@ const onPointsSelectionChange = (rows) => {
   console.log(1);
   selectedRowsPoints.value = rows;
 };
-
-const table_width1 = ref(1000);
-onUpdated(() => {
-  const ele = document.getElementById("function_point_table");
-  if (ele) {
-    const width = ele.getBoundingClientRect().width;
-    table_width1.value = width;
-  }
-});
 
 const clickTitle = (row) => {
   console.log(row);

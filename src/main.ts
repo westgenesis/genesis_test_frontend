@@ -2,6 +2,7 @@ import { createApp } from "vue";
 import App from "./App.vue";
 import "./styles/element/index.scss";
 import ElementPlus from "element-plus";
+import zhCn from "element-plus/es/locale/lang/zh-cn";
 import router from "./router/index";
 import Antd from "ant-design-vue";
 import { createPinia } from "pinia";
@@ -35,7 +36,9 @@ router.afterEach(() => {
 });
 
 app.use(pinia);
-app.use(ElementPlus);
+app.use(ElementPlus, {
+  locale: zhCn,
+});
 app.use(router);
 app.use(Antd);
 document.getElementById("loading")?.remove();

@@ -26,6 +26,7 @@
     "pinia": "^2.1.7",
     "quill": "^2.0.2",
     "quill-better-table": "^1.2.10",
+    "split.js": "^1.6.5",
     "vite-plugin-node-stdlib-browser": "^0.2.1",
     "vue": "^3.4.29",
     "vue-request": "^2.0.4",

@@ -33,6 +33,7 @@
       </a-button>
       <a-button
         type="primary"
+        danger
         @click="deleteSelectedScript"
         class="mr-2 flex items-center"
       >
@@ -86,10 +87,15 @@
         </template>
 
         <template v-if="column.key === 'action' && record.info">
-          <a-button type="link" size="small" @click="download(record)"
+          <a-button type="primary" size="small" @click="download(record)"
             >下载</a-button
           >
-          <a-button type="link" size="small" @click="deleteAction(record.id)"
+          <a-button
+            type="primary"
+            class="ml-2!"
+            danger
+            size="small"
+            @click="deleteAction(record.id)"
             >删除</a-button
           >
         </template>

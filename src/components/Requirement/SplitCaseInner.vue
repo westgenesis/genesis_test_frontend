@@ -62,15 +62,22 @@
       <a-button type="primary" style="margin-right: 1rem" @click="showDrawer"
         >新建测试用例</a-button
       >
-      <a-button type="primary" @click="handleExport">导出全部</a-button>
-      <a-button type="primary" class="ml-2" @click="handleBatchDeleteTestcase"
-        >删除</a-button
+      <a-button type="primary" class="ml-2" @click="handleExport"
+        >导出全部</a-button
       >
+
       <a-button type="primary" class="ml-2" @click="handleBatchGenerateScript"
         >生成脚本</a-button
       >
       <a-button type="primary" class="ml-2" @click="handleBatchMergeScript"
         >合成脚本</a-button
+      >
+      <a-button
+        type="primary"
+        danger
+        class="ml-2"
+        @click="handleBatchDeleteTestcase"
+        >删除</a-button
       >
     </div>
 
@@ -167,16 +174,8 @@
         </template>
       </el-table-column>
       <el-table-column type="selection" width="50"></el-table-column>
-      <el-table-column
-        prop="testcase_id"
-        label="测试用例ID"
-        :width="table_width1 / 8 || 100"
-      />
-      <el-table-column
-        prop="testcase_name"
-        label="测试用例名称"
-        :width="table_width1 / 5 || 100"
-      >
+      <el-table-column prop="testcase_id" label="测试用例ID" :width="200" />
+      <el-table-column prop="testcase_name" label="测试用例名称">
         <template #default="scope">
           <el-tooltip
             class="box-item"
@@ -184,22 +183,15 @@
             :content="scope.row.testcase_name"
             placement="top-start"
           >
-            <el-button type="primary" text @click="clickTitle(scope.row)">{{
-              scope.row.testcase_name
-            }}</el-button></el-tooltip
-          >
+            <MiddleEllipsis
+              link
+              :text="scope.row.testcase_name"
+              @click="clickTitle(scope.row)"
+          /></el-tooltip>
         </template>
       </el-table-column>
-      <el-table-column
-        prop="version"
-        label="版本"
-        :width="table_width1 / 15 || 100"
-      />
-      <el-table-column
-        prop="integrity"
-        label="完整性"
-        :width="table_width1 / 15 || 100"
-      >
+      <el-table-column prop="version" label="版本" :width="100" />
+      <el-table-column prop="integrity" label="完整性" :width="100">
         <template #default="scope">
           <span v-if="String(scope.row.integrity) === '1'" class="text-red-400"
             >不完整</span
@@ -207,40 +199,31 @@
           <span v-if="String(scope.row.integrity) === '0'">完整</span>
         </template>
       </el-table-column>
-      <el-table-column
-        prop="type"
-        label="用例类型"
-        :width="table_width1 / 8 || 100"
-      >
+      <el-table-column prop="type" label="用例类型" :width="100">
         <template #default="scope">
           {{ scope.row.type === "positive" ? "正例" : "反例" }}
         </template>
       </el-table-column>
-      <el-table-column
-        prop="is_generalized"
-        label="是否泛化"
-        :width="table_width1 / 8 || 100"
-      >
+      <el-table-column prop="is_generalized" label="是否泛化" :width="100">
         <template #default="scope">
           {{ scope.row.is_generalized ? "泛化用例" : "非泛化用例" }}
         </template>
       </el-table-column>
-      <el-table-column
-        prop="status"
-        label="状态"
-        :width="table_width1 / 10 || 100"
-      >
+      <el-table-column prop="status" label="状态" :width="100">
         <template #default="scope">
           {{ scope.row.status ? scope.row.status : "待操作" }}
         </template>
       </el-table-column>
-      <el-table-column label="操作" :width="150">
+      <el-table-column label="操作" :width="200">
         <template #default="scope">
-          <el-button type="text" @click="handleDelete(scope.row)"
-            >删除</el-button
-          >
-          <el-button type="text" @click="handleGenerateFile(scope.row)"
+          <el-button
+            type="primary"
+            size="small"
+            @click="handleGenerateFile(scope.row)"
             >生成脚本</el-button
+          >
+          <el-button type="danger" size="small" @click="handleDelete(scope.row)"
+            >删除</el-button
           >
         </template>
       </el-table-column>
@@ -415,6 +398,7 @@ const { refreshAllProjects } = useProjectStore();
 import ScriptList from "./ScriptList.vue";
 
 import GenerateScript from "./GenerateScript.vue";
+import MiddleEllipsis from "@/components/MiddleEllipsis.vue";
 
 const generateScriptVisible = ref(false);
 const genScriptRow = ref<any>({});
@@ -591,15 +575,6 @@ const showDrawer = () => {
 const handleSelectionChange = (rows) => {
   selectedRowsPoints.value = rows;
 };
-const table_width1 = ref(500);
-
-onUpdated(() => {
-  const ele = document.getElementById("function_point_table");
-  if (ele) {
-    const width = ele.getBoundingClientRect().width;
-    table_width1.value = width;
-  }
-});
 
 onMounted(() => {
   fetchData();

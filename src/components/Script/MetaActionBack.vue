@@ -41,10 +41,15 @@
           </div>
         </template>
         <template v-if="column.key === 'action'">
-          <a-button type="link" size="small" @click="showEditDrawer(record)"
+          <a-button type="primary" size="small" @click="showEditDrawer(record)"
             >编辑</a-button
           >
-          <a-button type="link" size="small" @click="deleteAction(record._id)"
+          <a-button
+            type="primary"
+            danger
+            class="ml-2"
+            size="small"
+            @click="deleteAction(record._id)"
             >删除</a-button
           >
         </template>
@@ -268,7 +273,7 @@
                 placeholder="请输入值描述"
               />
             </a-form-item>
-            <a-button type="link" @click="removeEditValue(index)"
+            <a-button type="link" danger @click="removeEditValue(index)"
               >删除</a-button
             >
           </a-card>
