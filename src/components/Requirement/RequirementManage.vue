@@ -1,112 +1,92 @@
 <template>
-  <div>
-    <a-card title="项目信息">
-      <a-descriptions>
-        <a-descriptions-item label="项目名称">{{
-          currentProject.name
-        }}</a-descriptions-item>
-        <a-descriptions-item label="项目ID">{{
-          currentProject._id.$oid
-        }}</a-descriptions-item>
-        <a-descriptions-item label="测试环境">{{
-          currentProject.kind
-        }}</a-descriptions-item>
-        <a-descriptions-item label="计划周期"
-          >{{ currentProject.period_start }} 至
-          {{ currentProject.period_end }}</a-descriptions-item
+  <a-card title="需求文档" class="mt-4!" id="requirement-card">
+    <template #extra>
+      <div class="flex gap-2">
+        <a-button type="primary" @click="doRefresh">
+          <RedoOutlined />刷新
+        </a-button>
+
+        <el-upload
+          ref="uploadRef"
+          :auto-upload="false"
+          :on-change="onBeforeUpload"
+          :show-file-list="false"
+          accept=".doc,.docx"
         >
-        <a-descriptions-item label="项目描述">{{
-          currentProject.notes || "无描述"
-        }}</a-descriptions-item>
-      </a-descriptions>
-    </a-card>
-    <a-card title="需求文档" class="mt-4!" id="requirement-card">
-      <template #extra>
-        <div class="flex gap-2">
-          <a-button type="primary" @click="doRefresh">
-            <RedoOutlined />刷新
-          </a-button>
-
-          <el-upload
-            ref="uploadRef"
-            :auto-upload="false"
-            :on-change="onBeforeUpload"
-            :show-file-list="false"
-            accept=".doc,.docx"
-          >
-            <template #trigger>
-              <a-button type="primary">
-                <template #icon>
-                  <CloudUploadOutlined />
-                </template>
-                上传需求
-              </a-button>
-            </template>
-          </el-upload>
-        </div>
-      </template>
-
-      <a-table
-        bordered
-        :dataSource="requirements"
-        :columns="columns"
-        :pagination="false"
-      >
-        <template #bodyCell="{ column, record }">
-          <template v-if="column.key === 'status'">
-            {{ requirementStatusMap[record.status] }}
+          <template #trigger>
+            <a-button type="primary">
+              <template #icon>
+                <CloudUploadOutlined />
+              </template>
+              上传需求
+            </a-button>
           </template>
-          <template v-if="column.key === 'actions'">
-            <div class="flex items-center">
-              <el-upload
-                ref="uploadRef"
-                :auto-upload="false"
-                :on-change="(file) => onBeforeUpdate(file, record)"
-                :show-file-list="false"
-                accept=".doc,.docx,.pdf"
-              >
-                <template #trigger>
-                  <el-button type="primary" size="small">更新</el-button>
-                </template>
-              </el-upload>
-              <el-button
-                class="ml-2"
-                type="primary"
-                size="small"
-                @click="doSplitRequirement(record)"
-              >
-                解析
-              </el-button>
-              <!-- <el-button type="primary"
-                  size="small" danger @click="doDelete(record)">删除</el-button> -->
-            </div>
-          </template>
+        </el-upload>
+      </div>
+    </template>
+
+    <a-table
+      bordered
+      :dataSource="requirements"
+      :columns="columns"
+      :pagination="false"
+    >
+      <template #bodyCell="{ column, record }">
+        <template v-if="column.key === 'status'">
+          {{ requirementStatusMap[record.status] }}
         </template>
-      </a-table>
-    </a-card>
-  </div>
+        <template v-if="column.key === 'actions'">
+          <div class="flex items-center">
+            <el-upload
+              ref="uploadRef"
+              :auto-upload="false"
+              :on-change="(file) => onBeforeUpdate(file, record)"
+              :show-file-list="false"
+              accept=".doc,.docx,.pdf"
+            >
+              <template #trigger>
+                <el-button type="primary" size="small">更新</el-button>
+              </template>
+            </el-upload>
+            <el-button
+              class="ml-2"
+              type="primary"
+              size="small"
+              @click="doSplitRequirement(record)"
+            >
+              解析
+            </el-button>
+            <!-- <el-button type="primary"
+                  size="small" danger @click="doDelete(record)">删除</el-button> -->
+          </div>
+        </template>
+      </template>
+    </a-table>
+  </a-card>
 </template>
 
 <script setup lang="ts">
 import { useProjectStore } from "@stores/project";
 import { storeToRefs } from "pinia";
-import { computed, watch } from "vue";
+import { computed } from "vue";
 import { CloudUploadOutlined, RedoOutlined } from "@ant-design/icons-vue";
 import { UploadProps, ElMessage } from "element-plus";
 import { http } from "../../http";
 import { requirementStatusMap } from "./RequirementModel";
 import { ElLoading } from "element-plus";
-import { useRoute } from "vue-router";
+
+interface Props {
+  id: string;
+}
+
+const props = defineProps<Props>();
 
 const projectStore = useProjectStore();
 
 const { projects } = storeToRefs(projectStore);
-const route = useRoute();
-
-const id = computed(() => route.params.id);
 
 const currentProject = computed(() =>
-  projects.value.find((item) => item?._id?.$oid === id.value)
+  projects.value.find((item) => item?._id?.$oid === props.id)
 );
 
 const requirements = computed(

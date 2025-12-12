@@ -50,7 +50,12 @@
         onChange: onSelectChange,
       }"
       bordered
+      :expand-column-width="120"
     >
+      <template #expandColumnTitle> 需求文档配置 </template>
+      <template #expandedRowRender="{ record }">
+        <RequirementManage :id="record._id.$oid" />
+      </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'display_id'">
           {{ record.display_id }}
@@ -75,13 +80,6 @@
           {{ formatDate(record.last_modified.$date) }}
         </template>
         <template v-else-if="column.dataIndex === 'actions'">
-          <a-button
-            size="small"
-            type="primary"
-            @click="manageRequirement(record)"
-          >
-            需求文档配置
-          </a-button>
           <a-button
             class="ml-2"
             size="small"
@@ -289,11 +287,6 @@ const editProject = (record) => {
   isEditing.value = true;
   selectedProject.value = record;
   showDetail.value = true;
-};
-
-const manageRequirement = (record) => {
-  router.replace(`/project/manageRequirement/${record._id.$oid}`);
-  projectStore.updateCurrentProjectById(record._id.$oid);
 };
 
 const changePeriod = (v, strs) => {
