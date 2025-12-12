@@ -434,10 +434,10 @@ const handleExport = () => {
 
 // 批量合成脚本
 const handleBatchMergeScript = function () {
-  if (selectedRows.value.length < 2) {
-    ElMessage.error("您需要选中至少2条数据");
-    return;
-  }
+    if (selectedRowsPoints.value.length < 2) {
+        ElMessage.error('您需要选中至少2条数据');
+        return
+    }
 
   batchType.value = "merge";
   handleBatchGenerateScript("merge");
