@@ -165,47 +165,17 @@
         <el-table-column type="selection" width="50" />
         <el-table-column type="expand">
           <template #default="scope">
-            <div style="padding: 10px">
-              <div class="flex" style="border: 1px solid #eee">
-                <div
-                  style="
-                    min-width: 100px;
-                    background-color: #f2f2f2;
-                    padding: 10px;
-                    text-align: center;
-                  "
-                >
-                  初始条件
-                </div>
-                <div>{{ scope.row.pre_condition }}</div>
-              </div>
-              <div class="flex" style="border: 1px solid #eee">
-                <div
-                  style="
-                    min-width: 100px;
-                    background-color: #f2f2f2;
-                    padding: 10px;
-                    text-align: center;
-                  "
-                >
-                  触发条件
-                </div>
-                <div>{{ scope.row.action }}</div>
-              </div>
-              <div class="flex" style="border: 1px solid #eee">
-                <div
-                  style="
-                    min-width: 100px;
-                    background-color: #f2f2f2;
-                    padding: 10px;
-                    text-align: center;
-                  "
-                >
-                  预期结果
-                </div>
-                <div>{{ scope.row.result }}</div>
-              </div>
-            </div>
+            <el-descriptions :column="1" border>
+              <el-descriptions-item label="初始条件">{{
+                scope.row.pre_condition
+              }}</el-descriptions-item>
+              <el-descriptions-item label="触发条件">{{
+                scope.row.action
+              }}</el-descriptions-item>
+              <el-descriptions-item label="预期结果">{{
+                scope.row.result
+              }}</el-descriptions-item>
+            </el-descriptions>
           </template>
         </el-table-column>
         <el-table-column prop="testcase_id" label="功能点ID" :width="140" />
