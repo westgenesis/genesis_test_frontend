@@ -8,7 +8,7 @@
         :key="item._id.$oid"
       >
         <template #label>
-          <span class="flex items-center gap-2 text-lg">
+          <span class="flex items-center gap-2 text">
             <el-icon :size="20"><Document /></el-icon>
             <span>{{ item.name }}</span>
           </span>
