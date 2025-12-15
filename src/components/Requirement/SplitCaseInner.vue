@@ -752,6 +752,7 @@ const handleGenerate = async () => {
     split_file_id: split_file_id.value,
     req_id: req_id.value,
     split_case_id: split_case_id.value,
+    index_name: props.currentRequirement?.project?.index_name,
   };
   console.log(singleCase);
   delete singleCase.testcases;

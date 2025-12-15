@@ -774,6 +774,7 @@ const handleBatchGenerate = () => {
         split_file_id: row.split_file_id,
         req_id: req_id.value,
         split_case_id: row.testcase_id,
+        index_name: props.currentRequirement?.project?.index_name,
       }));
 
       http
@@ -801,6 +802,7 @@ const handleGenerate = (row) => {
     split_file_id,
     req_id: req_id.value,
     split_case_id,
+    index_name: props.currentRequirement?.project?.index_name,
   };
   delete singleCase.testcases;
   http

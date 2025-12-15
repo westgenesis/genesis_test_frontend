@@ -841,6 +841,7 @@ const handleGenerate = (row) => {
     split_file_id,
     req_id,
     split_case_id,
+    index_name: currentRequirement?.value.project?.index_name,
   };
   delete singleCase.testcases;
   http
@@ -878,6 +879,7 @@ const handleBatchGenerate = () => {
         split_file_id,
         req_id,
         split_case_id: row.testcase_id,
+        index_name: currentRequirement?.value.project?.index_name,
       }));
 
       http
