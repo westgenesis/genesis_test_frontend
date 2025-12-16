@@ -91,7 +91,7 @@
     >
       <el-table-column type="expand">
         <template #default="scope">
-          <el-descriptions :column="1" border>
+          <el-descriptions :column="2" label-width="120px" border>
             <el-descriptions-item label="初始条件">{{
               scope.row.pre_condition
             }}</el-descriptions-item>
