@@ -516,15 +516,17 @@ const handleExport = () => {
   http
     .post("/api/export_by_splitcase", params, { responseType: "blob" })
     .then((response) => {
+      console.log(response);
       const blob = new Blob([response as any], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
+      console.log(blob);
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
       link.setAttribute(
         "download",
-        currentRequirement.splitCase.testcase_id + ".xlsx"
+        currentRequirement.project._id.$oid + ".xlsx"
       );
       document.body.appendChild(link);
       link.click();

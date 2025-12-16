@@ -420,10 +420,7 @@ const handleExport = () => {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute(
-        "download",
-        currentRequirement.splitCase.testcase_id + ".xlsx"
-      );
+      link.setAttribute("download", currentRequirement.req.req_id + ".xlsx");
       document.body.appendChild(link);
       link.click();
     })
