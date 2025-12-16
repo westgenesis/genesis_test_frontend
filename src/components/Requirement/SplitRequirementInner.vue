@@ -405,10 +405,10 @@ const handleBatchGenerateScript = function (type = "gen") {
 
 const handleExport = () => {
   const params = {
+    export_class: "testcases",
     project_id: currentRequirement.project._id.$oid,
     split_file_id: currentRequirement.splitReq.split_file_id,
     req_id: currentRequirement.req.req_id,
-    split_case_id: currentRequirement.splitCase.testcase_id,
   };
 
   http
