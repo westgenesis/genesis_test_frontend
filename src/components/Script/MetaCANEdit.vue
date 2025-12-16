@@ -4,19 +4,20 @@
       <a-form :model="formData" :rules="rules" layout="vertical" ref="formRef">
         <!-- 需要选择 -->
         <a-form-item label="动作名称" name="name">
-          <a-row :gutter="[16, 16]">
-            <a-col :span="16">
-              <a-input v-model:value="formData.name" placeholder="请输入内容" />
-            </a-col>
-            <a-col>
+          <a-input-search
+            v-model:value="formData.name"
+            placeholder="请输入内容"
+            disabled
+          >
+            <template #enterButton>
               <a-button
                 type="primary"
                 @click="canSelVisible = true"
                 :disabled="onlyOneStatus"
                 >选择</a-button
               >
-            </a-col>
-          </a-row>
+            </template>
+          </a-input-search>
         </a-form-item>
 
         <a-form-item label="动作描述" name="description">
