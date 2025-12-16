@@ -48,6 +48,10 @@
       <a-button type="primary" @click="openAddDrawer" class="mr-2"
         >新建功能模块</a-button
       >
+
+      <a-button type="primary" class="mr-2" @click="handleExport"
+        >导出全部</a-button
+      >
       <a-button type="primary" @click="handleBatchSplit" class="mr-2"
         >批量拆分</a-button
       >
@@ -500,6 +504,34 @@ const handleBatchMergeScript = function () {
 
   batchType.value = "merge";
   handleBatchGenerateScript("merge");
+};
+
+const handleExport = () => {
+  const params = {
+    export_class: "function",
+    project_id: currentRequirement.project._id.$oid,
+    req_id: currentRequirement.req.req_id,
+  };
+
+  http
+    .post("/api/export_by_splitcase", params, { responseType: "blob" })
+    .then((response) => {
+      const blob = new Blob([response as any], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute(
+        "download",
+        currentRequirement.splitCase.testcase_id + ".xlsx"
+      );
+      document.body.appendChild(link);
+      link.click();
+    })
+    .catch(() => {
+      ElMessage.error("导出失败");
+    });
 };
 
 const { refreshAllProjects } = useProjectStore();

@@ -63,6 +63,9 @@
         <a-button type="primary" @click="handleBatchGenerate" class="mr-2"
           >批量生成用例</a-button
         >
+        <a-button type="primary" class="mr-2" @click="handleExport"
+          >导出全部</a-button
+        >
         <a-button type="primary" @click="showDrawer" class="mr-2"
           >新建功能点</a-button
         >
@@ -398,6 +401,35 @@ const handleBatchGenerateScript = function (type = "gen") {
 
   batchGenScriptRows.value = selectedRows.value;
   batchGenerateScriptVisible.value = true;
+};
+
+const handleExport = () => {
+  const params = {
+    project_id: currentRequirement.project._id.$oid,
+    split_file_id: currentRequirement.splitReq.split_file_id,
+    req_id: currentRequirement.req.req_id,
+    split_case_id: currentRequirement.splitCase.testcase_id,
+  };
+
+  http
+    .post("/api/export_by_splitcase", params, { responseType: "blob" })
+    .then((response) => {
+      const blob = new Blob([response as any], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute(
+        "download",
+        currentRequirement.splitCase.testcase_id + ".xlsx"
+      );
+      document.body.appendChild(link);
+      link.click();
+    })
+    .catch(() => {
+      ElMessage.error("导出失败");
+    });
 };
 
 // 批量合成脚本

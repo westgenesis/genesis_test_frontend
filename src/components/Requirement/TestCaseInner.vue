@@ -316,6 +316,7 @@ function fillConfirm(record) {
 
   const data: any = {};
 
+  data.project_id = project_id.value;
   data.id = record.id;
   data.isChild = record.isChild;
   data.idx = record.idx;
