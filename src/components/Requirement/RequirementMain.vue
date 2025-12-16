@@ -97,7 +97,11 @@
               />
             </div>
             <div v-else-if="currentType === 'split_case'">
-              <SplitCaseInner
+              <!-- <SplitCaseInner
+                :currentRequirement="currentRequirement"
+                :selectNodeByKey="selectNodeByKey"
+              /> -->
+              <TestCaseInner
                 :currentRequirement="currentRequirement"
                 :selectNodeByKey="selectNodeByKey"
               />
@@ -267,22 +271,22 @@ const treeData = computed(() => {
                                   req: req,
                                   project: project,
                                   type: "split_case",
-                                  children:
-                                    splitCase.testcases &&
-                                    splitCase.testcases.length > 0
-                                      ? splitCase.testcases.map(
-                                          (testcase, testcaseIndex) => ({
-                                            title: testcase.testcase_name || "",
-                                            type: "testcase",
-                                            key: `${project._id.$oid}-${req.req_id}-${splitReq.split_file_id}-${splitCase.testcase_id}-${testcase.testcase_id}`,
-                                            splitCase: splitCase,
-                                            splitReq: splitReq,
-                                            req: req,
-                                            project: project,
-                                            testcase: testcase || [],
-                                          })
-                                        )
-                                      : [],
+                                  // children:
+                                  //   splitCase.testcases &&
+                                  //   splitCase.testcases.length > 0
+                                  //     ? splitCase.testcases.map(
+                                  //         (testcase, testcaseIndex) => ({
+                                  //           title: testcase.testcase_name || "",
+                                  //           type: "testcase",
+                                  //           key: `${project._id.$oid}-${req.req_id}-${splitReq.split_file_id}-${splitCase.testcase_id}-${testcase.testcase_id}`,
+                                  //           splitCase: splitCase,
+                                  //           splitReq: splitReq,
+                                  //           req: req,
+                                  //           project: project,
+                                  //           testcase: testcase || [],
+                                  //         })
+                                  //       )
+                                  //     : [],
                                 })
                               )
                             : [],
@@ -316,15 +320,15 @@ const typeMap = {
     tagType: "warning",
   },
   split_case: {
-    title: "功能点",
+    title: "测试用例",
     icon: ExperimentOutlined,
     tagType: "success",
   },
-  testcase: {
-    title: "测试用例",
-    icon: ApiOutlined,
-    tagType: "info",
-  },
+  // testcase: {
+  //   title: "测试用例",
+  //   icon: ApiOutlined,
+  //   tagType: "info",
+  // },
 };
 
 const onSelect = (info) => {

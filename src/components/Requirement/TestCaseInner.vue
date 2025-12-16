@@ -31,12 +31,12 @@
         >
       </div>
     </div>
-    <a-form-item label="测试用例类型">
+    <!-- <a-form-item label="测试用例类型">
       <a-select v-model:value="form.type" placeholder="请选择测试用例类型">
         <a-select-option value="positive">正例</a-select-option>
         <a-select-option value="negative">反例</a-select-option>
       </a-select>
-    </a-form-item>
+    </a-form-item> -->
     <a-form-item label="测试用例名称">
       <a-input
         v-model:value="form.testcase_name"
@@ -370,7 +370,7 @@ const split_case_id = computed(() => {
   return props.currentRequirement.splitCase.testcase_id;
 });
 const testcase_id = computed(() => {
-  return props.currentRequirement?.testcase.testcase_id;
+  return props.currentRequirement?.splitCase.testcase_id;
 });
 
 const selectForm = ref({
@@ -430,12 +430,11 @@ const downloadFile = (filename) => {
 
 const fetchData = () => {
   http
-    .post("/api/query_testcase_by_id", {
+    .post("/api/query_split_case_by_id", {
       project_id: project_id.value,
       req_id: req_id.value,
       split_file_id: split_file_id.value,
       split_case_id: split_case_id.value,
-      testcase_id: testcase_id.value,
     })
     .then((resp) => {
       if (resp.result) {
@@ -540,6 +539,7 @@ const handleSave = async () => {
   return http.post("/api/modify_testcase", params).then(async (response) => {
     if (response.status === "OK") {
       ElMessage.success("保存成功");
+      refreshAllProjects();
     }
   });
 };
