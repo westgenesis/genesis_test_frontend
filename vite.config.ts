@@ -68,8 +68,8 @@ export default defineConfig(({ mode }) => {
       port: 9200,
       proxy: {
         "/dev-api": {
-          target: "http://183.66.251.10:52080/",
-          // target: 'http://192.168.209.199:5001',
+          // target: "http://183.66.251.10:52080/",
+          target: "http://192.168.1.148:5002/",
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/dev-api/, ""),
         },
