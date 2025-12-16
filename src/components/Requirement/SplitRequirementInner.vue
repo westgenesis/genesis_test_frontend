@@ -6,13 +6,19 @@
     <a-tab-pane key="script_table" tab="台架测试脚本"></a-tab-pane>
   </a-tabs>
   <a-drawer
-    title="新建功能点"
+    title="新建测试用例"
     :visible="visible"
     :width="720"
     @close="onDrawerClose"
   >
     <a-form :model="newForm" layout="vertical">
-      <a-form-item label="功能点名称">
+      <!-- <a-form-item label="测试用例类型">
+        <a-select v-model:value="newForm.type" placeholder="请选择测试用例类型">
+          <a-select-option value="positive">正例</a-select-option>
+          <a-select-option value="negative">反例</a-select-option>
+        </a-select>
+      </a-form-item> -->
+      <a-form-item label="测试用例名称">
         <a-input
           v-model:value="newForm.name"
           placeholder="请输入功能点名称"
@@ -26,6 +32,13 @@
           :rows="3"
         />
       </a-form-item>
+      <a-form-item label="初始条件信号">
+        <a-textarea
+          v-model:value="newForm.pre_condition_signal"
+          placeholder="请输入初始条件信号"
+          :rows="3"
+        />
+      </a-form-item>
       <a-form-item label="触发条件">
         <a-textarea
           v-model:value="newForm.action"
@@ -33,9 +46,23 @@
           :rows="3"
         />
       </a-form-item>
+      <a-form-item label="触发条件信号">
+        <a-textarea
+          v-model:value="newForm.action_signal"
+          placeholder="请输入触发条件信号"
+          :rows="3"
+        />
+      </a-form-item>
       <a-form-item label="预期结果">
         <a-textarea
           v-model:value="newForm.result"
+          placeholder="请输入预期结果"
+          :rows="3"
+        />
+      </a-form-item>
+      <a-form-item label="预期结果信号">
+        <a-textarea
+          v-model:value="newForm.result_signal"
           placeholder="请输入预期结果"
           :rows="3"
         />
@@ -60,14 +87,14 @@
     <div style="width: 100%">
       <div class="w-full flex justify-end mr-2 mb-2">
         <a-button type="primary" @click="fetchData" class="mr-2">刷新</a-button>
-        <a-button type="primary" @click="handleBatchGenerate" class="mr-2"
+        <!-- <a-button type="primary" @click="handleBatchGenerate" class="mr-2"
           >批量生成用例</a-button
-        >
+        > -->
         <a-button type="primary" class="mr-2" @click="handleExport"
           >导出全部</a-button
         >
         <a-button type="primary" @click="showDrawer" class="mr-2"
-          >新建功能点</a-button
+          >新建测试用例</a-button
         >
         <a-button
           type="primary"
@@ -86,21 +113,33 @@
         <el-table-column type="selection" width="50" />
         <el-table-column type="expand" width="50">
           <template #default="scope">
-            <el-descriptions :column="1" border>
+            <el-descriptions :column="2" label-width="120px" border>
               <el-descriptions-item label="初始条件">{{
                 scope.row.pre_condition
+              }}</el-descriptions-item>
+              <el-descriptions-item label="初始条件信号">{{
+                scope.row.pre_condition_signal
               }}</el-descriptions-item>
               <el-descriptions-item label="触发条件">{{
                 scope.row.action
               }}</el-descriptions-item>
+
+              <el-descriptions-item label="触发条件信号">{{
+                scope.row.action_signal
+              }}</el-descriptions-item>
+
               <el-descriptions-item label="预期结果">{{
                 scope.row.result
+              }}</el-descriptions-item>
+
+              <el-descriptions-item label="预期结果信号">{{
+                scope.row.result_signal
               }}</el-descriptions-item>
             </el-descriptions>
           </template>
         </el-table-column>
-        <el-table-column prop="testcase_id" label="功能点ID" :width="140" />
-        <el-table-column prop="testcase_name" label="功能点名称">
+        <el-table-column prop="testcase_id" label="测试用例ID" :width="140" />
+        <el-table-column prop="testcase_name" label="测试用例名称">
           <template #default="scope">
             <el-tooltip
               class="box-item"
@@ -127,7 +166,7 @@
             {{ scope.row.status ? scope.row.status : "待操作" }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" :width="100">
+        <!-- <el-table-column label="操作" :width="100">
           <template #default="scope">
             <el-button
               type="primary"
@@ -136,7 +175,7 @@
               >生成用例</el-button
             >
           </template>
-        </el-table-column>
+        </el-table-column> -->
       </el-table>
     </div>
   </div>
@@ -162,86 +201,29 @@
     >
       <el-table-column type="expand">
         <template #default="scope">
-          <div style="padding: 10px">
-            <div class="flex" style="border: 1px solid #eee">
-              <div
-                style="
-                  min-width: 110px;
-                  background-color: #f2f2f2;
-                  padding: 10px;
-                  text-align: center;
-                "
-              >
-                初始条件
-              </div>
-              <div>{{ scope.row.pre_condition }}</div>
-            </div>
-            <div class="flex" style="border: 1px solid #eee">
-              <div
-                style="
-                  min-width: 110px;
-                  background-color: #f2f2f2;
-                  padding: 10px;
-                  text-align: center;
-                "
-              >
-                初始条件信号
-              </div>
-              <div>{{ scope.row.pre_condition_signal }}</div>
-            </div>
-            <div class="flex" style="border: 1px solid #eee">
-              <div
-                style="
-                  min-width: 110px;
-                  background-color: #f2f2f2;
-                  padding: 10px;
-                  text-align: center;
-                "
-              >
-                触发条件
-              </div>
-              <div>{{ scope.row.action }}</div>
-            </div>
-            <div class="flex" style="border: 1px solid #eee">
-              <div
-                style="
-                  min-width: 110px;
-                  background-color: #f2f2f2;
-                  padding: 10px;
-                  text-align: center;
-                "
-              >
-                触发条件信号
-              </div>
-              <div>{{ scope.row.action_signal }}</div>
-            </div>
-            <div class="flex" style="border: 1px solid #eee">
-              <div
-                style="
-                  min-width: 110px;
-                  background-color: #f2f2f2;
-                  padding: 10px;
-                  text-align: center;
-                "
-              >
-                预期结果
-              </div>
-              <div>{{ scope.row.result }}</div>
-            </div>
-            <div class="flex" style="border: 1px solid #eee">
-              <div
-                style="
-                  min-width: 110px;
-                  background-color: #f2f2f2;
-                  padding: 10px;
-                  text-align: center;
-                "
-              >
-                预期结果信号
-              </div>
-              <div>{{ scope.row.result_signal }}</div>
-            </div>
-          </div>
+          <el-descriptions :column="2" label-width="120px" border>
+            <el-descriptions-item label="初始条件">{{
+              scope.row.pre_condition
+            }}</el-descriptions-item>
+            <el-descriptions-item label="初始条件信号">{{
+              scope.row.pre_condition_signal
+            }}</el-descriptions-item>
+            <el-descriptions-item label="触发条件">{{
+              scope.row.action
+            }}</el-descriptions-item>
+
+            <el-descriptions-item label="触发条件信号">{{
+              scope.row.action_signal
+            }}</el-descriptions-item>
+
+            <el-descriptions-item label="预期结果">{{
+              scope.row.result
+            }}</el-descriptions-item>
+
+            <el-descriptions-item label="预期结果信号">{{
+              scope.row.result_signal
+            }}</el-descriptions-item>
+          </el-descriptions>
         </template>
       </el-table-column>
       <el-table-column type="selection" width="50"></el-table-column>
@@ -431,10 +413,10 @@ const handleExport = () => {
 
 // 批量合成脚本
 const handleBatchMergeScript = function () {
-    if (selectedRowsPoints.value.length < 2) {
-        ElMessage.error('您需要选中至少2条数据');
-        return
-    }
+  if (selectedRowsPoints.value.length < 2) {
+    ElMessage.error("您需要选中至少2条数据");
+    return;
+  }
 
   batchType.value = "merge";
   handleBatchGenerateScript("merge");
@@ -460,8 +442,11 @@ const currentRecord = ref();
 const newForm = ref({
   name: "",
   pre_condition: "",
+  pre_condition_signal: "",
   action: "",
+  action_signal: "",
   result: "",
+  result_signal: "",
   project_id: "",
   req_id: "",
   split_file_id: "",
@@ -629,8 +614,11 @@ const showDrawer = () => {
   newForm.value = {
     name: "",
     pre_condition: "",
+    pre_condition_signal: "",
     action: "",
+    action_signal: "",
     result: "",
+    result_signal: "",
     project_id: "",
     req_id: "",
     split_file_id: "",
