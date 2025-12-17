@@ -1,7 +1,7 @@
 <template>
   <a-tabs v-model:activeKey="activeTab">
     <a-tab-pane key="detail" tab="测试用例详情"></a-tab-pane>
-    <a-tab-pane key="script_table" tab="台架测试脚本"></a-tab-pane>
+    <!-- <a-tab-pane key="script_table" tab="台架测试脚本"></a-tab-pane> -->
   </a-tabs>
 
   <a-form :model="form" layout="vertical" v-show="activeTab === 'detail'">
@@ -22,13 +22,13 @@
         style="gap: 2rem; margin-right: 2rem"
       >
         <a-button type="primary" @click="handleSave">保存</a-button>
-        <a-button type="primary" @click="handleGenerateFile">生成脚本</a-button>
+        <!-- <a-button type="primary" @click="handleGenerateFile">生成脚本</a-button>
         <a-button
           type="primary"
           @click="downloadFile"
           v-if="form.script_status === 'generated'"
           >下载脚本</a-button
-        >
+        > -->
       </div>
     </div>
     <!-- <a-form-item label="测试用例类型">
