@@ -53,7 +53,8 @@
       >
         <a-row :gutter="16">
           <a-col :span="8">
-            <a-input
+            <a-textarea
+              auto-size
               v-model:value="item.description"
               placeholder="请输入初始条件描述"
             />
@@ -100,7 +101,8 @@
       >
         <a-row :gutter="16">
           <a-col :span="8">
-            <a-input
+            <a-textarea
+              auto-size
               v-model:value="item.description"
               placeholder="请输入触发条件描述"
             />
@@ -143,7 +145,8 @@
       >
         <a-row :gutter="16">
           <a-col :span="8">
-            <a-input
+            <a-textarea
+              auto-size
               v-model:value="item.description"
               placeholder="请输入预期结果描述"
             />
