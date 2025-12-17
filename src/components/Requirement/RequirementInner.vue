@@ -88,13 +88,11 @@
               :content="scope.row.file_name?.replace('.docx', '')"
               placement="top-start"
             >
-              <el-button
-                type="primary"
-                text
+              <MiddleEllipsis
+                link
+                :text="scope.row.file_name?.replace('.docx', '')"
                 @click="clickTitleModule(scope.row)"
-                >{{ scope.row.file_name?.replace(".docx", "") }}</el-button
-              ></el-tooltip
-            >
+            /></el-tooltip>
           </template>
         </el-table-column>
         <el-table-column prop="version" label="版本" width="80px" />
