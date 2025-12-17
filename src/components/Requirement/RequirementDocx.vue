@@ -14,7 +14,7 @@
       </div>
 
       <div class="flex justify-center mr-[1rem]" style="gap: 1rem">
-        <a-button type="primary" size="small" @click="onSplit">拆分</a-button>
+        <a-button type="primary" size="small" @click="onSplit">生成</a-button>
         <a-button type="primary" size="small" @click="onSaveContent"
           >保存</a-button
         >
@@ -101,7 +101,7 @@ const onSaveContent = () => {
 };
 
 const onSplit = () => {
-  ElMessageBox.confirm("拆分会覆盖当前模块的已有功能点，是否继续？", "提示", {
+  ElMessageBox.confirm("生成会覆盖当前模块的已有功能点，是否继续？", "提示", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
     type: "warning",
@@ -122,7 +122,7 @@ const onSplit = () => {
     .catch((e) => {
       console.log(e);
       // 用户点击取消，不做任何操作
-      ElMessage.info("已取消拆分操作");
+      ElMessage.info("已取消生成操作");
     });
 };
 </script>

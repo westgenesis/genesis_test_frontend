@@ -105,7 +105,7 @@
           >
 
           <a-button type="primary" @click="handleBatchSplit" class="mr-2"
-            >批量拆分</a-button
+            >批量生成</a-button
           >
           <a-button
             type="primary"
@@ -149,7 +149,7 @@
                 </a-tag>
               </template>
             </el-table-column>
-            <el-table-column prop="progress" label="拆分进度" :width="200">
+            <el-table-column prop="progress" label="生成进度" :width="200">
               <template #default="scope">
                 <a-progress
                   v-if="
@@ -171,7 +171,7 @@
                   size="small"
                   @click="handleSplit(scope.row)"
                   :disabled="scope.row.is_table === true"
-                  >拆分</el-button
+                  >生成</el-button
                 >
               </template>
             </el-table-column>
@@ -512,9 +512,9 @@ import {
 import { formatDateTime } from "@/utils/formatters.ts";
 
 const statusMap = {
-  正在拆分: "processing",
-  拆分完成: "success",
-  拆分过程中出错: "error",
+  正在生成: "processing",
+  生成完成: "success",
+  生成过程中出错: "error",
 };
 const currentType = ref();
 const visible = ref(false);
@@ -931,7 +931,7 @@ const closeAddDrawer = async () => {
 };
 
 const handleSplit = (row: any) => {
-  ElMessageBox.confirm("拆分会覆盖当前模块的已有功能点，是否继续？", "提示", {
+  ElMessageBox.confirm("生成会覆盖当前模块的已有功能点，是否继续？", "提示", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
     type: "warning",
@@ -951,17 +951,17 @@ const handleSplit = (row: any) => {
     })
     .catch(() => {
       // 用户点击取消，不做任何操作
-      ElMessage.info("已取消拆分操作");
+      ElMessage.info("已取消生成操作");
     });
 };
 
 const handleBatchSplit = () => {
   if (selectedRowsModule.value.length === 0) {
-    ElMessage.warning("请选择要拆分的功能模块");
+    ElMessage.warning("请选择要生成的功能模块");
     return;
   }
 
-  ElMessageBox.confirm("拆分会覆盖当前模块的已有功能点，是否继续？", "提示", {
+  ElMessageBox.confirm("生成会覆盖当前模块的已有功能点，是否继续？", "提示", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
     type: "warning",
@@ -980,12 +980,12 @@ const handleBatchSplit = () => {
           ElMessage.success("已下发功能点拆解任务，请等待或刷新后查看结果");
           refreshAllProjects();
         } else {
-          ElMessage.error("拆分失败");
+          ElMessage.error("生成失败");
         }
       });
     })
     .catch(() => {
-      ElMessage.info("已取消拆分操作");
+      ElMessage.info("已取消生成操作");
     });
 };
 

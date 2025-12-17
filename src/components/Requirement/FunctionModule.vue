@@ -125,7 +125,7 @@
           >
 
           <a-button type="primary" @click="handleBatchSplit" class="mr-2"
-            >批量拆分</a-button
+            >批量生成</a-button
           >
           <a-button type="primary" danger @click="handleDelete" class="mr-2"
             >删除</a-button
@@ -163,7 +163,7 @@
                   size="small"
                   @click="handleSplit(scope.row)"
                   :disabled="scope.row.is_table === true"
-                  >拆分</el-button
+                  >生成</el-button
                 >
               </template>
             </el-table-column>
@@ -406,7 +406,7 @@ const handlePageChange = (page: number) => {
 };
 
 const handleSplit = (row: any) => {
-  ElMessageBox.confirm("拆分会覆盖当前模块的已有功能点，是否继续？", "提示", {
+  ElMessageBox.confirm("生成会覆盖当前模块的已有功能点，是否继续？", "提示", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
     type: "warning",
@@ -426,17 +426,17 @@ const handleSplit = (row: any) => {
     })
     .catch(() => {
       // 用户点击取消，不做任何操作
-      ElMessage.info("已取消拆分操作");
+      ElMessage.info("已取消生成操作");
     });
 };
 
 const handleBatchSplit = () => {
   if (selectedRows.value.length === 0) {
-    ElMessage.warning("请选择要拆分的功能模块");
+    ElMessage.warning("请选择要生成的功能模块");
     return;
   }
 
-  ElMessageBox.confirm("拆分会覆盖当前模块的已有功能点，是否继续？", "提示", {
+  ElMessageBox.confirm("生成会覆盖当前模块的已有功能点，是否继续？", "提示", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
     type: "warning",
@@ -457,12 +457,12 @@ const handleBatchSplit = () => {
           );
           refreshAllProjects();
         } else {
-          ElMessage.error("拆分失败");
+          ElMessage.error("生成失败");
         }
       });
     })
     .catch(() => {
-      ElMessage.info("已取消拆分操作");
+      ElMessage.info("已取消生成操作");
     });
 };
 
