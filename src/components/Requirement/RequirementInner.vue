@@ -1,9 +1,9 @@
 <template>
   <a-tabs v-model:activeKey="activeTab" @change="tabChange">
     <a-tab-pane key="modules" tab="功能模块列表"></a-tab-pane>
-    <a-tab-pane key="points" tab="功能测试用例"></a-tab-pane>
-    <a-tab-pane key="testcase_table" tab="台架测试用例"></a-tab-pane>
-    <a-tab-pane key="script_table" tab="台架测试脚本"></a-tab-pane>
+    <a-tab-pane key="points" tab="测试用例"></a-tab-pane>
+    <!-- <a-tab-pane key="testcase_table" tab="台架测试用例"></a-tab-pane>
+    <a-tab-pane key="script_table" tab="台架测试脚本"></a-tab-pane> -->
   </a-tabs>
   <div v-if="activeTab === 'modules'">
     <div
@@ -49,9 +49,6 @@
         >新建功能模块</a-button
       >
 
-      <a-button type="primary" class="mr-2" @click="handleExport"
-        >导出全部</a-button
-      >
       <a-button type="primary" @click="handleBatchSplit" class="mr-2"
         >批量拆分</a-button
       >
@@ -150,6 +147,9 @@
         <a-button type="primary" @click="handleBatchGenerate" class="mr-2"
           >批量生成用例</a-button
         >
+        <a-button type="primary" class="mr-2" @click="handleExport"
+          >导出全部</a-button
+        >
         <a-button
           type="primary"
           danger
@@ -180,8 +180,8 @@
             </el-descriptions>
           </template>
         </el-table-column>
-        <el-table-column prop="testcase_id" label="功能点ID" :width="140" />
-        <el-table-column prop="testcase_name" label="功能点名称">
+        <el-table-column prop="testcase_id" label="测试用例ID" :width="140" />
+        <el-table-column prop="testcase_name" label="测试用例名称">
           <template #default="scope">
             <el-tooltip
               class="box-item"
@@ -689,7 +689,7 @@ const closeAddDrawer = async () => {
 };
 
 const handleSplit = (row: any) => {
-  ElMessageBox.confirm("拆分会覆盖当前模块的已有功能点，是否继续？", "提示", {
+  ElMessageBox.confirm("拆分会覆盖当前模块的已有测试用例，是否继续？", "提示", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
     type: "warning",
@@ -701,7 +701,7 @@ const handleSplit = (row: any) => {
         req_id: req_id.value,
       };
       ElMessage.success(
-        "已下发功能点拆解任务，请等待或刷新后去功能点页面查看结果"
+        "已下发测试用例拆解任务，请等待或刷新后去测试用例页面查看结果"
       );
       http.post("/api/subrequire_generate_points", params).then((res) => {
         console.log(res);
@@ -724,7 +724,7 @@ const handleBatchSplit = () => {
     return;
   }
 
-  ElMessageBox.confirm("拆分会覆盖当前模块的已有功能点，是否继续？", "提示", {
+  ElMessageBox.confirm("拆分会覆盖当前模块的已有测试用例，是否继续？", "提示", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
     type: "warning",
@@ -740,7 +740,7 @@ const handleBatchSplit = () => {
 
       http.post("/api/subrequire_batch_generate_points", params).then((res) => {
         if (res) {
-          ElMessage.success("已下发功能点拆解任务，请等待或刷新后查看结果");
+          ElMessage.success("已下发测试用例拆解任务，请等待或刷新后查看结果");
           refreshAllProjects();
         } else {
           ElMessage.error("拆分失败");
