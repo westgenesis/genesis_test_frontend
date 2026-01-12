@@ -16,14 +16,12 @@
       <div class="flex justify-center mr-[1rem]" style="gap: 1rem">
         <a-button
           type="primary"
-          size=""
           @click="() => onSplit(false)"
           class="custom-purple-button"
           >拆分</a-button
         >
         <a-button
           type="primary"
-          size=""
           @click="onSaveContent"
           class="custom-purple-button"
           >保存</a-button
@@ -208,18 +206,6 @@ const onSplit = (isTableImage = false) => {
 </script>
 
 <style scoped lang="less">
-.custom-purple-button {
-  background-color: purple;
-  border-color: purple;
-}
-
-.custom-purple-button:hover,
-.custom-purple-button:focus {
-  background-color: purple !important;
-  border-color: purple !important;
-  filter: opacity(0.9);
-}
-
 /* 覆盖 el-radio-button 的默认样式 */
 :deep(.el-radio-button__orig-radio:checked + .el-radio-button__inner) {
   background-color: purple;

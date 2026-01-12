@@ -44,12 +44,7 @@
           class="flex justify-center items-center"
           style="flex-direction: column"
         >
-          <a-button
-            type="primary"
-            @click="handleNewSave"
-            class="custom-purple-button"
-            >保存</a-button
-          >
+          <a-button type="primary" @click="handleNewSave">保存</a-button>
         </div>
       </a-form-item>
     </a-form>
@@ -67,14 +62,14 @@
           type="primary"
           size="large"
           @click="fetchData"
-          class="custom-purple-button mr-[2rem] mb-[1rem]"
+          class="mr-[2rem] mb-[1rem]"
           >刷新</a-button
         >
         <a-button
           type="primary"
           size="large"
           @click="showDrawer"
-          class="custom-purple-button mr-[2rem] mb-[1rem]"
+          class="mr-[2rem] mb-[1rem]"
           >新建测试用例</a-button
         >
       </div>
@@ -303,7 +298,6 @@
           >
         </template>
       </el-table-column>
-
       <el-table-column label="操作" :width="150">
         <template #default="scope">
           <el-button type="text" @click="handleDelete(scope.row)"
@@ -639,17 +633,3 @@ const handleBatchDelete = () => {
   });
 };
 </script>
-
-<style scoped lang="less">
-.custom-purple-button {
-  background-color: purple;
-  border-color: purple;
-}
-
-.custom-purple-button:hover,
-.custom-purple-button:focus {
-  background-color: purple !important;
-  border-color: purple !important;
-  filter: opacity(0.9);
-}
-</style>

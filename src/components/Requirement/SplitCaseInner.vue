@@ -19,16 +19,8 @@
         class="flex justify-center items-center"
         style="gap: 2rem; margin-right: 2rem"
       >
-        <a-button
-          type="primary"
-          @click="handleSave"
-          class="custom-purple-button"
-          >保存</a-button
-        >
-        <a-button
-          type="primary"
-          @click="handleGeneralization"
-          class="custom-purple-button"
+        <a-button type="primary" @click="handleSave">保存</a-button>
+        <a-button type="primary" @click="handleGeneralization"
           >泛化反向用例</a-button
         >
       </div>
@@ -66,13 +58,7 @@
   </div>
   <div v-if="activeTab === 'testcase_table'" style="margin: 1rem">
     <div style="display: flex; justify-content: flex-end; margin-bottom: 1rem">
-      <a-button
-        type="primary"
-        class="custom-purple-button"
-        size="large"
-        @click="handleExport"
-        >导出全部</a-button
-      >
+      <a-button type="primary" @click="handleExport">导出全部</a-button>
     </div>
 
     <el-table
@@ -270,12 +256,7 @@
           class="flex justify-center items-center"
           style="flex-direction: column"
         >
-          <a-button
-            type="primary"
-            @click="handleNewSave"
-            class="custom-purple-button"
-            >保存</a-button
-          >
+          <a-button type="primary" @click="handleNewSave">保存</a-button>
         </div>
       </a-form-item>
     </a-form>
@@ -702,17 +683,3 @@ const handleGenerate = async () => {
     });
 };
 </script>
-
-<style scoped lang="less">
-.custom-purple-button {
-  background-color: purple;
-  border-color: purple;
-}
-
-.custom-purple-button:hover,
-.custom-purple-button:focus {
-  background-color: purple !important;
-  border-color: purple !important;
-  filter: opacity(0.9);
-}
-</style>

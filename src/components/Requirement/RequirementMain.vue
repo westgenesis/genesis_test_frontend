@@ -313,34 +313,6 @@ const selectNodeByKey = async (key) => {
   padding: 0.2rem;
 }
 
-.custom-purple-button {
-  background-color: purple;
-  border-color: purple;
-}
-
-.custom-purple-button:hover,
-.custom-purple-button:focus {
-  background-color: purple !important;
-  border-color: purple !important;
-  filter: opacity(0.9);
-}
-
-/* 覆盖 el-radio-button 的默认样式 */
-:deep(.el-radio-button__orig-radio:checked + .el-radio-button__inner) {
-  background-color: purple;
-  border-color: purple;
-}
-
-:deep(.el-radio-button__inner) {
-  color: purple;
-  border-color: purple;
-}
-
-:deep(.el-radio-button__original-radio:checked + .el-radio-button__inner) {
-  background-color: purple;
-  border-color: purple !important;
-}
-
 :deep(.ant-tree-node-content-wrapper) {
   display: flex !important;
 }
