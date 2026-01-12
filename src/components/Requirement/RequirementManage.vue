@@ -195,7 +195,23 @@ const doSplitRequirement = async (requirement) => {
   doRefresh();
 };
 
-const doDelete = async (requirement) => {};
+const doDelete = async (requirement) => {
+  const [projectId, objectName] = requirement.name.split("/");
+  await http
+    .post(`/api/delete_project_file`, {
+      project_id: projectId, // 你的项目ID，24位十六进制字符串
+      object_type: "main_docx", // 固定值，必须写这个，匹配后端main_docx分支
+      object_name: objectName,
+    })
+    .then((response) => {
+      if (response.status === "success") {
+        ElMessage.success("删除成功");
+        doRefresh();
+      } else {
+        ElMessage.error("删除失败");
+      }
+    });
+};
 </script>
 
 <style scoped lang="scss">
