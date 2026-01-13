@@ -188,14 +188,19 @@ const onBeforeUpdate: UploadProps["onChange"] = async (file, requirement) => {
   formData.append("user_file", file.raw as File);
   formData.append("info", info);
 
-  await http.post(`/api/upload_project_file`, formData).then((response) => {
-    if (response.status === "OK") {
-      ElMessage.success("更新成功");
-    } else {
+  await http
+    .post(`/api/upload_project_file`, formData)
+    .then((response) => {
+      if (response.status === "OK") {
+        ElMessage.success("更新成功");
+        projectStore.refreshProject(currentProject.value["_id"]["$oid"]);
+      } else {
+        ElMessage.error("更新失败");
+      }
+    })
+    .catch((error) => {
       ElMessage.error("更新失败");
-    }
-  });
-  await projectStore.refreshProject(currentProject.value["_id"]["$oid"]);
+    });
 };
 
 const doSplitRequirement = async (requirement) => {
