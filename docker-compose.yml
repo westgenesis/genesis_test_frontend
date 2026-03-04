@@ -4,12 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: genesis-test-frontend
-    networks:
-      - app-network
     ports:
       - "5001:80" # 本地 5001 → 容器 nginx 80
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
-networks:
-  app-network:
-    external: true
