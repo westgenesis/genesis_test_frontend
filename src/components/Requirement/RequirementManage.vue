@@ -131,7 +131,7 @@ watch(currentProject, (newVal) => {
 });
 
 const requirements = computed(
-  () => currentProject.value?.requirement_files || []
+  () => currentProject.value?.requirement_files || [],
 );
 
 const onUploadMainDoc = () => {
@@ -216,6 +216,7 @@ const doDelete = async (requirement) => {
       project_id: projectId, // 你的项目ID，24位十六进制字符串
       object_type: "main_docx", // 固定值，必须写这个，匹配后端main_docx分支
       object_name: objectName,
+      req_id: requirement.req_id,
     })
     .then((response) => {
       if (response.status === "success") {
