@@ -50,7 +50,7 @@ export default defineConfig(({ mode }) => {
         autoInstall: true,
         customCollections: {
           "my-icons": FileSystemIconLoader("./src/assets/icons", (svg) =>
-            svg.replace(/^<svg /, '<svg fill="currentColor" ')
+            svg.replace(/^<svg /, '<svg fill="currentColor" '),
           ),
         },
       }),
@@ -68,8 +68,7 @@ export default defineConfig(({ mode }) => {
       port: 9200,
       proxy: {
         "/dev-api": {
-          // target: "http://183.66.251.10:52080/",
-          target: "http://192.168.1.148:5002/",
+          target: "http://183.66.251.10:57000/",
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/dev-api/, ""),
         },

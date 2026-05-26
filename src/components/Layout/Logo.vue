@@ -1,6 +1,6 @@
 <template>
   <div class="logo" @click="handleClick">
-    <img :src="logo" class="w-full h-full my-2" />
+    <img :src="logo" class="w-full h-10 my-2" />
   </div>
 </template>
 
@@ -20,5 +20,6 @@ const handleClick = () => {
   align-items: center;
   height: 100%;
   padding: 10px;
+  overflow: hidden;
 }
 </style>
