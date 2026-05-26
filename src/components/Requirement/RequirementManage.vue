@@ -11,7 +11,7 @@
           :auto-upload="false"
           :on-change="onBeforeUpload"
           :show-file-list="false"
-          accept=".doc,.docx"
+          accept=".doc,.docx,.pdf"
         >
           <template #trigger>
             <a-button type="primary">
@@ -91,11 +91,11 @@ const projectStore = useProjectStore();
 const { projects } = storeToRefs(projectStore);
 
 const currentProject = computed(() =>
-  projects.value.find((item) => item?._id?.$oid === props.id)
+  projects.value.find((item) => item?._id?.$oid === props.id),
 );
 
 const requirements = computed(
-  () => currentProject.value?.requirement_files || []
+  () => currentProject.value?.requirement_files || [],
 );
 
 const columns = [
