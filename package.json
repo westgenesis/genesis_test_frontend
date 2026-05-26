@@ -9,6 +9,14 @@
     "build": "vite build",
     "preview": "vite preview"
   },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@parcel/watcher",
+      "core-js",
+      "vue-demi",
+      "esbuild"
+    ]
+  },
   "dependencies": {
     "@ant-design/icons-vue": "^7.0.1",
     "@element-plus/icons-vue": "^2.3.2",
