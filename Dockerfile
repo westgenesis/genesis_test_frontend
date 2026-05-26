@@ -8,7 +8,7 @@ WORKDIR /app
 RUN npm install -g pnpm
 
 # 拷贝依赖文件并安装依赖
-COPY package.json .npmrc pnpm-lock.yaml ./
+COPY package.json .npmrc pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile
 
 # 拷贝源码并构建
