@@ -1,7 +1,7 @@
 <template>
   <header class="items-center px-5 pt-4">
     <div
-      class="flex items-center gap-2 before:content-[''] before:w-1 before:h-5 before:rounded-md before:bg-[#9362f2]"
+      class="flex items-center gap-2 before:content-[''] before:w-1 before:h-5 before:rounded-md before:bg-(--el-color-primary)"
     >
       <h2 class="text-base font-bold text-gray-700">
         {{ route.meta.title }}
@@ -15,6 +15,6 @@
 </template>
 
 <script setup lang="ts">
-import { useRoute } from 'vue-router'
-const route = useRoute()
+import { useRoute } from "vue-router";
+const route = useRoute();
 </script>
