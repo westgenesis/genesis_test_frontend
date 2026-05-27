@@ -29,7 +29,7 @@
       </div>
     </div>
   </div>
-  <div ref="quillEditorRef" class="docx-editor"></div>
+  <DocumentWordEditor ref="editorRef" />
 
   <div></div>
 
@@ -68,9 +68,8 @@
 </template>
 
 <script setup lang="ts">
-import HTMLtoDOCX from "html-to-docx";
-import { DocumentWordEdit } from "./DocumentWordEdit";
-import { ref, defineProps, onMounted, computed, watchEffect } from "vue";
+import DocumentWordEditor from "./DocumentWordEditor.vue";
+import { ref, onMounted, computed, watchEffect } from "vue";
 import { useProductFetch } from "../../handler/handler";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { useProjectStore } from "../../stores/project";
@@ -87,8 +86,7 @@ const props = defineProps({
   },
 });
 const fileName = ref(props.record?.file_name?.replace(".docx", ""));
-const quillEditorRef = ref();
-let documentWordEdit: DocumentWordEdit;
+const editorRef = ref<InstanceType<typeof DocumentWordEditor>>();
 
 const tableColumns = computed(() => {
   return (
@@ -120,31 +118,28 @@ watchEffect(() => {
 });
 
 onMounted(async () => {
-  documentWordEdit = new DocumentWordEdit(quillEditorRef.value);
   handler
     .DownloadFile(
       props.record.object_name.split("/")[0],
-      props.record.object_name
+      props.record.object_name,
     )
     .then((stream: any) => {
       const blob = new Blob([stream], {
         type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       });
       const file = new File([blob], props.record.object_name);
-      documentWordEdit.docxToQuill(file);
+      editorRef.value?.loadDocx(file);
     });
 });
 const { refreshAllProjects } = useProjectStore();
+
 const onSaveContent = () => {
   ElMessageBox.confirm("保存后会覆盖文件，是否确定？", "覆盖提示", {
     confirmButtonText: "是",
     cancelButtonText: "否",
     type: "warning",
   }).then(() => {
-    HTMLtoDOCX(documentWordEdit.quill.getSemanticHTML()).then((data) => {
-      const file = new File([data], fileName.value, {
-        type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      });
+    editorRef.value?.getDocx(fileName.value).then((file) => {
       const formData = new FormData();
       const info = new Blob([
         JSON.stringify({
@@ -162,7 +157,7 @@ const onSaveContent = () => {
         if (res) {
           ElMessage.success("保存成功");
           props.record.version = (Number(props.record.version) + 0.1).toFixed(
-            1
+            1,
           );
           refreshAllProjects();
         } else {
@@ -191,7 +186,7 @@ const onSplit = (isTableImage = false) => {
       }
 
       ElMessage.success(
-        "已下发功能点拆解任务，请等待或刷新后去功能点页面查看结果"
+        "已下发功能点拆解任务，请等待或刷新后去功能点页面查看结果",
       );
       http.post("/api/subrequire_generate_points", params).then((res) => {
         console.log(res);

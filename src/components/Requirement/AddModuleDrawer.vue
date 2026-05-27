@@ -50,11 +50,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineProps, defineEmits, onUpdated } from "vue";
+import { ref, defineProps, defineEmits, useTemplateRef } from "vue";
 import RequirementDocx from "./AddRequirementDocx.vue";
 import { http } from "../../http";
-import HTMLtoDOCX from "html-to-docx";
-import { ElMessage, ElMessageBox } from "element-plus";
+import { ElMessage } from "element-plus";
 
 const props = defineProps({
   visible: Boolean,
@@ -65,7 +64,7 @@ const emit = defineEmits(["close"]);
 
 const newModuleName = ref("");
 const newModuleDescription = ref("");
-const requirementDocxRef = ref(null);
+const requirementDocxRef = useTemplateRef("requirementDocxRef");
 
 const closeDrawer = () => {
   emit("close");
@@ -73,12 +72,8 @@ const closeDrawer = () => {
 
 const saveModule = () => {
   const requirementDocxInstance = requirementDocxRef.value;
-  if (requirementDocxInstance && requirementDocxInstance.documentWordEdit) {
-    const documentWordEdit = requirementDocxInstance.documentWordEdit;
-    HTMLtoDOCX(documentWordEdit.quill.getSemanticHTML()).then((data) => {
-      const file = new File([data], newModuleName.value, {
-        type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      });
+  if (requirementDocxInstance && requirementDocxInstance.getDocx) {
+    requirementDocxInstance?.getDocx(newModuleName.value)?.then((file) => {
       const formData = new FormData();
       const info = new Blob([
         JSON.stringify({
@@ -103,7 +98,7 @@ const saveModule = () => {
       });
     });
   } else {
-    console.error("无法获取 documentWordEdit 实例");
+    console.error("无法获取编辑器实例");
   }
 };
 </script>
