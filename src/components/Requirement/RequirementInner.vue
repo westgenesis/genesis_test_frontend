@@ -429,6 +429,7 @@ import { onMounted, watch, defineProps, computed, ref, onUpdated } from "vue";
 import { http } from "../../http";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { useProjectStore } from "../../stores/project";
+import AddModuleDrawer from "./AddModuleDrawer.vue";
 
 const { refreshAllProjects } = useProjectStore();
 const activeTab = ref("modules");
@@ -522,7 +523,7 @@ const handleModuleDelete = () => {
   })
     .then(() => {
       const split_file_ids = selectedRowsModule.value.map(
-        (row) => row.split_file_id
+        (row) => row.split_file_id,
       );
       const deleteSplitRequireParams = {
         project_id: project_id.value,
@@ -587,7 +588,7 @@ const handleSplit = (row: any) => {
         req_id: req_id.value,
       };
       ElMessage.success(
-        "已下发功能点拆解任务，请等待或刷新后去功能点页面查看结果"
+        "已下发功能点拆解任务，请等待或刷新后去功能点页面查看结果",
       );
       http.post("/api/subrequire_generate_points", params).then((res) => {
         console.log(res);
@@ -658,14 +659,14 @@ const clickTitle = (row) => {
   console.log(row);
   props.selectNodeByKey(
     [project_id.value, req_id.value, row.split_file_id, row.testcase_id].join(
-      "-"
-    )
+      "-",
+    ),
   );
 };
 
 const clickTitleModule = (row) => {
   props.selectNodeByKey(
-    [project_id.value, req_id.value, row.split_file_id].join("-")
+    [project_id.value, req_id.value, row.split_file_id].join("-"),
   );
 };
 
@@ -678,7 +679,7 @@ const clickTitleTestCase = (row) => {
       row.split_file_id,
       row.split_case_id,
       row.testcase_id,
-    ].join("-")
+    ].join("-"),
   );
 };
 

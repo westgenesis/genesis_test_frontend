@@ -5,7 +5,7 @@
     :visible="visible"
     @close="closeDrawer"
     placement="right"
-    :width="500"
+    width="70%"
   >
     <div>
       <div class="mb-4">
