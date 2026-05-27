@@ -33,3 +33,9 @@ defineExpose({
   getDocx,
 });
 </script>
+
+<style>
+.md-editor .cm-line {
+  caret-color: auto !important;
+}
+</style>

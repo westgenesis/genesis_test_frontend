@@ -31,7 +31,7 @@
     "less": "^4.2.0",
     "lodash-es": "^4.17.21",
     "mammoth": "^1.8.0",
-    "md-editor-v3": "^4.21.3",
+    "md-editor-v3": "^6.5.1",
     "nprogress": "^0.2.0",
     "pinia": "^2.1.7",
     "split.js": "^1.6.5",
