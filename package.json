@@ -34,6 +34,7 @@
     "md-editor-v3": "^4.21.3",
     "nprogress": "^0.2.0",
     "pinia": "^2.1.7",
+    "split.js": "^1.6.5",
     "vite-plugin-node-stdlib-browser": "^0.2.1",
     "vue": "^3.5.34",
     "vue-request": "^2.0.4",
