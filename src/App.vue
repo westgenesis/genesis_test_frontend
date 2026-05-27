@@ -3,7 +3,6 @@ import { useUserStore } from "./stores/user";
 import { onMounted } from "vue";
 import { http } from "./http";
 import { useProjectStore } from "./stores/project";
-import "quill/dist/quill.snow.css";
 import zhCN from "ant-design-vue/es/locale/zh_CN";
 import { ref } from "vue";
 import ActionSelect from "@/components/Script/actionSelect/ActionSelect.vue";

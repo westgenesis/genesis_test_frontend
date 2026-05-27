@@ -1,26 +1,16 @@
 <template>
-  <div ref="quillEditorRef" class="docx-editor"></div>
+  <DocumentWordEditor ref="editorRef" />
 </template>
 
 <script setup lang="ts">
-import { DocumentWordEdit } from "./DocumentWordEdit";
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
+import DocumentWordEditor from "./DocumentWordEditor.vue";
 
-const quillEditorRef = ref();
-let documentWordEdit = ref();
-
-onMounted(() => {
-  documentWordEdit.value = new DocumentWordEdit(quillEditorRef.value);
-  const emptyDoc = new Blob([], {
-    type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-  });
-  const file = new File([emptyDoc], "empty.docx");
-  documentWordEdit.value.docxToQuill(file);
-});
+const editorRef = ref<InstanceType<typeof DocumentWordEditor>>();
 
 defineExpose({
-  documentWordEdit,
+  loadDocx: (file: File) => editorRef.value?.loadDocx(file),
+  getMarkdown: () => editorRef.value?.getMarkdown() ?? "",
+  getDocx: (fileName: string) => editorRef.value?.getDocx(fileName),
 });
 </script>
-
-<style scoped lang="scss"></style>

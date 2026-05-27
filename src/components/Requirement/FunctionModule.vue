@@ -58,7 +58,7 @@
           </div>
         </div>
 
-        <div ref="quillEditorRef" class="docx-editor" />
+        <DocumentWordEditor ref="editorRef" />
         <div class="flex justify-center mt-[1rem]">
           <a-button type="primary" @click="onSaveContent">保存</a-button>
         </div>
@@ -193,12 +193,11 @@
 
 <script setup lang="ts">
 import { useProjectStore } from "../../stores/project";
-import { ref, computed, onMounted, watch, onUpdated } from "vue";
+import { ref, computed, onUpdated } from "vue";
 import type { TreeProps } from "ant-design-vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { useProductFetch } from "../../handler/handler";
-import { DocumentWordEdit } from "./DocumentWordEdit";
-import HTMLtoDOCX from "html-to-docx";
+import DocumentWordEditor from "./DocumentWordEditor.vue";
 import { http } from "../../http";
 import RequirementDocx from "./RequirementDocx.vue";
 import AddModuleDrawer from "./AddModuleDrawer.vue"; // 引入新组件
@@ -206,7 +205,6 @@ import { storeToRefs } from "pinia";
 
 const searchValue = ref("");
 const currentFile = ref();
-const uploadRef = ref();
 
 const projectStore = useProjectStore();
 const { refreshAllProjects } = useProjectStore();
@@ -217,13 +215,7 @@ const { handler } = useProductFetch();
 const fileName = ref();
 const currentRequirement = ref();
 
-const quillEditorRef = ref();
-const quillEditorRefNew = ref();
-let documentWordEdit: DocumentWordEdit;
-
-onMounted(async () => {
-  documentWordEdit = new DocumentWordEdit(quillEditorRef.value);
-});
+const editorRef = ref<InstanceType<typeof DocumentWordEditor>>();
 
 const currentType = ref("");
 const onClickPreviewFile = (node: any) => {
@@ -238,7 +230,7 @@ const onClickPreviewFile = (node: any) => {
       type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     });
     const file = new File([blob], splitReq.file_name);
-    documentWordEdit.docxToQuill(file);
+    editorRef.value?.loadDocx(file);
     currentFile.value = node;
     fileName.value = splitReq.file_name.replace(".docx", "");
   });
@@ -327,7 +319,7 @@ const treeData = computed(() => {
             })
           : [],
     })),
-    searchValue.value
+    searchValue.value,
   );
 });
 
@@ -356,10 +348,7 @@ const onSaveContent = () => {
     cancelButtonText: "否",
     type: "warning",
   }).then(() => {
-    HTMLtoDOCX(documentWordEdit.quill.getSemanticHTML()).then((data) => {
-      const file = new File([data], fileName.value, {
-        type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      });
+    editorRef.value?.getDocx(fileName.value).then((file) => {
       const formData = new FormData();
       const info = new Blob([
         JSON.stringify({
@@ -398,7 +387,7 @@ const pagedData = computed(() => {
 });
 
 const totalItems = computed(
-  () => currentRequirement.value?.req?.split_files.length || 0
+  () => currentRequirement.value?.req?.split_files.length || 0,
 );
 
 const handlePageChange = (page: number) => {
@@ -418,7 +407,7 @@ const handleSplit = (row: any) => {
         req_id: currentRequirement.value.req.req_id,
       };
       ElMessage.success(
-        "已下发功能点拆解任务，请等待或刷新后去功能点页面查看结果"
+        "已下发功能点拆解任务，请等待或刷新后去功能点页面查看结果",
       );
       http.post("/api/subrequire_generate_points", params).then((res) => {
         console.log(res);
@@ -453,7 +442,7 @@ const handleBatchSplit = () => {
       http.post("/api/subrequire_batch_generate_points", params).then((res) => {
         if (res) {
           ElMessage.success(
-            "已下发功能点拆解任务，请等待或刷新后去功能点页面查看结果"
+            "已下发功能点拆解任务，请等待或刷新后去功能点页面查看结果",
           );
           refreshAllProjects();
         } else {
@@ -479,10 +468,10 @@ const closeAddDrawer = async () => {
   drawerVisible.value = false;
   const result = await projectStore.refreshAllProjects();
   const currentProject = result.find(
-    (x) => x._id.$oid === currentRequirement.value.project._id.$oid
+    (x) => x._id.$oid === currentRequirement.value.project._id.$oid,
   );
   const currentReq = currentProject.requirement_files.find(
-    (x) => x.req_id === currentRequirement.value.req.req_id
+    (x) => x.req_id === currentRequirement.value.req.req_id,
   );
   currentRequirement.value.req.split_files = currentReq.split_files;
 };
@@ -525,7 +514,7 @@ const handleDelete = () => {
             refreshAllProjects();
             currentRequirement.value.req.split_files =
               currentRequirement.value?.req?.split_files.filter(
-                (x) => !split_file_ids.includes(x.split_file_id)
+                (x) => !split_file_ids.includes(x.split_file_id),
               );
           } else {
             ElMessage.error("删除失败");
