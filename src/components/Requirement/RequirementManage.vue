@@ -47,7 +47,7 @@
           :auto-upload="false"
           :on-change="onBeforeUpload"
           :show-file-list="false"
-          accept=".doc,.docx"
+          accept=".doc,.docx,.pdf"
         >
           <template #trigger>
             <a-button type="primary">
