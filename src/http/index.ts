@@ -1,45 +1,45 @@
-import axios from 'axios'
-import { ElMessage } from 'element-plus'
-import NProgress from 'nprogress'; // 引入 nprogress
+import axios from "axios";
+import { ElMessage } from "element-plus";
+import NProgress from "nprogress"; // 引入 nprogress
 
-const baseURL = import.meta.env.VITE_API_BASE_URL || '';
+const baseURL = import.meta.env.VITE_API_BASE_URL || "";
 
 // 创建 Axios 实例
 const http = axios.create({
   baseURL: baseURL, // 设置基本的请求 URL
-  timeout: 60000 // 设置请求超时时间
-})
+  timeout: 60000, // 设置请求超时时间
+});
 
 // 请求拦截器
 http.interceptors.request.use(
   (config) => {
     // 在发送请求之前做一些处理，例如添加请求头、身份验证等
-    const token = localStorage.getItem('token')
+    const token = localStorage.getItem("token");
     if (token) {
-      config.headers['Authorization'] = 'Bearer ' + token
+      config.headers["Authorization"] = "Bearer " + token;
     }
 
     // 删除请求参数中的下划线开头的参数
-    ;[config.params, config.data].forEach((params) => {
+    [config.params, config.data].forEach((params) => {
       for (const p in params) {
-        if (p.startsWith('_')) {
-          delete params[p]
+        if (p.startsWith("_")) {
+          delete params[p];
         }
       }
-    })
+    });
 
-    if (config.url !== '/api/display_user_projects') {
+    if (config.url !== "/api/display_user_projects") {
       NProgress.start(); // 开始进度条
     }
 
-    return config
+    return config;
   },
   (error) => {
     // 处理请求错误
     NProgress.done(); // 结束进度条
-    return Promise.reject(error)
-  }
-)
+    return Promise.reject(error);
+  },
+);
 
 // 响应拦截器
 http.interceptors.response.use(
@@ -47,20 +47,23 @@ http.interceptors.response.use(
     // 对响应数据进行处理，例如解析数据、错误处理等
     NProgress.done(); // 结束进度条
     if (response.status === 500) {
-      ElMessage.error(response.data.message)
-      return Promise.reject(response)
+      ElMessage.error(response.data.message);
+      return Promise.reject(response);
     }
-    return response.data
+    if (response.config.withResponse) {
+      return response;
+    }
+    return response.data;
   },
   (error) => {
     NProgress.done(); // 结束进度条
     if (error?.response?.status === 401) {
-      ElMessage.error('未授权，请重新登录')
-      window.location.href = '#/login'
+      ElMessage.error("未授权，请重新登录");
+      window.location.href = "#/login";
     }
     // 处理响应错误
-    return Promise.reject(error)
-  }
-)
+    return Promise.reject(error);
+  },
+);
 
-export { http }
+export { http };

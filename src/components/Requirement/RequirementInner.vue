@@ -55,6 +55,9 @@
       <a-button type="primary" @click="handleBatchSplit" class="mr-[2rem]"
         >批量拆分</a-button
       >
+      <a-button type="primary" @click="handleExportCase" class="mr-[2rem]"
+        >导出用例</a-button
+      >
     </div>
     <div style="width: 100%">
       <el-table
@@ -430,6 +433,7 @@ import { http } from "../../http";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { useProjectStore } from "../../stores/project";
 import AddModuleDrawer from "./AddModuleDrawer.vue";
+import { downloadByResponse } from "../../utils/file";
 
 const { refreshAllProjects } = useProjectStore();
 const activeTab = ref("modules");
@@ -827,6 +831,24 @@ const handleBatchDelete = () => {
       ElMessage.error("批量删除失败");
     }
   });
+};
+
+const handleExportCase = () => {
+  const params = {
+    project_id: project_id.value,
+    req_id: req_id.value,
+  };
+  http
+    .post("/api/export_all_testcases", params, {
+      withResponse: true,
+      responseType: "blob",
+    })
+    .then((response) => {
+      downloadByResponse(
+        response,
+        `${currentRequirement?.value?.title}_testcases.xlsx`,
+      );
+    });
 };
 </script>
 
